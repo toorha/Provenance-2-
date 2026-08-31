@@ -7,7 +7,7 @@ export function Hero() {
       <div className="glow-pool pointer-events-none absolute inset-0 z-0" />
 
       <div className="mx-auto w-full max-w-7xl px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.1fr)] lg:gap-16">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.68fr)_minmax(0,1.32fr)] lg:gap-14">
           <div className="max-w-xl">
             <h1 className="font-display text-[2.6rem] leading-[0.99] tracking-[-0.03em] text-bone sm:text-[3.2rem] lg:text-[3.6rem] xl:text-[4.1rem]">
               Buildings outlive the people who work on&nbsp;them. Their context

@@ -39,16 +39,48 @@ export const EVIDENCE_TYPES = [
  * ------------------------------------------------------------------ */
 export const CONTEXT_DECAY = {
   label: "Context decay",
-  headline: "Keep track of what's happening now. Never lose why it happened.",
-  body: "Important property decisions happen every day across emails, meetings, reports, tasks and different teams. Without a system that keeps those decisions connected to the property, the context gets scattered and eventually has to be reconstructed.",
-  example: {
-    question: "Why did we only replace part of the roof?",
-    without: "Search old files, emails, reports and meeting notes, then piece it together.",
-    withParts: [
-      { label: "What happened", value: "The eastern section was replaced in 2018. The western section was deferred." },
-      { label: "Why", value: "The consultant assessed the western membrane as having about five years of life left." },
-      { label: "Evidence", value: "Building assessment, capital meeting notes, contractor invoice." },
+  headline: "Everyone knows a piece. Provenance remembers the whole thing.",
+  body: "Property context is constantly being created across meetings, emails, documents and different teams. Provenance gives everyone a shared understanding today, then preserves that understanding as the property changes over time.",
+
+  brief: {
+    question: "What's going on with the south pad?",
+    fields: [
+      {
+        label: "What we know now",
+        value:
+          "The revised concept is waiting on vehicle-turning analysis from the traffic consultant.",
+      },
+      {
+        label: "What was decided",
+        value:
+          "The team agreed to preserve the larger building footprint and test an alternate loading configuration instead of reducing GFA.",
+      },
+      {
+        label: "Why",
+        value:
+          "Leasing advised that reducing the building further would compromise the current tenant opportunity.",
+      },
+      {
+        label: "Still unresolved",
+        value:
+          "Utility easements along the eastern portion of the pad still need to be confirmed before the concept can advance.",
+      },
     ],
+    sources: [
+      "Meeting notes",
+      "Consultant email",
+      "Concept plan",
+      "Leasing discussion",
+      "Municipal comments",
+    ],
+    actions: ["View context", "Open sources"],
+  },
+
+  time: {
+    headline: "Shared context today. Institutional memory tomorrow.",
+    body: "The same context helping the team understand the property today remains available years later, with the original evidence still attached.",
+    today: "The team knows what is happening and why.",
+    later: "A new team asks the same property and gets the full decision history.",
   },
 } as const;
 

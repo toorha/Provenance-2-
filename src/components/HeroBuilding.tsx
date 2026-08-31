@@ -22,8 +22,8 @@ const SHOTS: Shot[] = [
   {
     id: "rtu",
     zone: "rooftop",
-    origin: { x: 57.5, y: 35 },
-    scale: 2.5,
+    origin: { x: 57, y: 37 },
+    scale: 1.85,
     title: "RTU-4",
     kicker: "Rooftop mechanical",
     events: [
@@ -35,8 +35,8 @@ const SHOTS: Shot[] = [
   {
     id: "parking",
     zone: "ground",
-    origin: { x: 25, y: 54 },
-    scale: 2.1,
+    origin: { x: 26, y: 48 },
+    scale: 1.6,
     title: "Parking lot",
     kicker: "Surface lot · 180 stalls",
     events: [
@@ -45,10 +45,23 @@ const SHOTS: Shot[] = [
     ],
   },
   {
+    id: "underground",
+    zone: "underground",
+    origin: { x: 38, y: 60 },
+    scale: 1.75,
+    title: "Buried services",
+    kicker: "Storm and sanitary trunk",
+    events: [
+      { year: "2019", text: "CCTV inspection completed" },
+      { year: "2024", text: "Servicing capacity under review" },
+      { year: "Now", text: "Consultant plan overdue" },
+    ],
+  },
+  {
     id: "tenant",
     zone: "retail",
-    origin: { x: 52, y: 42 },
-    scale: 2.3,
+    origin: { x: 54, y: 45 },
+    scale: 1.75,
     title: "Tenant Bay 3",
     kicker: "Retail · 4,200 sf",
     events: [
@@ -59,8 +72,8 @@ const SHOTS: Shot[] = [
   {
     id: "landscape",
     zone: null,
-    origin: { x: 37, y: 55 },
-    scale: 2.2,
+    origin: { x: 37, y: 52 },
+    scale: 1.7,
     title: "Landscaping",
     kicker: "Site · islands and frontage",
     events: [
@@ -72,8 +85,8 @@ const SHOTS: Shot[] = [
     id: "parcel",
     zone: "parcel",
     develop: true,
-    origin: { x: 64, y: 74 },
-    scale: 1.75,
+    origin: { x: 64, y: 70 },
+    scale: 1.5,
     title: "North parcel",
     kicker: "Development opportunity",
     events: [
@@ -85,12 +98,12 @@ const SHOTS: Shot[] = [
 ];
 
 /* timeline: full view, then each shot zooms in, holds, zooms back out */
-const OPEN_MS = 1700;
-const IN_MS = 1150;
-const HOLD_MS = 3400;
-const OUT_MS = 950;
-const GAP_MS = 550;
-const LOOP_PAUSE_MS = 2600;
+const OPEN_MS = 1500;
+const IN_MS = 1000;
+const HOLD_MS = 2800;
+const OUT_MS = 800;
+const GAP_MS = 450;
+const LOOP_PAUSE_MS = 2000;
 
 export function HeroBuilding() {
   const reduced = useReducedMotion();
@@ -128,11 +141,14 @@ export function HeroBuilding() {
   const scale = shot ? shot.scale : 1;
 
   return (
-    <div className="mx-auto w-full max-w-[560px] lg:max-w-none">
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "706 / 456" }}>
-        {/* the camera */}
+    <div className="mx-auto w-full max-w-[600px] lg:max-w-none">
+      <div
+        className="relative w-full overflow-hidden rounded-[2px] border border-bone/[0.09] bg-charcoal-deep/40"
+        style={{ aspectRatio: "704 / 512" }}
+      >
+        {/* the camera — inset a touch so it reads as a viewport, not a bleed */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-[1.6%]"
           style={{
             transform: `scale(${scale})`,
             transformOrigin: origin,
@@ -152,9 +168,16 @@ export function HeroBuilding() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, rgba(12,13,12,0.55) 100%)",
+              "radial-gradient(ellipse 120% 92% at 50% 42%, transparent 52%, rgba(12,13,12,0.6) 100%)",
           }}
         />
+
+        {/* corner ticks — a quiet viewfinder */}
+        {(["left-2 top-2 border-l border-t", "right-2 top-2 border-r border-t", "left-2 bottom-2 border-l border-b", "right-2 bottom-2 border-r border-b"] as const).map(
+          (c) => (
+            <span key={c} className={`pointer-events-none absolute h-3 w-3 border-bone/25 ${c}`} />
+          )
+        )}
 
         {/* caption */}
         {shot && (
@@ -162,9 +185,8 @@ export function HeroBuilding() {
             key={shot.id}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.35 }}
-            className="absolute bottom-5 left-5 w-[218px] border border-bone/12 bg-charcoal-deep/85 backdrop-blur-[2px]"
+            transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
+            className="absolute bottom-4 left-4 w-[222px] border border-bone/12 bg-charcoal-deep/88 backdrop-blur-[2px]"
           >
             <div className="flex items-baseline justify-between border-b border-bone/10 px-3 py-2">
               <span className="text-[12.5px] font-semibold text-bone">{shot.title}</span>

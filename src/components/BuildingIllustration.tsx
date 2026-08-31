@@ -3,7 +3,13 @@
 import type { ReactNode } from "react";
 import { useReducedMotion } from "@/lib/motion";
 
-export type BuildingZone = "roof" | "retail" | "rooftop" | "ground" | "parcel";
+export type BuildingZone =
+  | "roof"
+  | "retail"
+  | "rooftop"
+  | "ground"
+  | "parcel"
+  | "underground";
 
 export interface BuildingMarker {
   zone: BuildingZone;
@@ -79,12 +85,36 @@ const LIGHTS: V[] = [
   [11.5, 13.2, 0],
 ];
 
+/* ------------------------------------------------------------------ *
+ * Buried services — a storm/sanitary trunk under the drive aisle,
+ * with manholes, a lateral to the building and a storm connection to
+ * the catch basin near the drainage issue.
+ * ------------------------------------------------------------------ */
+const UG = {
+  y: 12.05, // the trunk runs along here
+  z: -1.55, // buried depth
+  x0: -0.6,
+  x1: 16.6,
+  manholes: [1.4, 7.2, 13.6],
+  lateralX: 3.1, // sanitary lateral rising to the grocery
+  lateralToY: 8.55,
+  basin: { x: 6.0, y: 13.7 }, // catch basin at the flagged low point
+  outfallX: 16.6,
+};
+
+/* pad-mounted transformer, roof drains, service door — extra detail */
+const DOWNSPOUTS = [4.6, 8.4, 12.2];
+const ROOF_DRAINS = [5.5, 9.4, 13.3];
+const TRANSFORMER: Box = { x0: 11.5, x1: 12.2, y0: 8.9, y1: 9.6, z0: 0, z1: 0.7 };
+const BOLLARDS = [15.0, 15.5, 16.0];
+
 const ANCHOR: Record<BuildingZone, V> = {
   roof: [5.6, 6.6, 3.0],
   retail: [10.2, 8.0, 3.0],
   rooftop: [10.0, 6.0, 3.5],
   ground: [3.0, 12.6, 0],
   parcel: [17.9, 10.7, 0],
+  underground: [7.0, 11.9, 0],
 };
 
 function diamond([cx, cy]: [number, number], r: number) {
@@ -117,7 +147,7 @@ export function BuildingIllustration({
 
   return (
     <svg
-      viewBox="94 120 706 456"
+      viewBox="88 104 704 512"
       className={className}
       role="img"
       aria-label="Isometric architectural model of Westmount Centre shopping centre"
@@ -215,6 +245,15 @@ export function BuildingIllustration({
           </g>
         );
       })}
+
+      {/* ---- buried services ---- */}
+      <UndergroundServices
+        active={activeZone === "underground"}
+        hair={hair}
+        accent={accent}
+        accentSoft={accentSoft}
+        reduced={reduced}
+      />
 
       {/* sidewalk along the storefronts */}
       <polygon
@@ -358,6 +397,43 @@ export function BuildingIllustration({
         />
       ))}
 
+      {/* downspouts down the strip front face */}
+      {DOWNSPOUTS.map((x) => (
+        <line
+          key={`ds-${x}`}
+          {...seg([x, STRIP.y1 + 0.02, STRIP.z1 - 0.1], [x, STRIP.y1 + 0.02, 0])}
+          stroke={hair}
+          strokeWidth={1.2}
+        />
+      ))}
+
+      {/* pad-mounted transformer beside the office */}
+      <BoxSolid
+        box={TRANSFORMER}
+        stroke={stroke}
+        fillTop={fillTop}
+        fillSide={fillSide}
+        hair={hair}
+      />
+
+      {/* service bollards at the junior anchor door */}
+      {BOLLARDS.map((x) => {
+        const b = project(x, JUNIOR.y1 + 0.35, 0);
+        const t = project(x, JUNIOR.y1 + 0.35, 0.5);
+        return (
+          <line
+            key={`bo-${x}`}
+            x1={b[0]}
+            y1={b[1]}
+            x2={t[0]}
+            y2={t[1]}
+            stroke={hair}
+            strokeWidth={1.6}
+            strokeLinecap="round"
+          />
+        );
+      })}
+
       {/* rooftop mechanical */}
       {RTU_XS.map((x) => (
         <BoxSolid
@@ -369,6 +445,19 @@ export function BuildingIllustration({
           hair={hair}
         />
       ))}
+      {/* roof drains */}
+      {ROOF_DRAINS.map((x) => {
+        const p = project(x, 7.4, STRIP.z1);
+        return (
+          <path
+            key={`rd-${x}`}
+            d={diamond([p[0], p[1]], 2.4)}
+            fill="none"
+            stroke={hair}
+            strokeWidth={1}
+          />
+        );
+      })}
       <polygon
         points={facePoints([
           [5.4, 5.6, 3.0],
@@ -405,7 +494,10 @@ export function BuildingIllustration({
       })()}
 
       {/* ---- zone highlight ---- */}
-      {activeZone && activeZone !== "ground" && activeZone !== "retail" && (
+      {activeZone &&
+        activeZone !== "ground" &&
+        activeZone !== "retail" &&
+        activeZone !== "underground" && (
         <g key={`hl-${activeZone}`} className={fadeClass}>
           <ZoneHighlight zone={activeZone} accent={accent} accentSoft={accentSoft} />
         </g>
@@ -730,6 +822,146 @@ function SurveyParcel({
         return <circle key={i} cx={p[0]} cy={p[1]} r={1.8} fill={stroke} />;
       })}
     </>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Buried storm / sanitary trunk. Drawn faintly at all times so the
+ * property reads as having a hidden layer; lit up when it is the
+ * active system.
+ * ------------------------------------------------------------------ */
+function UndergroundServices({
+  active,
+  hair,
+  accent,
+  accentSoft,
+  reduced,
+}: {
+  active: boolean;
+  hair: string;
+  accent: string;
+  accentSoft: string;
+  reduced: boolean;
+}) {
+  const c = active ? accent : hair;
+  const sw = active ? 1.6 : 1;
+  const opacity = active ? 1 : 0.5;
+
+  // pipe drawn as two parallel invert lines
+  const invert = (
+    yOff: number,
+    a: V,
+    b: V,
+    width = sw
+  ): ReactNode => (
+    <line
+      {...seg(
+        [a[0], a[1] + yOff, a[2]],
+        [b[0], b[1] + yOff, b[2]]
+      )}
+      stroke={c}
+      strokeWidth={width}
+      strokeLinecap="round"
+    />
+  );
+
+  const mainA: V = [UG.x0, UG.y, UG.z];
+  const mainB: V = [UG.x1, UG.y, UG.z];
+  const trenchPts = facePoints([
+    [UG.x0, UG.y - 0.45, 0],
+    [UG.x1, UG.y - 0.45, 0],
+    [UG.x1, UG.y + 0.45, 0],
+    [UG.x0, UG.y + 0.45, 0],
+  ]);
+
+  return (
+    <g opacity={opacity} className={active && !reduced ? "bld-fade" : undefined}>
+      {/* trench footprint at grade */}
+      <polygon
+        points={trenchPts}
+        fill={active ? accentSoft : "none"}
+        stroke={c}
+        strokeWidth={active ? 1.2 : 1}
+        strokeDasharray="2 4"
+      />
+
+      {/* the trunk */}
+      {invert(-0.16, mainA, mainB, active ? 2 : 1.1)}
+      {invert(0.16, mainA, mainB, active ? 2 : 1.1)}
+
+      {/* manholes: shaft to grade + a ring */}
+      {UG.manholes.map((mx) => {
+        const g = project(mx, UG.y, 0);
+        return (
+          <g key={`mh-${mx}`}>
+            <line {...seg([mx, UG.y - 0.16, UG.z], [mx, UG.y - 0.16, 0])} stroke={c} strokeWidth={sw} />
+            <line {...seg([mx, UG.y + 0.16, UG.z], [mx, UG.y + 0.16, 0])} stroke={c} strokeWidth={sw} />
+            <ellipse cx={g[0]} cy={g[1]} rx={4.4} ry={2.4} fill="none" stroke={c} strokeWidth={sw} />
+          </g>
+        );
+      })}
+
+      {/* sanitary lateral rising to the building */}
+      <line
+        {...seg([UG.lateralX, UG.y, UG.z], [UG.lateralX, UG.lateralToY, UG.z])}
+        stroke={c}
+        strokeWidth={sw}
+      />
+      <line
+        {...seg([UG.lateralX, UG.lateralToY, UG.z], [UG.lateralX, UG.lateralToY, 0])}
+        stroke={c}
+        strokeWidth={sw}
+      />
+
+      {/* storm connection to the catch basin at the low point */}
+      <line
+        {...seg([UG.basin.x, UG.basin.y, UG.z], [UG.basin.x + 3.4, UG.y, UG.z])}
+        stroke={c}
+        strokeWidth={sw}
+      />
+      {(() => {
+        const bp = project(UG.basin.x, UG.basin.y, 0);
+        return (
+          <rect
+            x={bp[0] - 4}
+            y={bp[1] - 3}
+            width={8}
+            height={6}
+            fill="none"
+            stroke={c}
+            strokeWidth={sw}
+          />
+        );
+      })()}
+
+      {/* depth tick at the first manhole */}
+      {active && (
+        <line
+          {...seg([UG.manholes[0], UG.y - 0.6, 0], [UG.manholes[0], UG.y - 0.6, UG.z])}
+          stroke={accent}
+          strokeWidth={1}
+          strokeDasharray="2 2"
+        />
+      )}
+
+      {/* flow, when this is the active system */}
+      {active && !reduced && (
+        <circle r={3.2} fill={accent}>
+          <animateMotion
+            dur="2.4s"
+            repeatCount="indefinite"
+            path={`M ${project(UG.x0, UG.y, UG.z).join(" ")} L ${project(
+              UG.x1,
+              UG.y,
+              UG.z
+            ).join(" ")}`}
+            keyPoints="0;1"
+            keyTimes="0;1"
+            calcMode="linear"
+          />
+        </circle>
+      )}
+    </g>
   );
 }
 
