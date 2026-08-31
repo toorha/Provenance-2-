@@ -35,221 +35,38 @@ export const EVIDENCE_TYPES = [
 ] as const;
 
 /* ------------------------------------------------------------------ *
- * THE HIDDEN PROBLEM
+ * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
 export const CONTEXT_DECAY = {
   label: "Context decay",
-  headline:
-    "Important property decisions are happening every day. Most of the context around them won't last.",
-  body: "Every property generates a constant stream of emails, meetings, reports, actions and decisions. Without a system that captures what happened, why it happened, who owns the next step, and what remains unresolved, that context quickly gets scattered across people and tools.",
-  payoff: "Keep track of what's happening now. Never lose why it happened.",
-  consequence:
-    "The next step gets missed, the reasoning is gone by the time it matters, and the same ground gets covered twice.",
-  consequencePoints: [
-    "Follow-ups slip because no one is tracking who owns them",
-    "The reasoning behind a decision fades within months",
-    "Work gets redone because the earlier answer was never written down",
-  ],
-  /* a current-day property workflow → what Provenance captures → memory */
-  today: [
-    "Meeting completed",
-    "Decision captured",
-    "Action assigned",
-    "Deadline tracked",
-    "Consultant follow-up overdue",
-    "New report received",
-    "Property record updated",
-  ],
-  captures: [
-    "What happened",
-    "What was decided",
-    "Why",
-    "Owner",
-    "Due date",
-    "Unresolved items",
-    "Source evidence",
-  ],
-  addedTo: "Added to property memory",
+  headline: "Keep track of what's happening now. Never lose why it happened.",
+  body: "Important property decisions happen every day across emails, meetings, reports, tasks and different teams. Without a system that keeps those decisions connected to the property, the context gets scattered and eventually has to be reconstructed.",
+  example: {
+    question: "Why did we only replace part of the roof?",
+    without: "Search old files, emails, reports and meeting notes, then piece it together.",
+    withParts: [
+      { label: "What happened", value: "The eastern section was replaced in 2018. The western section was deferred." },
+      { label: "Why", value: "The consultant assessed the western membrane as having about five years of life left." },
+      { label: "Evidence", value: "Building assessment, capital meeting notes, contractor invoice." },
+    ],
+  },
 } as const;
 
 /* ------------------------------------------------------------------ *
- * ASK THE RECORD — interactive panel. Click a question, the property
- * record answers with its sources. Fictional data, Westmount Centre.
+ * ONE PROPERTY. MANY TEAMS. — who benefits, stated once.
  * ------------------------------------------------------------------ */
-export const ASK_PRESETS = [
-  {
-    id: "redevelopment",
-    tag: "Redevelopment",
-    chip: "Why we shelved the 2022 redevelopment concept",
-    q: "Why did we abandon the 2022 redevelopment concept, and what would need to change for it to work today?",
-    answer: [
-      {
-        label: "What happened",
-        text: "The 2022 concept proposed two new retail pads and a revised access configuration for the north parcel.",
-      },
-      {
-        label: "Why it stalled",
-        text: "The municipality required a different access arrangement, the civil consultant identified servicing constraints, and the anchor tenant objected to the revised circulation plan.",
-      },
-      {
-        label: "What has changed",
-        text: "The anchor's exclusivity and signage provisions lapse in 2027, and the city updated its access standards in 2025.",
-      },
-      {
-        label: "What this means now",
-        text: "A revised concept is worth costing once the servicing question is retested against current standards.",
-      },
-    ],
-    sources: [
-      "2022 Concept Plan",
-      "City Pre-Consultation Comments",
-      "Civil Servicing Memo",
-      "Anchor Lease",
-      "2026 Planning Update",
-    ],
-  },
-  {
-    id: "roof",
-    tag: "Capital planning",
-    chip: "Roof condition and outstanding work",
-    q: "What condition is the roof in, and what roof work is still outstanding?",
-    answer: [
-      {
-        text: "The eastern section was replaced in 2014 and carries a manufacturer warranty through 2034. The western section was deferred at that time with about a decade of useful life remaining; the 2023 assessment rated it fair and projected replacement around 2028. On the rooftop units, RTU-3 was replaced in 2026 and units 1, 2 and 4 are budgeted for 2027.",
-      },
-    ],
-    sources: [
-      "2014 Roof invoice & warranty",
-      "2023 Condition assessment",
-      "2026 Capital plan",
-      "Northline inspection report",
-    ],
-  },
-  {
-    id: "leasing",
-    tag: "Leasing",
-    chip: "Tenant restrictions on a repositioning",
-    q: "Which tenant obligations or restrictions could affect a repositioning?",
-    answer: [
-      {
-        text: "The anchor lease carries a full-line grocery use exclusivity and a co-tenancy clause tied to two of the three junior anchors. The exclusivity and a signage-control provision lapse in 2027. Three in-line tenants hold relocation clauses that demolition on the north parcel would trigger.",
-      },
-    ],
-    sources: [
-      "Anchor Lease (2011, amended 2019)",
-      "Junior anchor leases",
-      "In-line lease abstracts",
-      "2024 Lease review",
-    ],
-  },
-  {
-    id: "environmental",
-    tag: "Due diligence",
-    chip: "Environmental and site conditions",
-    q: "What environmental or site conditions would a buyer flag?",
-    answer: [
-      {
-        text: "A Phase I completed in 2020 for the refinancing found no recognized environmental conditions and required no further action. A historical dry cleaner on a since-demolished outparcel was reviewed and closed out in that report. Separately, the north-parcel storm system is undersized for added density, which is noted in the servicing memo.",
-      },
-    ],
-    sources: [
-      "2020 Phase I ESA",
-      "Consultant closure letter",
-      "Lender correspondence",
-      "Civil Servicing Memo",
-    ],
-  },
-  {
-    id: "hvac",
-    tag: "Operations",
-    chip: "Why the rooftop unit replacement is phased",
-    q: "Why is the rooftop unit replacement split across two budget years?",
-    answer: [
-      {
-        text: "Only RTU-3 failed inspection in 2026, so it was replaced right away. The other three units still had useful life, and replacing all four in one year would have pushed the capital budget past its cap, so units 1, 2 and 4 moved to the 2027 plan.",
-      },
-    ],
-    sources: [
-      "Northline inspection report",
-      "Capital planning review",
-      "RTU-3 invoice",
-    ],
-  },
-] as const;
-
-/* ------------------------------------------------------------------ *
- * SEE HOW PROVENANCE WORKS — one continuous product sequence
- * An email is captured, a meeting adds the reasoning, the property
- * memory grows, and months later the record answers a question.
- * ------------------------------------------------------------------ */
-export const PRODUCT_SEQUENCE = {
-  property: "Westmount Centre",
-
-  phases: [
-    "Email received",
-    "Extracting",
-    "Meeting linked",
-    "Memory updated",
-    "Answering",
+export const TEAMS = {
+  label: "One memory",
+  headline: "One property. Many teams. One memory.",
+  chain: [
+    "Acquisitions",
+    "Asset management",
+    "Operations",
+    "Leasing",
+    "Development",
+    "Ownership transition",
   ],
-
-  email: {
-    from: `${PEOPLE.jordan} · ${ORGS.engineering}`,
-    time: "Tue 2:03 PM",
-    subject: "RTU-3 replacement recommended",
-    lead: "RTU-3 failed its third inspection this year. We recommend ",
-    highlight: "full replacement rather than another repair",
-    tail: ". Estimate attached.",
-  },
-  emailExtract: [
-    { label: "Property", value: "Westmount Centre" },
-    { label: "Decision", value: "Replace RTU-3", tone: "accent" },
-    { label: "Evidence", value: "Northline inspection report" },
-    { label: "Action", value: "Issue PO to Northline" },
-    { label: "Owner", value: PEOPLE.sarah },
-    { label: "Due", value: "Oct 3" },
-  ],
-
-  meeting: {
-    title: "Capital planning review",
-    meta: "4 attendees · 26 min",
-    summary:
-      "The team approved RTU-3 now and moved the remaining three rooftop units into the 2027 plan, ",
-    summaryHighlight: "rather than replacing all four this year",
-    tail: ".",
-  },
-  meetingExtract: [
-    { label: "Why", value: "Only RTU-3 had failed. The others still had useful life." },
-    { label: "Action", value: "Budget units 1, 2 and 4 for 2027" },
-  ],
-
-  memory: {
-    added: [
-      { year: "2026", title: "RTU-3 replaced" },
-      { year: "2027", title: "Rooftop units 1, 2, 4 planned" },
-    ],
-    priorYear: "2023",
-    priorTitle: "HVAC replacement",
-    eventsFrom: 11,
-    eventsTo: 13,
-    status: "Property memory updated",
-  },
-
-  /* what Provenance pulls out, split into the two kinds of value */
-  currentWork: [
-    { label: "Decision", value: "Replace RTU-3" },
-    { label: "Owner", value: PEOPLE.sarah },
-    { label: "Due", value: "Oct 3" },
-    { label: "Open", value: "3 units deferred to 2027 plan" },
-  ],
-
-  ask: {
-    when: "Later, when it matters",
-    question: "Why didn't we replace all the rooftop units at once?",
-    answer:
-      "Only RTU-3 had failed inspection in 2026. The other three units still had useful life, so they were deferred to the 2027 capital plan to manage cash flow.",
-    evidence: ["Northline inspection report", "Capital planning review", "RTU-3 invoice"],
-  },
+  line: "Teams change. The property does not. Provenance carries the context forward.",
 } as const;
 
 /* ------------------------------------------------------------------ *
@@ -423,12 +240,6 @@ export const PRODUCT = {
     { name: "Riverside Distribution Centre", city: "London, ON", signals: 0, active: false },
   ],
 } as const;
-
-/* ------------------------------------------------------------------ *
- * THE MEMORY LAYER  (system diagram)
- * Many kinds of work feed a single Provenance memory layer, which turns
- * them into a growing property record. Ends with a later question.
- * ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ *
  * HOW IT WORKS — step 1: you work the way you already work.
  * Four ordinary actions, each captured without changing the workflow.
@@ -494,14 +305,15 @@ export const WORKFLOW = {
   ],
 } as const;
 
+/* ------------------------------------------------------------------ *
+ * THE MEMORY LAYER — everything captured feeds one growing memory.
+ * ------------------------------------------------------------------ */
 export const MEMORY_LAYER = {
   label: "The memory layer",
   headline: "Everything feeds the memory layer.",
   subhead:
-    "Emails, meetings, reports and project records all become structured property context inside Provenance.",
-  payoff: "Fragmented work in. One living, source-backed memory of the property out.",
+    "Emails, meetings, reports, drawings, invoices and project records become structured property context inside Provenance.",
 
-  /** the fragmented sources, arranged in an arc feeding inward */
   sources: [
     { tag: "MAIL", glyph: "mail", label: "Email", type: "Outlook email", title: "Re: Roof review" },
     { tag: "MTG", glyph: "meeting", label: "Meeting notes", type: "Meeting notes", title: "Capital planning review" },
@@ -512,112 +324,66 @@ export const MEMORY_LAYER = {
     { tag: "DOC", glyph: "lease", label: "Lease memo", type: "Lease memo", title: "Anchor tenant expansion" },
   ],
 
-  /** structured signals the layer produces, one per source it reads */
   signals: [
-    "Property identified",
-    "Event detected",
     "Decision captured",
-    "Action created",
+    "Action tracked",
+    "Reason preserved",
     "Evidence linked",
+    "Issue resolved",
   ],
 
-  /** the centre — the memory layer, which grows as sources feed */
-  events: { from: 7, to: 14 },
-  linkedSources: { from: 20, to: 34 },
+  events: { from: 7, to: 10 },
+  linkedSources: { from: 20, to: 28 },
 
-  /** what the memory layer powers */
-  outputs: [
-    { label: "Property Memory", sub: "what happened and why" },
-    { label: "Ask Provenance", sub: "answers with sources" },
-    { label: "Daily Digest", sub: "what changed today" },
-    { label: "Signals", sub: "what needs attention" },
-  ],
+  powers: ["Ask Provenance", "Daily Digest", "Signals", "Property history"],
 } as const;
 
 /* ------------------------------------------------------------------ *
- * ONE PROPERTY. YEARS OF CONTEXT.
+ * ASK PROVENANCE — the memory is built, so the record can be asked.
  * ------------------------------------------------------------------ */
-export const PROPERTY_TIMELINE = [
-  {
-    year: "2012",
-    fn: "Acquisitions",
-    phase: "Property acquired",
-    zone: null,
-    what: "Westmount Centre is purchased and set up in Provenance with title, financing terms and a condition baseline.",
-    why: "A clean starting record so every later decision has a reference point.",
-    evidence: ["Purchase agreement", "Condition survey", "Title file"],
-  },
-  {
-    year: "2014",
-    fn: "Capital projects",
-    phase: "Roof capital project",
-    zone: "roof",
-    what: "Northline assesses the roof. The team approves phase 1 over the eastern section rather than a full replacement.",
-    why: "The western membrane still had useful life. Phasing the work deferred roughly $400K.",
-    evidence: ["Roof assessment", "Capital meeting", "Invoice", "Warranty"],
-  },
-  {
-    year: "2017",
-    fn: "Leasing",
-    phase: "Tenant expansion",
-    zone: "retail",
-    what: "An adjoining unit is combined with an existing tenant's space. Meridian handles the lease amendment.",
-    why: "The tenant needed room to renew. Keeping them avoided nine months of downtime on the unit.",
-    evidence: ["Lease amendment", "Space plan", "Building permit"],
-  },
-  {
-    year: "2020",
-    fn: "Asset management",
-    phase: "Environmental review",
-    zone: "ground",
-    what: "A Phase I environmental assessment is completed ahead of refinancing. No further action required.",
-    why: "The lender required a current report. Findings attach to the site, not a folder.",
-    evidence: ["Phase I report", "Consultant letter", "Lender correspondence"],
-  },
-  {
-    year: "2023",
-    fn: "Operations",
-    phase: "HVAC replacement",
-    zone: "rooftop",
-    what: "Four rooftop units are replaced over two quarters. Warranties and commissioning reports are captured per unit.",
-    why: "The units were past end of life and driving up service calls.",
-    evidence: ["Equipment schedule", "Invoices", "Warranties", "Commissioning reports"],
-  },
-  {
-    year: "2026",
-    fn: "Development",
-    phase: "Redevelopment review",
-    zone: "parcel",
-    what: "Atlas studies adding density on the north parcel. A pre-application meeting with the Planning Department opens the file.",
-    why: "Land values support a second phase. Early feedback shapes what is worth pursuing.",
-    evidence: ["Concept drawings", "Pre-application notes", "Municipal correspondence"],
-  },
-] as const;
+export const ASK_PROVENANCE = {
+  headline: "Then just ask what happened.",
+  intro:
+    "The memory was built from the work the team already does, so Provenance answers from it directly. Not document search.",
 
-/* The property record is not just history — it has a live current state. */
-export const PROPERTY_CURRENT = {
-  happeningNow: [
-    "RTU-3 replacement in progress with Northline",
-    "Redevelopment feasibility on the north parcel",
+  queries: [
+    {
+      id: "roof",
+      kind: "History",
+      q: "Why was the roof replacement phased?",
+      answer:
+        "The eastern roof section was replaced in 2018. The western section was intentionally deferred after the consultant assessed it as having about five years of useful life remaining.",
+      sources: ["Building assessment", "Capital meeting", "Email thread", "Contractor invoice"],
+      actions: ["View sources", "Open roof history"],
+    },
+    {
+      id: "current",
+      kind: "Current state",
+      q: "What needs attention at Westmount Centre right now?",
+      lead: "3 items need attention:",
+      list: [
+        "Consultant servicing plan is 6 days overdue",
+        "Roof warranty expires in 42 days",
+        "RTU-3 replacement is currently in progress",
+      ],
+    },
+    {
+      id: "decision",
+      kind: "Decision context",
+      q: "What did we decide in yesterday's capital meeting?",
+      answer:
+        "Proceed with the eastern roof replacement and request contractor pricing by September 12.",
+      note: "2 actions created.",
+    },
+    {
+      id: "prior",
+      kind: "Prior knowledge",
+      q: "Have we looked at a drive-through here before?",
+      answer:
+        "Yes. A QSR opportunity was evaluated in 2024 but paused because drive-through uses were not permitted under the zoning in effect at the time.",
+      note: "The current zoning has since changed.",
+    },
   ],
-  open: [
-    "Revised servicing plan is unresolved",
-    "3 rooftop units deferred to the 2027 plan",
-  ],
-  needsAttention: [
-    "Consultant deliverable is 6 days overdue",
-    "Roof warranty expires in 42 days",
-  ],
-  changedRecently: [
-    "Drive-through zoning now permitted",
-    "Survey scope decision captured today",
-  ],
-} as const;
 
-export const MEMORY_QUERY = {
-  question: "Why was the 2014 roof project phased?",
-  answer:
-    "The western membrane still had useful life, so only the eastern section was replaced. Phasing the work deferred roughly $400K.",
-  sourceCount: 4,
-  aside: "The context that was captured the day it happened is still here, still usable.",
+  payoff: "Current state. Past decisions. Original evidence. One place to ask.",
 } as const;

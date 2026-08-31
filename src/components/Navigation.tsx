@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "The problem", href: "#problem" },
   { label: "How it works", href: "#how-it-works" },
-  { label: "Property memory", href: "#memory" },
+  { label: "Memory layer", href: "#memory" },
+  { label: "Daily digest", href: "#today" },
 ];
 
 export function Navigation() {

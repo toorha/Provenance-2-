@@ -1,61 +1,52 @@
-import { CurrentWorkDemo } from "./CurrentWorkDemo";
 import { CONTEXT_DECAY } from "@/lib/demo-data";
 
 export function ProblemSection() {
   const d = CONTEXT_DECAY;
+  const ex = d.example;
+
   return (
-    <section id="problem" className="tex tex-paper bg-bone py-28 lg:py-36">
+    <section id="problem" className="tex tex-paper bg-bone py-24 lg:py-32">
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <p className="label-caps">{d.label}</p>
 
-        <h2 className="mt-7 max-w-[20ch] font-display text-[2.2rem] leading-[1.02] tracking-[-0.026em] text-foreground sm:text-[2.9rem] lg:text-[3.4rem]">
+        <h2 className="mt-7 max-w-[24ch] font-display text-[2.1rem] leading-[1.04] tracking-[-0.025em] text-foreground sm:text-[2.7rem] lg:text-[3.1rem]">
           {d.headline}
         </h2>
 
-        <p className="mt-9 max-w-[54ch] text-[17.5px] font-normal leading-[1.6] text-graphite lg:text-[18.5px]">
+        <p className="mt-8 max-w-[58ch] text-[17px] leading-[1.6] text-graphite lg:text-[18px]">
           {d.body}
         </p>
 
-        <p className="mt-10 max-w-[24ch] border-l-2 border-accent pl-6 font-display text-[22px] leading-[1.2] tracking-[-0.022em] text-foreground lg:text-[27px]">
-          {d.payoff}
-        </p>
-
-        {/* current value, shown */}
-        <div className="mt-20 lg:mt-24">
-          <p className="label-mono text-muted-foreground">Current value</p>
-          <p className="mt-3 max-w-[50ch] text-[16px] leading-[1.55] text-graphite">
-            Provenance sits on the day-to-day work and turns it into a record as it happens.
-          </p>
-          <div className="mt-7">
-            <CurrentWorkDemo />
+        {/* one concrete example — static */}
+        <div className="mt-14 border-t border-foreground/15 pt-10 lg:mt-16">
+          <div className="flex items-start gap-3">
+            <span className="mt-[3px] font-mono text-[11px] font-medium tracking-[0.1em] text-accent">
+              Q
+            </span>
+            <p className="font-display text-[19px] leading-[1.25] tracking-[-0.015em] text-foreground lg:text-[22px]">
+              {ex.question}
+            </p>
           </div>
-        </div>
 
-        {/* the cost — structural, no boxes */}
-        <div className="mt-20 border-t border-foreground/20 pt-12 lg:mt-24">
-          <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,23rem)_1fr] lg:gap-20">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-16">
             <div>
-              <p className="label-mono text-muted-foreground">What that costs</p>
-              <p className="mt-5 font-display text-[22px] leading-[1.18] tracking-[-0.022em] text-foreground lg:text-[26px]">
-                {d.consequence}
-              </p>
+              <p className="label-mono text-muted-foreground">Without Provenance</p>
+              <p className="mt-3 text-[14.5px] leading-[1.55] text-graphite">{ex.without}</p>
             </div>
 
-            <ol className="grid border-t border-border sm:grid-cols-3 sm:border-t-0">
-              {d.consequencePoints.map((point, i) => (
-                <li
-                  key={point}
-                  className="border-b border-border py-6 sm:border-b-0 sm:border-l sm:px-7 sm:py-0 sm:first:border-l-0 sm:first:pl-0"
-                >
-                  <span className="font-mono text-[11px] font-medium tabular-nums tracking-[0.1em] text-accent">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className="mt-3 text-[15px] leading-[1.5] text-graphite lg:text-[15.5px]">
-                    {point}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            <div className="border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-16 lg:pt-0">
+              <p className="label-mono !text-accent">With Provenance</p>
+              <dl className="mt-3 space-y-3">
+                {ex.withParts.map((p) => (
+                  <div key={p.label}>
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.13em] text-muted-foreground">
+                      {p.label}
+                    </dt>
+                    <dd className="mt-1 text-[14.5px] leading-[1.5] text-foreground">{p.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </div>
       </div>
