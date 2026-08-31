@@ -397,113 +397,129 @@ export const WORKFLOW = {
  * The work goes in, structure accumulates, useful work comes back out.
  * ------------------------------------------------------------------ */
 export const MEMORY_LAYER = {
-  label: "The system",
-  headline: "Everything feeds the memory layer.",
+  label: "The memory layer",
+  headline: ["Everything your team does", "builds the property memory."],
   subhead:
-    "Emails, meetings, reports, drawings and decisions go in. Structured, source-backed property context comes back out.",
+    "Emails, meetings, drawings, decisions and actions flow into one shared record, then come back out as answers, tasks and context the team can actually use.",
 
   property: "Westmount Centre",
 
-  /** what arrives, and what Provenance pulls out of each one */
+  /** what arrives, where it sits in the field, and what Provenance
+   *  understands from it. `adds` writes a row into the memory. */
   inputs: [
     {
       id: "email",
       glyph: "mail",
       label: "Email",
       title: "South pad concept revision",
-      extract: { kind: "Decision captured", value: "Preserve current footprint" },
+      at: { x: 3, y: 9 },
+      steps: [
+        { kind: "Property matched", value: "Westmount Centre" },
+        { kind: "Decision captured", value: "Preserve 9,000 SF footprint" },
+      ],
+      adds: { kind: "Decision", title: "South pad footprint preserved", meta: "Feb 12" },
     },
     {
       id: "meeting",
       glyph: "meeting",
       label: "Meeting",
       title: "South Pad Review",
-      extract: { kind: "Action created", value: "Turning analysis · Sarah Chen" },
+      at: { x: 0, y: 37 },
+      steps: [
+        { kind: "Action detected", value: "Complete turning analysis" },
+        { kind: "Owner and due date", value: "Sarah Chen · Thursday" },
+      ],
+      adds: { kind: "Open action", title: "Turning analysis", meta: "Sarah Chen · Thu" },
     },
     {
       id: "report",
       glyph: "report",
       label: "Report",
-      title: "Traffic memo, Rev. 03",
-      extract: { kind: "Issue tracked", value: "Turning analysis outstanding" },
+      title: "Traffic memo · Rev. 03",
+      at: { x: 15, y: 60 },
+      steps: [{ kind: "Constraint linked", value: "South pad loading configuration" }],
+      adds: { kind: "Issue", title: "Turning analysis outstanding", meta: "Open" },
     },
     {
       id: "drawing",
       glyph: "drawing",
       label: "Drawing",
-      title: "Concept plan, Rev. 07",
-      extract: { kind: "Evidence linked", value: "Associated with South Pad" },
+      title: "Concept plan · Rev. 07",
+      at: { x: 1, y: 84 },
+      steps: [{ kind: "Revision identified", value: "South pad · Rev. 07" }],
+      adds: { kind: "Property event", title: "Concept Rev. 07 received", meta: "Evidence linked" },
     },
     {
       id: "lease",
       glyph: "lease",
       label: "Lease memo",
       title: "Prospective tenant terms",
-      extract: { kind: "Person identified", value: "Jordan Lee · Leasing" },
-    },
-    {
-      id: "invoice",
-      glyph: "invoice",
-      label: "Invoice",
-      title: "Survey scope, phase 1",
-      extract: { kind: "Deadline identified", value: "Due Thursday" },
+      at: { x: 20, y: 2 },
+      steps: [{ kind: "Person identified", value: "Jordan Lee · Leasing" }],
     },
     {
       id: "municipal",
       glyph: "letter",
       label: "Correspondence",
       title: "Municipal comments",
-      extract: { kind: "Property identified", value: "Westmount Centre" },
+      at: { x: 19, y: 78 },
+      steps: [{ kind: "Issue updated", value: "Servicing information required" }],
+    },
+    {
+      id: "invoice",
+      glyph: "invoice",
+      label: "Invoice",
+      title: "Survey scope",
+      at: { x: 14, y: 22 },
+      steps: [{ kind: "Deadline identified", value: "Due Thursday" }],
     },
   ],
 
-  /** internal system state, early and late */
+  /** system state, quiet — early and late */
   state: {
-    from: { sources: 20, decisions: 4, actions: 3, events: 11, teams: 2 },
-    to: { sources: 126, decisions: 12, actions: 8, events: 47, teams: 6 },
+    from: { sources: 12, events: 6, decisions: 2, actions: 1, teams: 2 },
+    to: { sources: 126, events: 47, decisions: 12, actions: 8, teams: 6 },
   },
 
-  /** what comes back out of the same memory */
+  /** what the same memory gives back — fewer, and more considered */
   outputs: [
     {
       id: "ask",
       kind: "Ask Provenance",
+      variant: "ask",
       title: "What's holding up the south pad?",
-      detail: "Answered from 4 sources",
-    },
-    {
-      id: "brief",
-      kind: "Property brief",
-      title: "South Pad",
-      detail: "3 open constraints",
+      meta: "Answered from 4 sources",
+      at: { x: 68, y: 8 },
     },
     {
       id: "task",
       kind: "Task",
+      variant: "task",
       title: "Complete turning analysis",
-      detail: "Sarah Chen · due Thursday",
-    },
-    {
-      id: "decision",
-      kind: "Decision",
-      title: "Preserve 9,000 SF footprint",
-      detail: "Feb 12 · shared with Development, Leasing",
+      meta: "Sarah Chen · Development",
+      due: "Due Thursday",
+      at: { x: 74, y: 33 },
     },
     {
       id: "shared",
       kind: "Shared context",
+      variant: "shared",
       title: "South pad status",
-      detail: "Sent to Development, Leasing, Legal",
+      people: ["SC", "JL", "EC"],
+      meta: "Development · Leasing · Legal",
+      at: { x: 68, y: 58 },
     },
     {
       id: "prep",
       kind: "Meeting prep",
+      variant: "prep",
       title: "Thursday South Pad Review",
-      detail: "5 relevant updates",
+      meta: "5 relevant updates",
+      at: { x: 74, y: 84 },
     },
   ],
 
-  payoff: "Work goes in. Context comes out. The record gets deeper every time.",
+  payoff: ["Work goes in.", "Useful context comes out.", "The property remembers."],
 } as const;
 
 /* ------------------------------------------------------------------ *
