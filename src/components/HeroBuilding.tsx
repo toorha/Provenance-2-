@@ -97,21 +97,28 @@ const SHOTS: Shot[] = [
   },
 ];
 
-/* timeline: full view, then each shot zooms in, holds, zooms back out */
-const OPEN_MS = 1500;
+/* ambient timeline: full view, then each shot zooms in, holds, out */
+const OPEN_MS = 1600;
 const IN_MS = 1000;
 const HOLD_MS = 2800;
 const OUT_MS = 800;
-const GAP_MS = 450;
+const GAP_MS = 500;
 const LOOP_PAUSE_MS = 2000;
 
 export function HeroBuilding() {
   const reduced = useReducedMotion();
   const [i, setI] = useState<number>(-1); // -1 = full view
+  const [manual, setManual] = useState(false);
   const timers = useRef<number[]>([]);
 
+  const clearTimers = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  };
+
+  // ambient auto-tour until the visitor takes over
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || manual) return;
     const at = (ms: number, fn: () => void) => timers.current.push(window.setTimeout(fn, ms));
 
     const run = () => {
@@ -129,12 +136,19 @@ export function HeroBuilding() {
     };
     setI(-1);
     run();
+    return clearTimers;
+  }, [reduced, manual]);
 
-    return () => {
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
-    };
-  }, [reduced]);
+  const pick = (idx: number) => {
+    clearTimers();
+    setManual(true);
+    setI((cur) => (cur === idx ? -1 : idx));
+  };
+  const back = () => {
+    clearTimers();
+    setManual(true);
+    setI(-1);
+  };
 
   const shot = i >= 0 ? SHOTS[i] : null;
   const origin = shot ? `${shot.origin.x}% ${shot.origin.y}%` : "50% 50%";
@@ -146,7 +160,7 @@ export function HeroBuilding() {
         className="relative w-full overflow-hidden rounded-[2px] border border-bone/[0.09] bg-charcoal-deep/40"
         style={{ aspectRatio: "704 / 512" }}
       >
-        {/* the camera — inset a touch so it reads as a viewport, not a bleed */}
+        {/* the camera */}
         <div
           className="absolute inset-[1.6%]"
           style={{
@@ -163,7 +177,7 @@ export function HeroBuilding() {
           />
         </div>
 
-        {/* a faint vignette so captions read against the corners */}
+        {/* vignette */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -172,11 +186,60 @@ export function HeroBuilding() {
           }}
         />
 
-        {/* corner ticks — a quiet viewfinder */}
-        {(["left-2 top-2 border-l border-t", "right-2 top-2 border-r border-t", "left-2 bottom-2 border-l border-b", "right-2 bottom-2 border-r border-b"] as const).map(
-          (c) => (
-            <span key={c} className={`pointer-events-none absolute h-3 w-3 border-bone/25 ${c}`} />
-          )
+        {/* corner ticks */}
+        {(
+          [
+            "left-2 top-2 border-l border-t",
+            "right-2 top-2 border-r border-t",
+            "left-2 bottom-2 border-l border-b",
+            "right-2 bottom-2 border-r border-b",
+          ] as const
+        ).map((c) => (
+          <span key={c} className={`pointer-events-none absolute h-3 w-3 border-bone/25 ${c}`} />
+        ))}
+
+        {/* clickable asset dots — shown on the full view */}
+        {i === -1 && !reduced && (
+          <div className="absolute inset-[1.6%]">
+            {SHOTS.map((s, idx) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => pick(idx)}
+                aria-label={`Inspect ${s.title}`}
+                className="group absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${s.origin.x}%`, top: `${s.origin.y}%` }}
+              >
+                <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+                  <span
+                    className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
+                    style={{ background: "#63C6A0", animationDuration: "2.4s" }}
+                  />
+                  <span
+                    className="relative h-2.5 w-2.5 rounded-full ring-4 ring-[#63C6A0]/15 transition-transform duration-200 group-hover:scale-110"
+                    style={{ background: "#63C6A0" }}
+                  />
+                </span>
+                <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-[2px] bg-charcoal-deep/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-bone opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  {s.title}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* back to overview */}
+        {i >= 0 && (
+          <button
+            type="button"
+            onClick={back}
+            className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-[2px] border border-bone/15 bg-charcoal-deep/80 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-bone/70 transition-colors hover:text-bone"
+          >
+            <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 2 3 6l4 4" />
+            </svg>
+            All systems
+          </button>
         )}
 
         {/* caption */}
@@ -214,7 +277,9 @@ export function HeroBuilding() {
       </div>
 
       <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-bone/35">
-        Westmount Centre &nbsp;·&nbsp; one property, many systems
+        {i === -1
+          ? "Westmount Centre  ·  select a system"
+          : "Westmount Centre  ·  one property, many systems"}
       </p>
     </div>
   );

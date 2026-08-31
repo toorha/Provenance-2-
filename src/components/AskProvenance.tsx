@@ -14,6 +14,7 @@ type Phase = "typing" | "thinking" | "answered";
 export function AskProvenance() {
   const rootRef = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
+  const touched = useRef(false);
   const reduced = useReducedMotion();
 
   const [started, setStarted] = useState(false);
@@ -33,15 +34,21 @@ export function AskProvenance() {
 
   const runQuery = useCallback(
     (i: number) => {
+      clearTimers();
       const q = Q[i];
       setIdx(i);
       setPhase("typing");
       setTyped(0);
 
+      // once the visitor picks a question, stop the ambient rotation
+      const advance = (next: () => void, ms: number) => {
+        if (!touched.current) wait(ms, next);
+      };
+
       if (reduced) {
         setTyped(q.q.length);
         setPhase("answered");
-        wait(4200, () => runQuery((i + 1) % Q.length));
+        advance(() => runQuery((i + 1) % Q.length), 4200);
         return;
       }
 
@@ -57,8 +64,9 @@ export function AskProvenance() {
             setPhase("thinking");
             wait(900, () => {
               setPhase("answered");
-              wait(i === Q.length - 1 ? 5200 : 2600, () =>
-                runQuery((i + 1) % Q.length)
+              advance(
+                () => runQuery((i + 1) % Q.length),
+                i === Q.length - 1 ? 5200 : 2600
               );
             });
           });
@@ -68,6 +76,11 @@ export function AskProvenance() {
     },
     [reduced]
   );
+
+  const pick = (i: number) => {
+    touched.current = true;
+    runQuery(i);
+  };
 
   // start once scrolled into view
   useEffect(() => {
@@ -100,9 +113,35 @@ export function AskProvenance() {
             <span className="text-[11px] text-muted-foreground">· Ask</span>
             <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
               {query.kind}
-              <span className="mx-2 text-border-dark">·</span>
-              {idx + 1} / {Q.length}
             </span>
+          </div>
+
+          {/* pick a question */}
+          <div className="flex flex-wrap gap-1.5 border-b border-border px-4 py-2.5">
+            {Q.map((q, qi) => {
+              const on = qi === idx;
+              return (
+                <button
+                  key={q.id}
+                  type="button"
+                  onClick={() => pick(qi)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] transition-colors duration-200",
+                    on
+                      ? "border-accent bg-accent/[0.07] text-accent"
+                      : "border-border text-muted-foreground hover:border-accent/45 hover:text-foreground"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "h-1.5 w-1.5 shrink-0 rounded-full",
+                      on ? "bg-accent" : "border border-border-dark"
+                    )}
+                  />
+                  {q.kind}
+                </button>
+              );
+            })}
           </div>
 
           {/* search bar */}
