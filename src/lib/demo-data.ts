@@ -39,48 +39,86 @@ export const EVIDENCE_TYPES = [
  * ------------------------------------------------------------------ */
 export const CONTEXT_DECAY = {
   label: "Context decay",
-  headline: "Everyone knows a piece. Provenance remembers the whole thing.",
-  body: "Property context is constantly being created across meetings, emails, documents and different teams. Provenance gives everyone a shared understanding today, then preserves that understanding as the property changes over time.",
+  headline: "Everyone knows a piece. No one knows the whole thing.",
+  body: "Property context is constantly being created across meetings, emails, documents, consultants and different teams. The information usually exists. Getting enough of it together to actually make a decision is the hard part.",
+  question: "What's actually going on with the south pad?",
 
-  brief: {
-    question: "What's going on with the south pad?",
-    fields: [
-      {
-        label: "What we know now",
-        value:
-          "The revised concept is waiting on vehicle-turning analysis from the traffic consultant.",
-      },
-      {
-        label: "What was decided",
-        value:
-          "The team agreed to preserve the larger building footprint and test an alternate loading configuration instead of reducing GFA.",
-      },
-      {
-        label: "Why",
-        value:
-          "Leasing advised that reducing the building further would compromise the current tenant opportunity.",
-      },
-      {
-        label: "Still unresolved",
-        value:
-          "Utility easements along the eastern portion of the pad still need to be confirmed before the concept can advance.",
-      },
-    ],
-    sources: [
-      "Meeting notes",
-      "Consultant email",
-      "Concept plan",
-      "Leasing discussion",
-      "Municipal comments",
-    ],
-    actions: ["View context", "Open sources"],
-  },
+  /* the fragments that hold parts of the answer, each in a different
+     place, created at a different time, owned by a different person */
+  fragments: [
+    {
+      id: "leasing",
+      kind: "email",
+      system: "Leasing",
+      when: "3 months ago",
+      meta: { from: "Priya Anand · Leasing", subject: "Re: South pad — footprint", context: "buried in a thread" },
+      quote: "Reducing the building any further would compromise the current tenant opportunity.",
+    },
+    {
+      id: "traffic",
+      kind: "email",
+      system: "Traffic consultant",
+      when: "Last week",
+      meta: { from: "Doyle & Associates", subject: "South pad — outstanding items", context: "attachment not opened" },
+      quote: "Vehicle-turning analysis is still outstanding.",
+    },
+    {
+      id: "meeting",
+      kind: "notes",
+      system: "Meeting notes",
+      when: "Feb 12",
+      meta: { title: "Development review", attendees: "Dev, Leasing, Planning" },
+      quote: "Team agreed to preserve the larger building footprint and test an alternate loading configuration.",
+    },
+    {
+      id: "legal",
+      kind: "email",
+      system: "Legal",
+      when: "8 months ago",
+      meta: { from: "M. Rourke · Legal", subject: "South pad — title review", context: "may be superseded" },
+      quote: "Utility easements along the eastern portion of the pad still need to be confirmed.",
+    },
+    {
+      id: "plan",
+      kind: "drawing",
+      system: "Concept plan",
+      when: "Rev 07",
+      meta: { sheet: "SP-101", note: "not yet issued" },
+      quote: "Alternate loading configuration under review.",
+    },
+    {
+      id: "tracker",
+      kind: "tracker",
+      system: "Project tracker",
+      when: "Updated 4 months ago",
+      row: { project: "South Pad", status: "On Hold", owner: "—" },
+      stale: true,
+    },
+    {
+      id: "municipal",
+      kind: "letter",
+      system: "Municipal comments",
+      when: "Resubmission pending",
+      meta: { ref: "PL-2024-0391", body: "Planning & Development" },
+      quote: "Additional servicing information required prior to resubmission.",
+    },
+  ],
 
-  time: {
-    headline: "Shared context today. Institutional memory tomorrow.",
-    body: "The same context helping the team understand the property today remains available years later, with the original evidence still attached.",
-    today: "The team knows what is happening and why.",
-    later: "A new team asks the same property and gets the full decision history.",
+  /* what it takes to answer one question */
+  reconstruct: [
+    "Message multiple people",
+    "Search old emails",
+    "Find the latest drawings",
+    "Reopen consultant reports",
+    "Read the meeting notes",
+    "Work out which version is current",
+    "Reconstruct why decisions were made",
+    "Figure out what is still unresolved",
+  ],
+
+  closing: {
+    lead: "The answer exists. It's scattered across people, files and time.",
+    sub: "And every day spent reconstructing it is another day the property doesn't move forward.",
   },
 } as const;
 

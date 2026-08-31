@@ -143,6 +143,26 @@
     );
   }
 
+  /* a document fragment surface — mineral, lit from above, faint grain */
+  .frag {
+    background-color: #1a1c1d;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27100%27 height=%27100%27%3E%3Cfilter id=%27f%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%272%27/%3E%3C/filter%3E%3Crect width=%27100%27 height=%27100%27 filter=%27url(%23f)%27 opacity=%270.028%27/%3E%3C/svg%3E");
+    border: 1px solid rgba(237, 234, 225, 0.09);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.035) inset,
+      0 26px 46px -30px rgba(0, 0, 0, 0.8);
+  }
+
+  .frag-ruled {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 21px,
+      rgba(237, 234, 225, 0.06) 21px,
+      rgba(237, 234, 225, 0.06) 22px
+    );
+  }
+
   /* the dark sections get depth at the seams, not a hard edge */
   .edge-top {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
