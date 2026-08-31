@@ -3,7 +3,7 @@ import { PRODUCT } from "@/lib/demo-data";
 
 export function ProactiveSection() {
   return (
-    <section id="today" className="tex tex-paper bg-bone py-28 lg:py-36">
+    <section id="today" className="tex tex-paper bg-bone py-24 lg:py-32">
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <p className="label-caps">{PRODUCT.label}</p>
         <h2 className="mt-7 max-w-2xl font-display text-display-sm leading-[1.04] text-foreground sm:text-display-md">

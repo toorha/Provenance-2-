@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "The problem", href: "#problem" },
+  { label: "Why Provenance", href: "#problem" },
+  { label: "What it does today", href: "#today" },
   { label: "How it works", href: "#how-it-works" },
-  { label: "Memory layer", href: "#memory" },
-  { label: "Daily digest", href: "#today" },
+  { label: "Memory", href: "#memory" },
+  { label: "Vision", href: "#vision" },
 ];
 
 export function Navigation() {
@@ -36,15 +37,15 @@ export function Navigation() {
           <div
             className={cn(
               "flex h-[22px] w-[22px] items-center justify-center border",
-              onHero ? "border-bone/35" : "border-accent"
+              "border-accent"
             )}
           >
-            <div className={cn("h-[7px] w-[7px]", onHero ? "bg-bone/85" : "bg-accent")} />
+            <div className={cn("h-[7px] w-[7px]", "bg-accent")} />
           </div>
           <span
             className={cn(
               "text-[15px] font-semibold tracking-[-0.015em]",
-              onHero ? "text-bone" : "text-foreground"
+              "text-foreground"
             )}
           >
             Provenance
@@ -58,9 +59,7 @@ export function Navigation() {
               href={link.href}
               className={cn(
                 "label-mono transition-colors duration-300",
-                onHero
-                  ? "text-bone/45 hover:text-bone"
-                  : "text-muted-foreground hover:text-foreground"
+                "text-muted-foreground hover:text-foreground"
               )}
             >
               {link.label}
@@ -70,9 +69,7 @@ export function Navigation() {
             href="#request-access"
             className={cn(
               "rounded-[2px] border px-4 py-[7px] text-[13px] font-medium transition-colors duration-300",
-              onHero
-                ? "border-bone/25 text-bone hover:border-bone/55 hover:bg-bone/[0.06]"
-                : "border-foreground/20 text-foreground hover:border-foreground/45 hover:bg-foreground/[0.04]"
+              "border-foreground/20 text-foreground hover:border-foreground/45 hover:bg-foreground/[0.04]"
             )}
           >
             Request early access
@@ -89,7 +86,7 @@ export function Navigation() {
               key={i}
               className={cn(
                 "block h-px w-5 transition-all",
-                onHero ? "bg-warm-white" : "bg-foreground",
+                "bg-foreground",
                 i === 0 && mobileOpen && "translate-y-[3.5px] rotate-45",
                 i === 1 && mobileOpen && "opacity-0",
                 i === 2 && mobileOpen && "-translate-y-[3.5px] -rotate-45"
@@ -103,7 +100,7 @@ export function Navigation() {
         <div
           className={cn(
             "md:hidden border-t px-6 py-6 space-y-4",
-            onHero ? "border-warm-white/10 bg-dark-section" : "border-border bg-background"
+            "border-border bg-background"
           )}
         >
           {navLinks.map((link) => (
@@ -113,7 +110,7 @@ export function Navigation() {
               onClick={() => setMobileOpen(false)}
               className={cn(
                 "block text-[16px] font-medium",
-                onHero ? "text-warm-white/80" : "text-slate"
+                "text-graphite"
               )}
             >
               {link.label}
@@ -124,7 +121,7 @@ export function Navigation() {
             onClick={() => setMobileOpen(false)}
             className={cn(
               "inline-block text-[13px] font-medium px-4 py-2.5 rounded-sm border",
-              onHero ? "border-warm-white/25 text-warm-white" : "border-border"
+              "border-border text-foreground"
             )}
           >
             Request early access

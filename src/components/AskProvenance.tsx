@@ -1,155 +1,55 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MacWindow } from "./MacWindow";
-import { ASK_PROVENANCE } from "@/lib/demo-data";
+import { ASK_PROVENANCE, ROSTER } from "@/lib/demo-data";
+import { useSequence } from "@/lib/useSequence";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const Q = ASK_PROVENANCE.queries;
+const A = ASK_PROVENANCE;
 
-type Phase = "typing" | "thinking" | "answered";
+/*
+ * 1   the question is in
+ * 2   Provenance reads the memory
+ * 3-5 the three constraints
+ * 6   the reasoning behind them
+ * 7   the suggested next step
+ * 8   the sources
+ */
+const STEPS = 8;
+
+/* the three people who get it by default — one per team involved */
+const DEFAULT_TO = ["Sarah Chen", "Jordan Lee", "Emma Clarke"];
 
 export function AskProvenance() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const timers = useRef<number[]>([]);
-  const touched = useRef(false);
   const reduced = useReducedMotion();
+  const { ref, step: raw } = useSequence(STEPS, { beatMs: 620, startMs: 350 });
+  const step = reduced ? STEPS : raw;
 
-  const [started, setStarted] = useState(false);
-  const [idx, setIdx] = useState(0);
-  const [phase, setPhase] = useState<Phase>("typing");
-  const [typed, setTyped] = useState(0);
-
-  const query = Q[idx];
-
-  const clearTimers = () => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  };
-  const wait = (ms: number, fn: () => void) => {
-    timers.current.push(window.setTimeout(fn, ms));
-  };
-
-  const runQuery = useCallback(
-    (i: number) => {
-      clearTimers();
-      const q = Q[i];
-      setIdx(i);
-      setPhase("typing");
-      setTyped(0);
-
-      // once the visitor picks a question, stop the ambient rotation
-      const advance = (next: () => void, ms: number) => {
-        if (!touched.current) wait(ms, next);
-      };
-
-      if (reduced) {
-        setTyped(q.q.length);
-        setPhase("answered");
-        advance(() => runQuery((i + 1) % Q.length), 4200);
-        return;
-      }
-
-      const total = q.q.length;
-      let c = 0;
-      const type = () => {
-        c = Math.min(total, c + 1);
-        setTyped(c);
-        if (c < total) {
-          wait(26, type);
-        } else {
-          wait(420, () => {
-            setPhase("thinking");
-            wait(900, () => {
-              setPhase("answered");
-              advance(
-                () => runQuery((i + 1) % Q.length),
-                i === Q.length - 1 ? 5200 : 2600
-              );
-            });
-          });
-        }
-      };
-      wait(260, type);
-    },
-    [reduced]
-  );
-
-  const pick = (i: number) => {
-    touched.current = true;
-    runQuery(i);
-  };
-
-  // start once scrolled into view
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el || started) return;
-    const io = new IntersectionObserver(
-      (e) => e.some((x) => x.isIntersecting) && setStarted(true),
-      { rootMargin: "0px 0px -20% 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    runQuery(0);
-    return clearTimers;
-  }, [started, runQuery]);
+  const [share, setShare] = useState<"closed" | "open" | "sent">("closed");
+  const [openSource, setOpenSource] = useState<number | null>(null);
 
   return (
-    <div ref={rootRef} className="mx-auto max-w-3xl">
+    <div ref={ref} className="mx-auto max-w-3xl">
       <MacWindow title="Provenance">
-        <div className="flex min-h-[214px] flex-col bg-warm-white text-foreground">
+        <div className="relative flex min-h-[420px] flex-col bg-warm-white font-sans text-foreground">
           {/* header */}
-          <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
+          <div className="flex items-center gap-2 border-b border-foreground/10 px-4 py-2.5">
             <span className="flex h-4 w-4 items-center justify-center border-[1.5px] border-accent">
               <span className="h-[3px] w-[3px] bg-accent" />
             </span>
-            <span className="text-[12px] font-semibold text-foreground">Westmount Centre</span>
+            <span className="text-[12px] font-semibold">Westmount Centre</span>
             <span className="text-[11px] text-muted-foreground">· Ask</span>
-            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-              {query.kind}
-            </span>
           </div>
 
-          {/* pick a question */}
-          <div className="flex flex-wrap gap-1.5 border-b border-border px-4 py-2.5">
-            {Q.map((q, qi) => {
-              const on = qi === idx;
-              return (
-                <button
-                  key={q.id}
-                  type="button"
-                  onClick={() => pick(qi)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] transition-colors duration-200",
-                    on
-                      ? "border-accent bg-accent/[0.07] text-accent"
-                      : "border-border text-muted-foreground hover:border-accent/45 hover:text-foreground"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "h-1.5 w-1.5 shrink-0 rounded-full",
-                      on ? "bg-accent" : "border border-border-dark"
-                    )}
-                  />
-                  {q.kind}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* search bar */}
-          <div className="border-b border-border px-4 py-3">
-            <div className="flex items-center gap-2.5 rounded-[2px] border border-border bg-background px-3 py-2">
+          {/* the question */}
+          <div className="border-b border-foreground/10 px-4 py-3">
+            <div className="flex items-start gap-2.5">
               <svg
                 viewBox="0 0 16 16"
-                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                className="mt-[3px] h-3.5 w-3.5 shrink-0 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -157,161 +57,312 @@ export function AskProvenance() {
                 <circle cx="7" cy="7" r="4.5" />
                 <path d="m11 11 3.5 3.5" strokeLinecap="round" />
               </svg>
-              <p className="min-w-0 flex-1 text-[13px] leading-snug text-foreground">
-                {query.q.slice(0, typed)}
-                {phase === "typing" && (
-                  <span className="ml-px inline-block h-[1.05em] w-[2px] translate-y-[3px] bg-accent align-baseline animate-pulse" />
-                )}
-              </p>
-              <span
-                className={cn(
-                  "shrink-0 rounded-[2px] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors",
-                  phase === "typing" && typed === query.q.length
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                Return
-              </span>
+              <p className="text-[13.5px] leading-[1.45] text-foreground">{A.question}</p>
             </div>
           </div>
 
-          {/* answer */}
-          <div className="min-h-[196px] flex-1 px-4 py-4">
-            {phase === "thinking" ? (
-              <div className="flex items-center gap-2 py-1 text-[12px] text-muted-foreground">
-                <span className="flex gap-1">
-                  {[0, 1, 2].map((i) => (
-                    <span
-                      key={i}
-                      className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse"
-                      style={{ animationDelay: `${i * 0.16}s` }}
-                    />
-                  ))}
-                </span>
-                Searching the property memory
-              </div>
-            ) : phase === "answered" ? (
-              <motion.div
-                key={query.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="flex gap-3"
-              >
+          {/* the answer */}
+          <div className="flex-1 px-4 py-4">
+            {step < 2 ? (
+              <p className="text-[12px] text-muted-foreground">Reading the property memory…</p>
+            ) : (
+              <div className="flex gap-3">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-[1.5px] border-accent">
                   <span className="h-1 w-1 bg-accent" />
                 </span>
+
                 <div className="min-w-0 flex-1">
-                  <Answer query={query} />
+                  <p className="text-[13px] leading-[1.5] text-foreground">{A.lead}</p>
+
+                  <ol className="mt-2.5 space-y-2">
+                    {A.constraints.map((c, i) => (
+                      <motion.li
+                        key={c}
+                        initial={false}
+                        animate={{
+                          opacity: step >= 3 + i ? 1 : 0,
+                          y: step >= 3 + i ? 0 : 4,
+                        }}
+                        transition={{ duration: 0.4, ease: EASE }}
+                        className="flex gap-2.5 text-[13px] leading-[1.5] text-foreground"
+                      >
+                        <span className="font-mono text-[10.5px] tabular-nums text-accent">
+                          {i + 1}
+                        </span>
+                        {c}
+                      </motion.li>
+                    ))}
+                  </ol>
+
+                  <motion.p
+                    initial={false}
+                    animate={{ opacity: step >= 6 ? 1 : 0 }}
+                    transition={{ duration: 0.4, ease: EASE }}
+                    className="mt-3.5 text-[12.5px] leading-[1.5] text-graphite"
+                  >
+                    {A.rationale}
+                  </motion.p>
+
+                  <motion.div
+                    initial={false}
+                    animate={{ opacity: step >= 7 ? 1 : 0, y: step >= 7 ? 0 : 4 }}
+                    transition={{ duration: 0.4, ease: EASE }}
+                    className="mt-3.5 border-l-2 border-accent pl-3"
+                  >
+                    <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-accent">
+                      Suggested next step
+                    </p>
+                    <p className="mt-1 text-[12.5px] leading-[1.5] text-foreground">
+                      {A.nextStep}
+                    </p>
+                  </motion.div>
+
+                  {/* sources */}
+                  <motion.div
+                    initial={false}
+                    animate={{ opacity: step >= 8 ? 1 : 0, y: step >= 8 ? 0 : 4 }}
+                    transition={{ duration: 0.45, ease: EASE }}
+                    className="mt-5 border-t border-foreground/10 pt-3"
+                  >
+                    <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
+                      {A.sources.length} sources
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {A.sources.map((s, i) => (
+                        <button
+                          key={s.title}
+                          type="button"
+                          onClick={() => setOpenSource(openSource === i ? null : i)}
+                          className={cn(
+                            "flex items-center gap-1.5 rounded-[2px] border px-2 py-1 text-[11px] transition-colors duration-200",
+                            openSource === i
+                              ? "border-accent bg-accent/[0.07] text-accent"
+                              : "border-foreground/12 text-graphite hover:border-accent/45 hover:text-foreground"
+                          )}
+                        >
+                          {s.title}
+                          <span className="font-mono text-[9px] text-muted-foreground">
+                            {s.when}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <AnimatePresence initial={false}>
+                      {openSource !== null && (
+                        <motion.p
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: EASE }}
+                          className="overflow-hidden font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground"
+                        >
+                          <span className="mt-2 block">
+                            {A.sources[openSource].kind} · filed to Westmount Centre · South Pad
+                          </span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+
+                    {/* share */}
+                    <div className="mt-4 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShare("open")}
+                        className="inline-flex items-center gap-1.5 rounded-[2px] bg-accent px-3 py-[6px] text-[11.5px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
+                      >
+                        <ShareIcon />
+                        Share
+                      </button>
+                      {share === "sent" && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-[11.5px] text-accent"
+                        >
+                          {A.share.confirm}
+                        </motion.span>
+                      )}
+                    </div>
+                  </motion.div>
                 </div>
-              </motion.div>
-            ) : (
-              <p className="py-1 text-[12px] text-muted-foreground">Asking the record…</p>
+              </div>
             )}
           </div>
+
+          {share === "open" && (
+            <SharePanel onSend={() => setShare("sent")} onClose={() => setShare("closed")} />
+          )}
         </div>
       </MacWindow>
+
+      <p className="mt-5 max-w-[40ch] text-[13.5px] leading-[1.55] text-muted-foreground">
+        {A.payoff}
+      </p>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
 
-function Answer({ query }: { query: (typeof Q)[number] }) {
-  const [viewed, setViewed] = useState(false);
+function SharePanel({ onSend, onClose }: { onSend: () => void; onClose: () => void }) {
+  const [to, setTo] = useState<string[]>(DEFAULT_TO);
+  const [include, setInclude] = useState<string[]>([...A.share.include]);
 
-  // list-style answer (current state)
-  if ("list" in query && query.list) {
-    return (
-      <div>
-        <p className="text-[13.5px] font-medium leading-[1.5] text-foreground">
-          {query.lead}
-        </p>
-        <ul className="mt-2.5 space-y-1.5">
-          {query.list.map((item, i) => (
-            <motion.li
-              key={item}
-              initial={{ opacity: 0, x: -4 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, ease: EASE, delay: 0.15 + i * 0.1 }}
-              className="flex items-start gap-2.5 text-[13px] leading-[1.45] text-foreground"
-            >
-              <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-accent" />
-              {item}
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
+  const toggle = (list: string[], set: (v: string[]) => void, v: string) =>
+    set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  // paragraph answer, optionally with sources + actions (roof) or a note
-  if (!("answer" in query)) return null;
   return (
-    <div>
-      <p className="text-[13.5px] leading-[1.55] text-foreground">{query.answer}</p>
+    <div
+      className="absolute inset-0 z-20 flex items-center justify-center bg-charcoal/35 px-6"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: EASE }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[380px] border border-foreground/15 bg-warm-white shadow-[0_24px_60px_-18px_rgba(19,20,19,0.45)]"
+      >
+        <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
+          <p className="text-[12.5px] font-semibold">{A.share.title}</p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <svg viewBox="0 0 14 14" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+              <path d="m3 3 8 8M11 3l-8 8" />
+            </svg>
+          </button>
+        </div>
 
-      {"note" in query && query.note && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.35 }}
-          className="mt-2 text-[12.5px] leading-[1.5] text-muted-foreground"
-        >
-          {query.note}
-        </motion.p>
-      )}
-
-      {"sources" in query && query.sources && (
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.4, ease: EASE }}
-          className="mt-4 border-t border-border pt-3"
-        >
-          <p className="label-mono text-muted-foreground">{query.sources.length} sources</p>
-          <ul className="mt-2 space-y-1">
-            {query.sources.map((s, i) => (
-              <li
-                key={s}
-                className={cn(
-                  "flex items-center gap-2 rounded-[2px] px-1.5 py-1 text-[12px] transition-colors",
-                  viewed ? "bg-accent/[0.05] text-foreground" : "text-slate"
-                )}
-              >
-                <span className="font-mono text-[9px] tabular-nums text-muted-foreground">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                {s}
-              </li>
-            ))}
-          </ul>
-
-          {"actions" in query && query.actions && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setViewed((v) => !v)}
-                className={cn(
-                  "rounded-[2px] px-3 py-[6px] text-[11.5px] font-medium transition-colors duration-300",
-                  viewed
-                    ? "bg-accent/10 text-accent"
-                    : "bg-accent text-accent-foreground hover:bg-accent-light"
-                )}
-              >
-                {query.actions[0]}
-              </button>
-              <button
-                type="button"
-                className="rounded-[2px] border border-border px-3 py-[6px] text-[11.5px] font-medium text-slate transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
-              >
-                {query.actions[1]}
-              </button>
+        <div className="space-y-4 px-4 py-3.5">
+          {/* people */}
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
+              To
+            </p>
+            <div className="mt-2 space-y-px">
+              {ROSTER.map((p) => {
+                const on = to.includes(p.name);
+                return (
+                  <button
+                    key={p.name}
+                    type="button"
+                    onClick={() => toggle(to, setTo, p.name)}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 rounded-[2px] px-2 py-1.5 text-left transition-colors duration-200",
+                      on ? "bg-accent/[0.07]" : "hover:bg-foreground/[0.035]"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[8.5px] font-semibold",
+                        on ? "bg-accent text-accent-foreground" : "bg-foreground/10 text-graphite"
+                      )}
+                    >
+                      {p.initials}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[12px] text-foreground">{p.name}</span>
+                      <span className="block text-[10px] text-muted-foreground">{p.dept}</span>
+                    </span>
+                    {on && <Tick />}
+                  </button>
+                );
+              })}
             </div>
-          )}
-        </motion.div>
-      )}
+          </div>
+
+          {/* message */}
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
+              Message
+            </p>
+            <p className="mt-1.5 border border-foreground/10 bg-background px-2.5 py-2 text-[12px] leading-[1.45] text-graphite">
+              {A.share.defaultMessage}
+            </p>
+          </div>
+
+          {/* what goes with it */}
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
+              Include
+            </p>
+            <div className="mt-2 space-y-1">
+              {A.share.include.map((item) => {
+                const on = include.includes(item);
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => toggle(include, setInclude, item)}
+                    className="flex w-full items-center gap-2 text-left text-[12px] text-foreground"
+                  >
+                    <span
+                      className={cn(
+                        "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[2px] border transition-colors",
+                        on ? "border-accent bg-accent text-accent-foreground" : "border-foreground/25"
+                      )}
+                    >
+                      {on && <Tick small />}
+                    </span>
+                    {item}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-foreground/10 px-4 py-3">
+          <button
+            type="button"
+            onClick={onSend}
+            disabled={to.length === 0}
+            className="w-full rounded-[2px] bg-accent px-4 py-2 text-[12.5px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light disabled:bg-foreground/15 disabled:text-muted-foreground"
+          >
+            {A.share.action}
+          </button>
+        </div>
+      </motion.div>
     </div>
+  );
+}
+
+function Tick({ small }: { small?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={small ? "h-2.5 w-2.5" : "h-3 w-3 text-accent"}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 7.5 6 10l5-6" />
+    </svg>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className="h-3 w-3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="3" r="1.6" />
+      <circle cx="3" cy="7" r="1.6" />
+      <circle cx="11" cy="11" r="1.6" />
+      <path d="M4.4 6.2 9.6 3.7M4.4 7.8l5.2 2.5" />
+    </svg>
   );
 }

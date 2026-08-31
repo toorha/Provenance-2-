@@ -11,11 +11,34 @@ export const DEMO_PROPERTY = {
   years: 14, // 2012 -> 2026
 } as const;
 
+/** the team, used consistently across every product surface */
 export const PEOPLE = {
-  alex: "Alex Morgan",
-  jordan: "Jordan Lee",
-  sarah: "Sarah Chen",
+  alex: { name: "Alex Morgan", dept: "Portfolio", initials: "AM" },
+  sarah: { name: "Sarah Chen", dept: "Development", initials: "SC" },
+  jordan: { name: "Jordan Lee", dept: "Leasing", initials: "JL" },
+  maya: { name: "Maya Patel", dept: "Asset Management", initials: "MP" },
+  daniel: { name: "Daniel Kim", dept: "Operations", initials: "DK" },
+  emma: { name: "Emma Clarke", dept: "Legal", initials: "EC" },
+  noah: { name: "Noah Williams", dept: "Planning", initials: "NW" },
 } as const;
+
+export const ROSTER = [
+  PEOPLE.sarah,
+  PEOPLE.jordan,
+  PEOPLE.maya,
+  PEOPLE.daniel,
+  PEOPLE.emma,
+  PEOPLE.noah,
+] as const;
+
+export const DEPARTMENTS = [
+  "Development",
+  "Leasing",
+  "Asset Management",
+  "Operations",
+  "Legal",
+  "Planning",
+] as const;
 
 export const ORGS = {
   planning: "Atlas Planning",
@@ -24,16 +47,26 @@ export const ORGS = {
   municipal: "Planning Department",
 } as const;
 
-export const EVIDENCE_TYPES = [
-  "Email",
-  "Meeting",
-  "Report",
-  "Invoice",
-  "Lease",
-  "Permit",
-  "Drawing",
-] as const;
+/* ------------------------------------------------------------------ *
+ * HERO — the scale problem
+ * ------------------------------------------------------------------ */
+export const HERO = {
+  headline: ["Keep track of what's happening now.", "Never lose why it happened."],
+  body: "Provenance helps property teams capture decisions, coordinate active work and preserve context across every asset in the portfolio.",
+  primary: "Request early access",
+  secondary: "See how it works",
+  caption: "Every property has active work. At portfolio scale, the context gets scattered fast.",
 
+  /** the activity that appears around the first property */
+  activity: [
+    "Leasing revision",
+    "Development meeting",
+    "Consultant report",
+    "Legal issue",
+    "Action due",
+    "Municipal comment",
+  ],
+} as const;
 /* ------------------------------------------------------------------ *
  * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
@@ -51,7 +84,7 @@ export const CONTEXT_DECAY = {
       kind: "email",
       system: "Leasing",
       when: "3 months ago",
-      meta: { from: "Priya Anand · Leasing", subject: "Re: South pad — footprint", context: "buried in a thread" },
+      meta: { from: "Jordan Lee · Leasing", subject: "Re: South pad — footprint", context: "buried in a thread" },
       quote: "Reducing the building any further would compromise the current tenant opportunity.",
     },
     {
@@ -59,7 +92,7 @@ export const CONTEXT_DECAY = {
       kind: "email",
       system: "Traffic consultant",
       when: "Last week",
-      meta: { from: "Doyle & Associates", subject: "South pad — outstanding items", context: "attachment not opened" },
+      meta: { from: "Northline Engineering", subject: "South pad — outstanding items", context: "attachment not opened" },
       quote: "Vehicle-turning analysis is still outstanding.",
     },
     {
@@ -75,7 +108,7 @@ export const CONTEXT_DECAY = {
       kind: "email",
       system: "Legal",
       when: "8 months ago",
-      meta: { from: "M. Rourke · Legal", subject: "South pad — title review", context: "may be superseded" },
+      meta: { from: "Emma Clarke · Legal", subject: "South pad — title review", context: "may be superseded" },
       quote: "Utility easements along the eastern portion of the pad still need to be confirmed.",
     },
     {
@@ -123,30 +156,13 @@ export const CONTEXT_DECAY = {
 } as const;
 
 /* ------------------------------------------------------------------ *
- * ONE PROPERTY. MANY TEAMS. — who benefits, stated once.
- * ------------------------------------------------------------------ */
-export const TEAMS = {
-  label: "One memory",
-  headline: "One property. Many teams. One memory.",
-  chain: [
-    "Acquisitions",
-    "Asset management",
-    "Operations",
-    "Leasing",
-    "Development",
-    "Ownership transition",
-  ],
-  line: "Teams change. The property does not. Provenance carries the context forward.",
-} as const;
-
-/* ------------------------------------------------------------------ *
  * THE PRODUCT — Daily Digest, proactive signals, signal detail, property
  * Memory -> Detection -> Recommendation -> Action
  * ------------------------------------------------------------------ */
 export const PRODUCT = {
-  label: "The product",
-  headline: "Useful today. Smarter over time.",
-  body: "Provenance opens on a briefing of what changed across your portfolio, why each change matters against everything the property already knows, and what to do next.",
+  label: "What it can do today",
+  headline: "For the work happening right now.",
+  body: "Provenance keeps track of decisions, actions, deadlines, documents and unresolved issues across every property, and preserves the context behind them.",
 
   digest: {
     label: "Daily Digest",
@@ -326,7 +342,7 @@ export const WORKFLOW = {
       title: "CC Provenance on an email",
       kind: "New message",
       fields: [
-        { label: "To", value: `${PEOPLE.jordan} · ${ORGS.engineering}` },
+        { label: "To", value: `${PEOPLE.jordan.name} · ${ORGS.engineering}` },
         { label: "Cc", value: "provenance", accent: true },
         { label: "Subject", value: "RTU-3 replacement recommended" },
       ],
@@ -375,85 +391,195 @@ export const WORKFLOW = {
   ],
 } as const;
 
+
 /* ------------------------------------------------------------------ *
- * THE MEMORY LAYER — everything captured feeds one growing memory.
+ * INPUTS -> PROPERTY MEMORY -> OUTPUTS
+ * The work goes in, structure accumulates, useful work comes back out.
  * ------------------------------------------------------------------ */
 export const MEMORY_LAYER = {
-  label: "The memory layer",
+  label: "The system",
   headline: "Everything feeds the memory layer.",
   subhead:
-    "Emails, meetings, reports, drawings, invoices and project records become structured property context inside Provenance.",
+    "Emails, meetings, reports, drawings and decisions go in. Structured, source-backed property context comes back out.",
 
-  sources: [
-    { tag: "MAIL", glyph: "mail", label: "Email", type: "Outlook email", title: "Re: Roof review" },
-    { tag: "MTG", glyph: "meeting", label: "Meeting notes", type: "Meeting notes", title: "Capital planning review" },
-    { tag: "RPT", glyph: "report", label: "Report", type: "Consultant report", title: "Roof condition assessment" },
-    { tag: "INV", glyph: "invoice", label: "Invoice", type: "Invoice", title: "Roof replacement, phase 1" },
-    { tag: "PPT", glyph: "deck", label: "Slide deck", type: "Slide deck", title: "Redevelopment options" },
-    { tag: "DWG", glyph: "drawing", label: "Drawing", type: "Drawing", title: "Roof plan, Rev. 04" },
-    { tag: "DOC", glyph: "lease", label: "Lease memo", type: "Lease memo", title: "Anchor tenant expansion" },
-  ],
+  property: "Westmount Centre",
 
-  signals: [
-    "Decision captured",
-    "Action tracked",
-    "Reason preserved",
-    "Evidence linked",
-    "Issue resolved",
-  ],
-
-  events: { from: 7, to: 10 },
-  linkedSources: { from: 20, to: 28 },
-
-  powers: ["Ask Provenance", "Daily Digest", "Signals", "Property history"],
-} as const;
-
-/* ------------------------------------------------------------------ *
- * ASK PROVENANCE — the memory is built, so the record can be asked.
- * ------------------------------------------------------------------ */
-export const ASK_PROVENANCE = {
-  headline: "Then just ask what happened.",
-  intro:
-    "The memory was built from the work the team already does, so Provenance answers from it directly. Not document search.",
-
-  queries: [
+  /** what arrives, and what Provenance pulls out of each one */
+  inputs: [
     {
-      id: "roof",
-      kind: "History",
-      q: "Why was the roof replacement phased?",
-      answer:
-        "The eastern roof section was replaced in 2018. The western section was intentionally deferred after the consultant assessed it as having about five years of useful life remaining.",
-      sources: ["Building assessment", "Capital meeting", "Email thread", "Contractor invoice"],
-      actions: ["View sources", "Open roof history"],
+      id: "email",
+      glyph: "mail",
+      label: "Email",
+      title: "South pad concept revision",
+      extract: { kind: "Decision captured", value: "Preserve current footprint" },
     },
     {
-      id: "current",
-      kind: "Current state",
-      q: "What needs attention at Westmount Centre right now?",
-      lead: "3 items need attention:",
-      list: [
-        "Consultant servicing plan is 6 days overdue",
-        "Roof warranty expires in 42 days",
-        "RTU-3 replacement is currently in progress",
-      ],
+      id: "meeting",
+      glyph: "meeting",
+      label: "Meeting",
+      title: "South Pad Review",
+      extract: { kind: "Action created", value: "Turning analysis · Sarah Chen" },
+    },
+    {
+      id: "report",
+      glyph: "report",
+      label: "Report",
+      title: "Traffic memo, Rev. 03",
+      extract: { kind: "Issue tracked", value: "Turning analysis outstanding" },
+    },
+    {
+      id: "drawing",
+      glyph: "drawing",
+      label: "Drawing",
+      title: "Concept plan, Rev. 07",
+      extract: { kind: "Evidence linked", value: "Associated with South Pad" },
+    },
+    {
+      id: "lease",
+      glyph: "lease",
+      label: "Lease memo",
+      title: "Prospective tenant terms",
+      extract: { kind: "Person identified", value: "Jordan Lee · Leasing" },
+    },
+    {
+      id: "invoice",
+      glyph: "invoice",
+      label: "Invoice",
+      title: "Survey scope, phase 1",
+      extract: { kind: "Deadline identified", value: "Due Thursday" },
+    },
+    {
+      id: "municipal",
+      glyph: "letter",
+      label: "Correspondence",
+      title: "Municipal comments",
+      extract: { kind: "Property identified", value: "Westmount Centre" },
+    },
+  ],
+
+  /** internal system state, early and late */
+  state: {
+    from: { sources: 20, decisions: 4, actions: 3, events: 11, teams: 2 },
+    to: { sources: 126, decisions: 12, actions: 8, events: 47, teams: 6 },
+  },
+
+  /** what comes back out of the same memory */
+  outputs: [
+    {
+      id: "ask",
+      kind: "Ask Provenance",
+      title: "What's holding up the south pad?",
+      detail: "Answered from 4 sources",
+    },
+    {
+      id: "brief",
+      kind: "Property brief",
+      title: "South Pad",
+      detail: "3 open constraints",
+    },
+    {
+      id: "task",
+      kind: "Task",
+      title: "Complete turning analysis",
+      detail: "Sarah Chen · due Thursday",
     },
     {
       id: "decision",
-      kind: "Decision context",
-      q: "What did we decide in yesterday's capital meeting?",
-      answer:
-        "Proceed with the eastern roof replacement and request contractor pricing by September 12.",
-      note: "2 actions created.",
+      kind: "Decision",
+      title: "Preserve 9,000 SF footprint",
+      detail: "Feb 12 · shared with Development, Leasing",
     },
     {
-      id: "prior",
-      kind: "Prior knowledge",
-      q: "Have we looked at a drive-through here before?",
-      answer:
-        "Yes. A QSR opportunity was evaluated in 2024 but paused because drive-through uses were not permitted under the zoning in effect at the time.",
-      note: "The current zoning has since changed.",
+      id: "shared",
+      kind: "Shared context",
+      title: "South pad status",
+      detail: "Sent to Development, Leasing, Legal",
+    },
+    {
+      id: "prep",
+      kind: "Meeting prep",
+      title: "Thursday South Pad Review",
+      detail: "5 relevant updates",
     },
   ],
 
-  payoff: "Current state. Past decisions. Original evidence. One place to ask.",
+  payoff: "Work goes in. Context comes out. The record gets deeper every time.",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * ASK PROVENANCE — one strong question, sourced, shareable.
+ * ------------------------------------------------------------------ */
+export const ASK_PROVENANCE = {
+  label: "Ask the property",
+  headline: "Ask the property.",
+  intro:
+    "You are not searching documents. You are asking the property what happened, and getting the story with its sources attached.",
+
+  question:
+    "What's holding up the south pad, and what needs to happen before we can move it forward?",
+
+  lead: "The current concept is mainly constrained by three items:",
+  constraints: [
+    "Leasing wants to preserve the 9,000 SF footprint for the prospective tenant.",
+    "Vehicle-turning analysis is still outstanding for the revised loading configuration.",
+    "The eastern utility easement needs to be confirmed before the concept can advance.",
+  ],
+  rationale:
+    "The larger footprint was intentionally preserved during the February 12 development meeting.",
+  nextStep:
+    "Complete the turning analysis and confirm the easement before the next internal concept review.",
+
+  sources: [
+    { title: "Development meeting", when: "Feb 12", kind: "Meeting" },
+    { title: "Leasing email", when: "May 18", kind: "Email" },
+    { title: "Traffic memo", when: "Rev. 03", kind: "Report" },
+    { title: "Legal correspondence", when: "Jan 27", kind: "Email" },
+  ],
+
+  share: {
+    title: "Share property context",
+    defaultMessage:
+      "Sharing the latest context on the south pad before Thursday's concept review.",
+    include: ["Provenance summary", "Supporting sources", "Open actions"],
+    action: "Share context",
+    confirm: "Shared with Development, Leasing and Legal.",
+  },
+
+  payoff: "One answer. Shared context across every team involved.",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * OVER TIME — the same work, compounding.
+ * ------------------------------------------------------------------ */
+export const OVER_TIME = {
+  label: "Over time",
+  headline: "A memory layer for every property.",
+  body: "Every email, meeting, report, decision and action adds to a source-backed record of the property: what happened, why it happened, what changed, and what is still unresolved.",
+
+  stages: [
+    { year: "Year 1", title: "Active work", detail: "Decisions, actions and documents captured as the team works." },
+    { year: "Year 3", title: "Accumulated projects", detail: "Completed projects, resolved issues and the reasoning behind them." },
+    { year: "Year 7", title: "Deep property memory", detail: "Rationale, source lineage and continuity across departments." },
+    { year: "Year 15", title: "Teams have changed", detail: "The people moved on. The context did not." },
+  ],
+
+  today: {
+    label: "Today it",
+    items: ["Coordinates work", "Captures decisions", "Tracks actions", "Answers questions", "Shares context"],
+  },
+  later: {
+    label: "Over time it becomes",
+    items: ["Decision history", "Property timeline", "Historical rationale", "Source lineage", "Institutional memory"],
+  },
+
+  payoff: "Teams change. The property persists. Its context should too.",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * FINAL CTA
+ * ------------------------------------------------------------------ */
+export const CTA = {
+  headline: "Give every property a memory.",
+  body: "Start with the work your team is already doing.",
+  action: "Request early access",
 } as const;
