@@ -58,7 +58,7 @@ export function Navigation() {
               key={link.href}
               href={link.href}
               className={cn(
-                "label-mono transition-colors duration-300",
+                "text-[13px] font-medium transition-colors duration-300",
                 "text-muted-foreground hover:text-foreground"
               )}
             >

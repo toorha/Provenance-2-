@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MacWindow } from "./MacWindow";
-import { ASK_PROVENANCE, ROSTER } from "@/lib/demo-data";
+import { ASK_PROVENANCE, PEOPLE } from "@/lib/demo-data";
 import { useSequence } from "@/lib/useSequence";
 import { cn } from "@/lib/utils";
 
@@ -19,9 +19,6 @@ const A = ASK_PROVENANCE;
  * 8   the sources
  */
 const STEPS = 8;
-
-/* the three people who get it by default — one per team involved */
-const DEFAULT_TO = ["Sarah Chen", "Jordan Lee", "Emma Clarke"];
 
 export function AskProvenance() {
   const reduced = useReducedMotion();
@@ -74,22 +71,24 @@ export function AskProvenance() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] leading-[1.5] text-foreground">{A.lead}</p>
 
-                  <ol className="mt-2.5 space-y-2">
+                  <ol className="mt-3 space-y-2.5">
                     {A.constraints.map((c, i) => (
                       <motion.li
-                        key={c}
+                        key={c.team}
                         initial={false}
                         animate={{
                           opacity: step >= 3 + i ? 1 : 0,
                           y: step >= 3 + i ? 0 : 4,
                         }}
                         transition={{ duration: 0.4, ease: EASE }}
-                        className="flex gap-2.5 text-[13px] leading-[1.5] text-foreground"
+                        className="flex gap-3"
                       >
-                        <span className="font-mono text-[10.5px] tabular-nums text-accent">
-                          {i + 1}
+                        <span className="w-[74px] shrink-0 font-mono text-[9.5px] uppercase tracking-[0.11em] text-accent">
+                          {String(i + 1).padStart(2, "0")} · {c.team}
                         </span>
-                        {c}
+                        <span className="text-[13px] leading-[1.45] text-foreground">
+                          {c.text}
+                        </span>
                       </motion.li>
                     ))}
                   </ol>
@@ -206,11 +205,11 @@ export function AskProvenance() {
 /* ------------------------------------------------------------------ */
 
 function SharePanel({ onSend, onClose }: { onSend: () => void; onClose: () => void }) {
-  const [to, setTo] = useState<string[]>(DEFAULT_TO);
   const [include, setInclude] = useState<string[]>([...A.share.include]);
+  const people = A.share.people.map((k) => PEOPLE[k as keyof typeof PEOPLE]);
 
-  const toggle = (list: string[], set: (v: string[]) => void, v: string) =>
-    set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
+  const toggle = (v: string) =>
+    setInclude((cur) => (cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]));
 
   return (
     <div
@@ -222,7 +221,7 @@ function SharePanel({ onSend, onClose }: { onSend: () => void; onClose: () => vo
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: EASE }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[380px] border border-foreground/15 bg-warm-white shadow-[0_24px_60px_-18px_rgba(19,20,19,0.45)]"
+        className="w-full max-w-[340px] border border-foreground/15 bg-warm-white shadow-[0_24px_60px_-18px_rgba(19,20,19,0.45)]"
       >
         <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
           <p className="text-[12.5px] font-semibold">{A.share.title}</p>
@@ -238,73 +237,49 @@ function SharePanel({ onSend, onClose }: { onSend: () => void; onClose: () => vo
           </button>
         </div>
 
-        <div className="space-y-4 px-4 py-3.5">
-          {/* people */}
+        <div className="space-y-4 px-4 py-4">
+          {/* the group already working on this */}
           <div>
-            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
-              To
-            </p>
-            <div className="mt-2 space-y-px">
-              {ROSTER.map((p) => {
-                const on = to.includes(p.name);
-                return (
-                  <button
-                    key={p.name}
-                    type="button"
-                    onClick={() => toggle(to, setTo, p.name)}
-                    className={cn(
-                      "flex w-full items-center gap-2.5 rounded-[2px] px-2 py-1.5 text-left transition-colors duration-200",
-                      on ? "bg-accent/[0.07]" : "hover:bg-foreground/[0.035]"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[8.5px] font-semibold",
-                        on ? "bg-accent text-accent-foreground" : "bg-foreground/10 text-graphite"
-                      )}
-                    >
-                      {p.initials}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[12px] text-foreground">{p.name}</span>
-                      <span className="block text-[10px] text-muted-foreground">{p.dept}</span>
-                    </span>
-                    {on && <Tick />}
-                  </button>
-                );
-              })}
-            </div>
+            <p className="text-[12.5px] font-medium text-foreground">{A.share.group}</p>
+            <ul className="mt-2.5 space-y-1.5">
+              {people.map((p) => (
+                <li key={p.name} className="flex items-center gap-2.5">
+                  <span className="flex h-[21px] w-[21px] shrink-0 items-center justify-center rounded-full bg-accent/[0.13] text-[8.5px] font-semibold text-accent">
+                    {p.initials}
+                  </span>
+                  <span className="text-[12.5px] text-foreground">
+                    {p.name}
+                    <span className="text-muted-foreground"> · {p.dept}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              className="mt-2.5 text-[11.5px] text-graphite transition-colors hover:text-accent"
+            >
+              {A.share.add}
+            </button>
           </div>
 
-          {/* message */}
-          <div>
-            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
-              Message
-            </p>
-            <p className="mt-1.5 border border-foreground/10 bg-background px-2.5 py-2 text-[12px] leading-[1.45] text-graphite">
-              {A.share.defaultMessage}
-            </p>
-          </div>
-
-          {/* what goes with it */}
-          <div>
-            <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
-              Include
-            </p>
-            <div className="mt-2 space-y-1">
+          {/* what travels with it */}
+          <div className="border-t border-foreground/10 pt-3.5">
+            <div className="space-y-1.5">
               {A.share.include.map((item) => {
                 const on = include.includes(item);
                 return (
                   <button
                     key={item}
                     type="button"
-                    onClick={() => toggle(include, setInclude, item)}
-                    className="flex w-full items-center gap-2 text-left text-[12px] text-foreground"
+                    onClick={() => toggle(item)}
+                    className="flex w-full items-center gap-2.5 text-left text-[12.5px] text-foreground"
                   >
                     <span
                       className={cn(
-                        "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[2px] border transition-colors",
-                        on ? "border-accent bg-accent text-accent-foreground" : "border-foreground/25"
+                        "flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-[2px] border transition-colors",
+                        on
+                          ? "border-accent bg-accent text-accent-foreground"
+                          : "border-foreground/25"
                       )}
                     >
                       {on && <Tick small />}
@@ -321,8 +296,7 @@ function SharePanel({ onSend, onClose }: { onSend: () => void; onClose: () => vo
           <button
             type="button"
             onClick={onSend}
-            disabled={to.length === 0}
-            className="w-full rounded-[2px] bg-accent px-4 py-2 text-[12.5px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light disabled:bg-foreground/15 disabled:text-muted-foreground"
+            className="rounded-[2px] bg-accent px-4 py-[7px] text-[12.5px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
           >
             {A.share.action}
           </button>

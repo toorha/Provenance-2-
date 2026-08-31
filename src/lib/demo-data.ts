@@ -73,10 +73,11 @@ export const PORTFOLIO = [
   {
     id: "westmount",
     name: "Westmount Centre",
-    context: "3 active items",
+    context: "3 open items",
     plan: "anchored",
     at: { x: 34, y: 31 },
     w: 33,
+    dots: 6,
     hero: true,
   },
   {
@@ -86,6 +87,7 @@ export const PORTFOLIO = [
     plan: "plaza",
     at: { x: 1, y: 8 },
     w: 27,
+    dots: 4,
     hero: false,
   },
   {
@@ -95,6 +97,7 @@ export const PORTFOLIO = [
     plan: "pad",
     at: { x: 71, y: 9 },
     w: 21,
+    dots: 3,
     hero: false,
   },
   {
@@ -104,6 +107,7 @@ export const PORTFOLIO = [
     plan: "mixed",
     at: { x: 3, y: 62 },
     w: 22,
+    dots: 2,
     hero: false,
   },
   {
@@ -113,6 +117,7 @@ export const PORTFOLIO = [
     plan: "urban",
     at: { x: 31, y: 77 },
     w: 16,
+    dots: 2,
     hero: false,
   },
   {
@@ -122,6 +127,7 @@ export const PORTFOLIO = [
     plan: "strip",
     at: { x: 66, y: 57 },
     w: 29,
+    dots: 4,
     hero: false,
   },
   {
@@ -131,6 +137,7 @@ export const PORTFOLIO = [
     plan: "redev",
     at: { x: 2, y: 33 },
     w: 24,
+    dots: 3,
     hero: false,
   },
 ] as const;
@@ -178,42 +185,6 @@ export const CONTEXT_DECAY = {
       meta: { from: "Emma Clarke · Legal", subject: "South pad — title review", context: "may be superseded" },
       quote: "Utility easements along the eastern portion of the pad still need to be confirmed.",
     },
-    {
-      id: "plan",
-      kind: "drawing",
-      system: "Concept plan",
-      when: "Rev 07",
-      meta: { sheet: "SP-101", note: "not yet issued" },
-      quote: "Alternate loading configuration under review.",
-    },
-    {
-      id: "tracker",
-      kind: "tracker",
-      system: "Project tracker",
-      when: "Updated 4 months ago",
-      row: { project: "South Pad", status: "On Hold", owner: "—" },
-      stale: true,
-    },
-    {
-      id: "municipal",
-      kind: "letter",
-      system: "Municipal comments",
-      when: "Resubmission pending",
-      meta: { ref: "PL-2024-0391", body: "Planning & Development" },
-      quote: "Additional servicing information required prior to resubmission.",
-    },
-  ],
-
-  /* what it takes to answer one question */
-  reconstruct: [
-    "Message multiple people",
-    "Search old emails",
-    "Find the latest drawings",
-    "Reopen consultant reports",
-    "Read the meeting notes",
-    "Work out which version is current",
-    "Reconstruct why decisions were made",
-    "Figure out what is still unresolved",
   ],
 
   closing: {
@@ -226,6 +197,86 @@ export const CONTEXT_DECAY = {
  * THE PRODUCT — Daily Digest, proactive signals, signal detail, property
  * Memory -> Detection -> Recommendation -> Action
  * ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ *
+ * WHAT IT CAN DO TODAY — the shared operating layer for active work.
+ * One property, every team, all the live work attached to it.
+ * ------------------------------------------------------------------ */
+export const TODAY = {
+  label: "What it can do today",
+  headline: "For the work happening right now.",
+  body: "Provenance keeps decisions, actions, deadlines, documents and open issues connected across every team working on the property.",
+
+  property: {
+    name: "Westmount Centre",
+    address: "1840 Westmount Avenue · Hamilton, ON",
+  },
+
+  /** the live work, as it would stand this morning */
+  items: [
+    {
+      id: "turning",
+      kind: "Action",
+      tone: "due",
+      title: "Turning analysis",
+      person: "sarah",
+      meta: "Due Thursday",
+    },
+    {
+      id: "lease",
+      kind: "Update",
+      tone: "plain",
+      title: "Lease revision received",
+      person: "jordan",
+      meta: "This morning",
+    },
+    {
+      id: "plan",
+      kind: "Document",
+      tone: "filed",
+      title: "Concept Plan Rev. 07",
+      person: null,
+      meta: "Filed automatically",
+    },
+    {
+      id: "easement",
+      kind: "Open issue",
+      tone: "open",
+      title: "Utility easement confirmation",
+      person: "emma",
+      meta: "Open 14 days",
+    },
+    {
+      id: "footprint",
+      kind: "Decision",
+      tone: "decided",
+      title: "Preserve 9,000 SF footprint",
+      person: "sarah",
+      meta: "Captured Feb 12",
+    },
+    {
+      id: "review",
+      kind: "Meeting",
+      tone: "plain",
+      title: "South Pad Review",
+      person: null,
+      meta: "Thursday · 2:00 PM",
+      with: ["sarah", "jordan", "emma"],
+    },
+  ],
+
+  /** everyone with work on this property right now */
+  involved: ["sarah", "jordan", "emma", "daniel", "maya"],
+
+  /** detection, kept small — a consequence of memory, not the pitch */
+  opportunity: {
+    kind: "Opportunity",
+    title: "Drive-through uses are now permitted",
+    why: "A previous QSR concept was paused because this use was prohibited.",
+    action: "Review previous concept",
+  },
+
+  payoff: "One property. Many teams. Shared context.",
+} as const;
 export const PRODUCT = {
   label: "What it can do today",
   headline: "For the work happening right now.",
@@ -601,16 +652,16 @@ export const ASK_PROVENANCE = {
   question:
     "What's holding up the south pad, and what needs to happen before we can move it forward?",
 
-  lead: "The current concept is mainly constrained by three items:",
+  lead: "3 things are holding it up.",
   constraints: [
-    "Leasing wants to preserve the 9,000 SF footprint for the prospective tenant.",
-    "Vehicle-turning analysis is still outstanding for the revised loading configuration.",
-    "The eastern utility easement needs to be confirmed before the concept can advance.",
+    { team: "Leasing", text: "The 9,000 SF footprint needs to remain for the prospective tenant." },
+    { team: "Traffic", text: "Vehicle-turning analysis is still outstanding." },
+    { team: "Legal", text: "The eastern utility easement still needs confirmation." },
   ],
   rationale:
-    "The larger footprint was intentionally preserved during the February 12 development meeting.",
+    "The footprint was intentionally preserved at the February 12 development meeting.",
   nextStep:
-    "Complete the turning analysis and confirm the easement before the next internal concept review.",
+    "Complete the turning analysis and confirm the easement before Thursday's concept review.",
 
   sources: [
     { title: "Development meeting", when: "Feb 12", kind: "Meeting" },
@@ -620,11 +671,12 @@ export const ASK_PROVENANCE = {
   ],
 
   share: {
-    title: "Share property context",
-    defaultMessage:
-      "Sharing the latest context on the south pad before Thursday's concept review.",
-    include: ["Provenance summary", "Supporting sources", "Open actions"],
+    title: "Share this context",
+    group: "South Pad Working Group",
+    people: ["sarah", "jordan", "emma"],
+    include: ["Summary", "Sources", "Open actions"],
     action: "Share context",
+    add: "+ Add people",
     confirm: "Shared with Development, Leasing and Legal.",
   },
 
@@ -636,15 +688,8 @@ export const ASK_PROVENANCE = {
  * ------------------------------------------------------------------ */
 export const OVER_TIME = {
   label: "Over time",
-  headline: "A memory layer for every property.",
-  body: "Every email, meeting, report, decision and action adds to a source-backed record of the property: what happened, why it happened, what changed, and what is still unresolved.",
-
-  stages: [
-    { year: "Year 1", title: "Active work", detail: "Decisions, actions and documents captured as the team works." },
-    { year: "Year 3", title: "Accumulated projects", detail: "Completed projects, resolved issues and the reasoning behind them." },
-    { year: "Year 7", title: "Deep property memory", detail: "Rationale, source lineage and continuity across departments." },
-    { year: "Year 15", title: "Teams have changed", detail: "The people moved on. The context did not." },
-  ],
+  headline: ["Teams change.", "The property persists.", "Its context should too."],
+  body: "Every decision, project, issue and piece of evidence captured through Provenance becomes part of a source-backed record that survives team turnover and future ownership.",
 
   today: {
     label: "Today it",
@@ -655,7 +700,7 @@ export const OVER_TIME = {
     items: ["Decision history", "Property timeline", "Historical rationale", "Source lineage", "Institutional memory"],
   },
 
-  payoff: "Teams change. The property persists. Its context should too.",
+  payoff: "The people move on. The record does not.",
 } as const;
 
 /* ------------------------------------------------------------------ *

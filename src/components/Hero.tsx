@@ -24,7 +24,7 @@ export function Hero() {
               </a>
               <a
                 href="#how-it-works"
-                className="label-mono text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                className="text-[13.5px] font-medium text-graphite transition-colors duration-300 hover:text-foreground"
               >
                 {HERO.secondary}
               </a>

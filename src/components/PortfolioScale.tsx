@@ -121,6 +121,35 @@ export function PortfolioScale() {
             );
           })}
 
+          {/* the context multiplying across every asset */}
+          {PORTFOLIO.flatMap((p) =>
+            Array.from({ length: p.dots }).map((_, k) => {
+              const gx = p.at.x + (p.w * (14 + ((k * 29) % 70))) / 100;
+              const gy = p.at.y + (p.w * 0.62 * (12 + ((k * 41) % 62))) / 100;
+              return (
+                <motion.span
+                  key={`dot-${p.id}-${k}`}
+                  initial={false}
+                  animate={{ opacity: showNames ? 0.8 : 0 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: EASE,
+                    delay: showNames ? 0.35 + k * 0.06 : 0,
+                  }}
+                  className="pointer-events-none absolute rounded-full bg-accent"
+                  style={{
+                    left: `${gx}%`,
+                    top: `${gy}%`,
+                    width: 4,
+                    height: 4,
+                    transform: `translate(-50%,-50%) scale(${1 / zoom})`,
+                    transition: "transform 1500ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  }}
+                />
+              );
+            })
+          )}
+
           {/* the rest of the portfolio, named once we can see it */}
           {PORTFOLIO.map((p) => (
             <motion.div
