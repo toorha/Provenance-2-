@@ -21,19 +21,20 @@ const STEPS = FIRST_OUT + N_OUT;
 
 /* ---- geometry, in the drawing's own coordinates ---- */
 const W = 1000;
-const H = 496;
+/* a tile is 56 tall plus its label, so rows need ~80 to clear */
+const H = 604;
 const CX = 500;
-const CY = 240;
+const CY = 302;
 /* where a connector meets the centre card */
 const HUB_X = 152;
 const HUB_Y = 104;
 
-const IN_X = 62;
-const IN_TOP = 42;
-const IN_GAP = 68;
-const OUT_X = 938;
-const OUT_TOP = 108;
-const OUT_GAP = 92;
+const IN_X = 64;
+const IN_TOP = 48;
+const IN_GAP = 84;
+const OUT_X = 936;
+const OUT_TOP = 122;
+const OUT_GAP = 120;
 
 const inAt = (i: number) => ({ x: IN_X, y: IN_TOP + i * IN_GAP });
 const outAt = (i: number) => ({ x: OUT_X, y: OUT_TOP + i * OUT_GAP });
@@ -45,13 +46,17 @@ function curve(from: { x: number; y: number }, to: { x: number; y: number }) {
   return `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
 }
 
+/* the tile sits above the label, so the line leaves the tile, not the
+   middle of the pair */
+const TILE_DY = 12;
+
 function pathIn(i: number) {
   const s = inAt(i);
-  return curve({ x: s.x + 30, y: s.y }, { x: CX - HUB_X, y: CY });
+  return curve({ x: s.x + 30, y: s.y - TILE_DY }, { x: CX - HUB_X, y: CY });
 }
 function pathOut(i: number) {
   const e = outAt(i);
-  return curve({ x: CX + HUB_X, y: CY }, { x: e.x - 30, y: e.y });
+  return curve({ x: CX + HUB_X, y: CY }, { x: e.x - 30, y: e.y - TILE_DY });
 }
 
 function lerp(a: number, b: number, t: number) {
