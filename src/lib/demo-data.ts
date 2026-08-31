@@ -55,18 +55,85 @@ export const HERO = {
   body: "Provenance helps property teams capture decisions, coordinate active work and preserve context across every asset in the portfolio.",
   primary: "Request early access",
   secondary: "See how it works",
-  caption: "Every property has active work. At portfolio scale, the context gets scattered fast.",
+  caption: ["One property is manageable.", "Across a portfolio, context gets scattered fast."],
 
-  /** the activity that appears around the first property */
-  activity: [
-    "Leasing revision",
-    "Development meeting",
-    "Consultant report",
-    "Legal issue",
-    "Action due",
-    "Municipal comment",
+  /** active work anchored to parts of the first property.
+   *  at = position within that property's own box, in percent */
+  work: [
+    { team: "Leasing", item: "Tenant revision", at: { x: 97, y: 20 } },
+    { team: "Development", item: "Concept review", at: { x: 97, y: 72 } },
+    { team: "Operations", item: "Maintenance issue", at: { x: 3, y: 24 } },
+    { team: "Legal", item: "Easement question", at: { x: 3, y: 84 } },
   ],
 } as const;
+
+/** the portfolio the camera pulls back to reveal. `plan` picks the site
+ *  drawing, `at`/`w` place it in the field, in percent of the frame. */
+export const PORTFOLIO = [
+  {
+    id: "westmount",
+    name: "Westmount Centre",
+    context: "3 active items",
+    plan: "anchored",
+    at: { x: 34, y: 31 },
+    w: 33,
+    hero: true,
+  },
+  {
+    id: "riverstone",
+    name: "Riverstone Plaza",
+    context: "Leasing · Development",
+    plan: "plaza",
+    at: { x: 1, y: 8 },
+    w: 27,
+    hero: false,
+  },
+  {
+    id: "oakridge",
+    name: "Oakridge",
+    context: "2 decisions · 1 open issue",
+    plan: "pad",
+    at: { x: 71, y: 9 },
+    w: 21,
+    hero: false,
+  },
+  {
+    id: "harbour",
+    name: "Harbour Quay",
+    context: "Operations",
+    plan: "mixed",
+    at: { x: 3, y: 62 },
+    w: 22,
+    hero: false,
+  },
+  {
+    id: "kingsway",
+    name: "Kingsway",
+    context: "",
+    plan: "urban",
+    at: { x: 31, y: 77 },
+    w: 16,
+    hero: false,
+  },
+  {
+    id: "northgate",
+    name: "Northgate",
+    context: "1 decision",
+    plan: "strip",
+    at: { x: 66, y: 57 },
+    w: 29,
+    hero: false,
+  },
+  {
+    id: "riverside",
+    name: "Riverside",
+    context: "Redevelopment study",
+    plan: "redev",
+    at: { x: 2, y: 33 },
+    w: 24,
+    hero: false,
+  },
+] as const;
 /* ------------------------------------------------------------------ *
  * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
