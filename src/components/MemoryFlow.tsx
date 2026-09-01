@@ -10,87 +10,63 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 const IN = MEMORY_LAYER.inputs;
 const OUT = MEMORY_LAYER.outputs;
-const N_IN = IN.length;
-const N_OUT = OUT.length;
 
-/* 1 the memory sits there · 2..8 each record feeds in · 9..12 the
-   outputs emerge · 13 the finished system */
-const FIRST_IN = 2;
-const FIRST_OUT = FIRST_IN + N_IN;
-const STEPS = FIRST_OUT + N_OUT;
+/*
+ * Everything is on screen from the start. The animation only moves
+ * emphasis, the way you would light one layer of a drawing at a time.
+ *
+ * 1  the work already happening
+ * 2  Provenance, holding it
+ * 3  what the team gets back
+ * 4  the whole system
+ */
+const STEPS = 4;
 
-/* ---- geometry, in the drawing's own coordinates ---- */
+/* ---- geometry ---- */
 const W = 1000;
-/* a tile is 56 tall plus its label, so rows need ~80 to clear */
-const H = 604;
+const H = 470;
 const CX = 500;
-const CY = 302;
-/* where a connector meets the centre card */
-const HUB_X = 152;
-const HUB_Y = 104;
+const CY = 235;
+const HUB_X = 156;
 
-const IN_X = 64;
-const IN_TOP = 48;
-const IN_GAP = 84;
-const OUT_X = 936;
-const OUT_TOP = 122;
-const OUT_GAP = 120;
+const IN_X = 74;
+const IN_TOP = 40;
+const IN_GAP = 62;
+const OUT_X = 926;
+const OUT_TOP = 62;
+const OUT_GAP = 92;
 
 const inAt = (i: number) => ({ x: IN_X, y: IN_TOP + i * IN_GAP });
 const outAt = (i: number) => ({ x: OUT_X, y: OUT_TOP + i * OUT_GAP });
 
-/** a bezier that leaves the tile horizontally and arrives at the card
- *  horizontally, so every line curves rather than pointing */
 function curve(from: { x: number; y: number }, to: { x: number; y: number }) {
   const dx = (to.x - from.x) * 0.55;
   return `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
 }
-
-/* the tile sits above the label, so the line leaves the tile, not the
-   middle of the pair */
-const TILE_DY = 12;
-
-function pathIn(i: number) {
-  const s = inAt(i);
-  return curve({ x: s.x + 30, y: s.y - TILE_DY }, { x: CX - HUB_X, y: CY });
-}
-function pathOut(i: number) {
-  const e = outAt(i);
-  return curve({ x: CX + HUB_X, y: CY }, { x: e.x - 30, y: e.y - TILE_DY });
-}
-
-function lerp(a: number, b: number, t: number) {
-  return Math.round(a + (b - a) * Math.min(1, Math.max(0, t)));
-}
+const pathIn = (i: number) =>
+  curve({ x: inAt(i).x + 84, y: inAt(i).y }, { x: CX - HUB_X, y: CY });
+const pathOut = (i: number) =>
+  curve({ x: CX + HUB_X, y: CY }, { x: outAt(i).x - 96, y: outAt(i).y });
 
 export function MemoryFlow() {
   const reduced = useReducedMotion();
   const { ref, step: raw } = useSequence(STEPS, {
-    beatMs: 950,
-    startMs: 400,
+    beatMs: 2000,
+    startMs: 500,
     loop: true,
-    loopPauseMs: 5200,
+    loopPauseMs: 3500,
   });
-  const step = reduced ? STEPS : raw;
+  const s = reduced ? STEPS : raw;
 
-  const activeIn = step >= FIRST_IN && step < FIRST_OUT ? step - FIRST_IN : -1;
-  const fed = Math.max(0, Math.min(N_IN, step - FIRST_IN + 1));
-  const outShown = Math.max(0, Math.min(N_OUT, step - FIRST_OUT + 1));
-  const t = fed / N_IN;
-
-  const st = MEMORY_LAYER.state;
-  const events = lerp(st.from.events, st.to.events, t);
-  const linked = lerp(st.from.sources, st.to.sources, t);
-
-  type Row = { kind: string; title: string; meta: string };
-  const rows: Row[] = IN.slice(0, fed).flatMap((i) =>
-    "adds" in i && i.adds ? [i.adds as Row] : []
-  );
-  const reading = activeIn >= 0 ? IN[activeIn] : null;
+  /* emphasis, not movement */
+  const inLit = s === 1 || s >= 4;
+  const hubLit = s === 2 || s >= 4;
+  const outLit = s === 3 || s >= 4;
+  const dim = (lit: boolean) => (s === 0 ? 0.82 : lit ? 1 : 0.4);
 
   return (
     <div ref={ref}>
-      {/* ---------------- the field ---------------- */}
+      {/* ---------------- the system, all at once ---------------- */}
       <div
         className="relative mx-auto hidden lg:block"
         style={{ width: W, height: H, maxWidth: "100%" }}
@@ -101,149 +77,109 @@ export function MemoryFlow() {
           fill="none"
           aria-hidden="true"
         >
-          {/* records converging on the memory */}
-          {IN.map((item, i) => {
-            const d = pathIn(i);
-            const on = activeIn === i;
-            const done = fed > i;
-            return (
-              <g key={item.id}>
-                <path
-                  d={d}
-                  className={on ? "stroke-accent" : "stroke-border-dark"}
-                  strokeWidth={on ? 1.6 : 1}
-                  strokeLinecap="round"
-                  opacity={on ? 0.95 : done ? 0.4 : 0.3}
-                  style={{ transition: "opacity 600ms" }}
-                />
-                {(on || done) && (
-                  <circle r={on ? 3.4 : 2} className={on ? "fill-accent" : "fill-border-dark"}>
-                    <animateMotion
-                      dur={`${on ? 1.5 : 3.4}s`}
-                      repeatCount="indefinite"
-                      begin={`-${i * 0.35}s`}
-                      path={d}
-                      keyPoints="0;1"
-                      keyTimes="0;1"
-                      calcMode="linear"
-                    />
-                  </circle>
-                )}
-              </g>
-            );
-          })}
-
-          {/* and the work coming back out of it */}
-          {OUT.map((o, i) => {
-            const d = pathOut(i);
-            const on = outShown > i;
-            return (
-              <g key={o.id}>
-                <path
-                  d={d}
-                  className={on ? "stroke-accent" : "stroke-border-dark"}
-                  strokeWidth={on ? 1.4 : 1}
-                  strokeLinecap="round"
-                  opacity={on ? 0.7 : 0.16}
-                  style={{ transition: "opacity 700ms" }}
-                />
-                {on && (
-                  <circle r={2.8} className="fill-accent">
-                    <animateMotion
-                      dur="2.2s"
-                      repeatCount="indefinite"
-                      begin={`-${i * 0.5}s`}
-                      path={d}
-                      keyPoints="0;1"
-                      keyTimes="0;1"
-                      calcMode="linear"
-                    />
-                  </circle>
-                )}
-              </g>
-            );
-          })}
+          {IN.map((item, i) => (
+            <path
+              key={item.id}
+              d={pathIn(i)}
+              className={inLit || hubLit ? "stroke-accent" : "stroke-border-dark"}
+              strokeWidth={inLit ? 1.4 : 1}
+              strokeLinecap="round"
+              opacity={inLit ? 0.75 : hubLit ? 0.4 : 0.22}
+              style={{ transition: "opacity 700ms, stroke-width 700ms" }}
+            />
+          ))}
+          {OUT.map((o, i) => (
+            <path
+              key={o.id}
+              d={pathOut(i)}
+              className={outLit || hubLit ? "stroke-accent" : "stroke-border-dark"}
+              strokeWidth={outLit ? 1.4 : 1}
+              strokeLinecap="round"
+              opacity={outLit ? 0.75 : hubLit ? 0.35 : 0.22}
+              style={{ transition: "opacity 700ms, stroke-width 700ms" }}
+            />
+          ))}
         </svg>
 
-        {/* incoming records */}
-        {IN.map((item, i) => {
-          const p = inAt(i);
-          return (
-            <div
-              key={item.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: p.x, top: p.y }}
-            >
-              <Tile
-                glyph={item.glyph}
-                label={item.label}
-                active={activeIn === i}
-                done={fed > i}
-              />
-            </div>
-          );
-        })}
+        {/* work in */}
+        <Phase label={MEMORY_LAYER.phases[0]} x={IN_X - 34} y={12} lit={inLit} />
+        <motion.div
+          initial={false}
+          animate={{ opacity: dim(inLit), scale: inLit ? 1 : 0.985 }}
+          transition={{ duration: 0.7, ease: EASE }}
+          style={{ transformOrigin: "left center" }}
+        >
+          {IN.map((item, i) => {
+            const p = inAt(i);
+            return (
+              <div
+                key={item.id}
+                className="absolute -translate-y-1/2"
+                style={{ left: p.x - 34, top: p.y }}
+              >
+                <Row glyph={item.glyph} label={item.label} lit={inLit} />
+              </div>
+            );
+          })}
+        </motion.div>
 
-        {/* the memory, holding the middle */}
-        <div
+        {/* the memory */}
+        <Phase label={MEMORY_LAYER.phases[1]} x={CX - 150} y={12} lit={hubLit} centre />
+        <motion.div
+          initial={false}
+          animate={{ opacity: dim(hubLit), scale: hubLit ? 1 : 0.985 }}
+          transition={{ duration: 0.7, ease: EASE }}
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ left: CX, top: CY, width: 300 }}
         >
-          <Memory rows={rows} reading={reading} events={events} linked={linked} />
-        </div>
+          <Memory lit={hubLit} />
+        </motion.div>
 
-        {/* what the memory gives back */}
-        {OUT.map((o, i) => {
-          const p = outAt(i);
-          return (
-            <div
-              key={o.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: p.x, top: p.y }}
-            >
-              <Tile
-                glyph={OUT_GLYPH[o.variant] ?? "ask"}
-                label={o.kind}
-                active={outShown === i + 1}
-                done={outShown > i + 1}
-                accent
-              />
-            </div>
-          );
-        })}
+        {/* work out */}
+        <Phase label={MEMORY_LAYER.phases[2]} x={OUT_X - 116} y={12} lit={outLit} />
+        <motion.div
+          initial={false}
+          animate={{ opacity: dim(outLit), scale: outLit ? 1 : 0.985 }}
+          transition={{ duration: 0.7, ease: EASE }}
+          style={{ transformOrigin: "right center" }}
+        >
+          {OUT.map((o, i) => {
+            const p = outAt(i);
+            return (
+              <div
+                key={o.id}
+                className="absolute w-[188px] -translate-y-1/2"
+                style={{ left: p.x - 96, top: p.y }}
+              >
+                <Output o={o} lit={outLit} />
+              </div>
+            );
+          })}
+        </motion.div>
       </div>
 
       {/* ---------------- stacked, small screens ---------------- */}
-      <div className="space-y-6 lg:hidden">
-        <div className="grid grid-cols-4 gap-3">
-          {IN.map((item, i) => (
-            <Tile
-              key={item.id}
-              glyph={item.glyph}
-              label={item.label}
-              active={activeIn === i}
-              done={fed > i}
-            />
-          ))}
+      <div className="space-y-5 lg:hidden">
+        <div>
+          <Cap lit={inLit}>{MEMORY_LAYER.phases[0]}</Cap>
+          <div className="mt-2 grid grid-cols-2 gap-x-5 gap-y-1.5">
+            {IN.map((item) => (
+              <Row key={item.id} glyph={item.glyph} label={item.label} lit={inLit} />
+            ))}
+          </div>
         </div>
-        <Arrow />
-        <Memory rows={rows} reading={reading} events={events} linked={linked} />
-        <Arrow />
-        <div className="grid grid-cols-4 gap-3">
-          {OUT.map((o, i) => (
-            <Tile
-              key={o.id}
-              glyph={OUT_GLYPH[o.variant] ?? "ask"}
-              label={o.kind}
-              active={outShown === i + 1}
-              done={outShown > i + 1}
-              accent
-            />
-          ))}
+        <Memory lit={hubLit} />
+        <div>
+          <Cap lit={outLit}>{MEMORY_LAYER.phases[2]}</Cap>
+          <div className="mt-2 space-y-2.5">
+            {OUT.map((o) => (
+              <Output key={o.id} o={o} lit={outLit} />
+            ))}
+          </div>
         </div>
       </div>
 
-      <p className="mt-10 font-display text-[1.4rem] leading-[1.16] tracking-[-0.022em] text-foreground sm:text-[1.7rem] lg:mt-6">
+      <p className="mt-10 font-display text-[1.4rem] leading-[1.16] tracking-[-0.022em] text-foreground sm:text-[1.7rem] lg:mt-8">
         {MEMORY_LAYER.payoff.map((line, i) => (
           <span key={line} className={cn("block", i > 0 && "text-graphite")}>
             {line}
@@ -256,165 +192,157 @@ export function MemoryFlow() {
 
 /* ------------------------------------------------------------------ */
 
-function Arrow() {
+function Phase({
+  label,
+  x,
+  y,
+  lit,
+  centre,
+}: {
+  label: string;
+  x: number;
+  y: number;
+  lit: boolean;
+  centre?: boolean;
+}) {
   return (
-    <p className="text-center text-[15px] text-border-dark" aria-hidden="true">
-      &darr;
+    <p
+      className={cn(
+        "absolute font-mono text-[9px] uppercase tracking-[0.16em] transition-colors duration-700",
+        centre && "w-[300px] text-center",
+        lit ? "text-accent" : "text-muted-foreground/70"
+      )}
+      style={{ left: x, top: y }}
+    >
+      {label}
     </p>
   );
 }
 
-/** a record or an output: a glyph tile with its name underneath */
-function Tile({
-  glyph,
-  label,
-  active,
-  done,
-  accent,
-}: {
-  glyph: string;
-  label: string;
-  active: boolean;
-  done: boolean;
-  accent?: boolean;
-}) {
-  const lit = active || (accent && done);
+function Cap({ children, lit }: { children: ReactNode; lit: boolean }) {
   return (
-    <motion.div
-      initial={false}
-      animate={{
-        opacity: active ? 1 : done ? (accent ? 0.95 : 0.55) : accent ? 0.28 : 0.8,
-        scale: active ? 1.05 : 1,
-      }}
-      transition={{ duration: 0.35, ease: EASE }}
-      className="flex w-[108px] flex-col items-center gap-2 text-center"
+    <p
+      className={cn(
+        "font-mono text-[9.5px] uppercase tracking-[0.16em] transition-colors duration-700",
+        lit ? "text-accent" : "text-muted-foreground"
+      )}
     >
-      <span
-        className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-[10px] border transition-colors duration-300",
-          lit
-            ? "border-accent/70 bg-accent/[0.06] shadow-[0_8px_22px_-8px_rgba(30,80,58,0.5)]"
-            : "border-foreground/12 bg-warm-white shadow-[0_1px_2px_rgba(19,20,19,0.05)]"
-        )}
-      >
-        <Glyph name={glyph} className={lit ? "text-accent" : "text-graphite"} />
-      </span>
-      <span
-        className={cn(
-          "text-[11.5px] leading-tight",
-          lit ? "font-medium text-foreground" : "text-graphite"
-        )}
-      >
-        {label}
-      </span>
-    </motion.div>
+      {children}
+    </p>
   );
 }
 
-/** the property memory — the one object that gets containment */
-function Memory({
-  rows,
-  reading,
-  events,
-  linked,
-}: {
-  rows: { kind: string; title: string; meta: string }[];
-  reading: (typeof IN)[number] | null;
-  events: number;
-  linked: number;
-}) {
+/** one kind of work arriving — a line, not a card */
+function Row({ glyph, label, lit }: { glyph: string; label: string; lit: boolean }) {
   return (
-    <div className="rounded-[6px] border border-foreground/[0.09] bg-warm-white shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_2px_6px_rgba(19,20,19,0.05),0_28px_56px_-26px_rgba(19,20,19,0.4)]">
-      {/* identity */}
-      <div className="flex items-center justify-between gap-3 border-b border-foreground/[0.07] px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="flex h-[17px] w-[17px] items-center justify-center border-[1.5px] border-accent">
-            <span className="h-1 w-1 bg-accent" />
-          </span>
-          <span className="text-[13px] font-semibold tracking-[-0.01em] text-foreground">
-            Provenance memory layer
-          </span>
+    <div className="flex items-center gap-2.5">
+      <Glyph
+        name={glyph}
+        className={cn("transition-colors duration-500", lit ? "text-accent" : "text-graphite")}
+      />
+      <span className="whitespace-nowrap text-[12.5px] text-foreground">{label}</span>
+    </div>
+  );
+}
+
+/** the property memory */
+function Memory({ lit }: { lit: boolean }) {
+  const st = MEMORY_LAYER.state.to;
+  return (
+    <div
+      className={cn(
+        "rounded-[6px] border bg-warm-white transition-shadow duration-700",
+        lit
+          ? "border-accent/40 shadow-[0_2px_8px_rgba(19,20,19,0.06),0_30px_60px_-26px_rgba(19,20,19,0.45)]"
+          : "border-foreground/[0.09] shadow-[0_1px_3px_rgba(19,20,19,0.05)]"
+      )}
+    >
+      <div className="flex items-center gap-2 border-b border-foreground/[0.07] px-4 py-3">
+        <span className="flex h-[17px] w-[17px] items-center justify-center border-[1.5px] border-accent">
+          <span className="h-1 w-1 bg-accent" />
+        </span>
+        <span className="text-[13px] font-semibold tracking-[-0.01em]">Provenance</span>
+      </div>
+
+      <div className="px-4 py-3">
+        <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+          {MEMORY_LAYER.property}
+        </p>
+
+        <div className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5">
+          {(
+            [
+              [st.sources, "sources"],
+              [st.decisions, "decisions"],
+              [st.actions, "open actions"],
+              [st.teams, "teams"],
+            ] as const
+          ).map(([v, label]) => (
+            <span key={label} className="flex items-baseline gap-1.5">
+              <span className="font-display text-[17px] tabular-nums text-foreground">{v}</span>
+              <span className="text-[10.5px] text-muted-foreground">{label}</span>
+            </span>
+          ))}
         </div>
-        <motion.span
-          key={events}
-          initial={{ opacity: 0.45 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="shrink-0 rounded-full bg-foreground/[0.06] px-2 py-[3px] text-[10px] font-medium tabular-nums text-graphite"
-        >
-          {events} events
-        </motion.span>
-      </div>
 
-      {/* what it now holds */}
-      <div className="min-h-[150px] px-4 py-3">
-        {reading && (
-          <motion.div
-            key={reading.id}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: EASE }}
-            className="mb-2.5 flex items-start gap-2.5 border-b border-foreground/[0.06] pb-2.5"
-          >
-            <Glyph name={reading.glyph} className="mt-[3px] shrink-0 text-accent" small />
-            <span className="min-w-0 flex-1">
-              <span className="block font-mono text-[8.5px] uppercase tracking-[0.13em] text-accent">
-                {reading.steps[Math.min(1, reading.steps.length - 1)].kind}
+        {/* what it has made of the work */}
+        <ul className="mt-3.5 space-y-1 border-t border-foreground/[0.07] pt-3">
+          {MEMORY_LAYER.structure.map((sig, i) => (
+            <motion.li
+              key={sig}
+              initial={false}
+              animate={{ opacity: lit ? 1 : 0.35 }}
+              transition={{ duration: 0.4, ease: EASE, delay: lit ? 0.15 + i * 0.05 : 0 }}
+              className="flex items-center gap-2 text-[11.5px] text-foreground"
+            >
+              <span className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-accent text-warm-white">
+                <svg viewBox="0 0 12 12" className="h-1.5 w-1.5" fill="none">
+                  <path
+                    d="M2.5 6.2 5 8.5 9.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
-              <span className="block truncate text-[12px] leading-tight text-foreground">
-                {reading.steps[Math.min(1, reading.steps.length - 1)].value}
-              </span>
-            </span>
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-          </motion.div>
+              {sig}
+            </motion.li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/** something the team gets back */
+function Output({ o, lit }: { o: (typeof OUT)[number]; lit: boolean }) {
+  return (
+    <div
+      className={cn(
+        "border-l-2 pl-3 transition-colors duration-700",
+        lit ? "border-accent" : "border-foreground/15"
+      )}
+    >
+      <p
+        className={cn(
+          "font-mono text-[8.5px] uppercase tracking-[0.13em] transition-colors duration-700",
+          lit ? "text-accent" : "text-muted-foreground"
         )}
-
-        {rows.map((r) => (
-          <motion.div
-            key={r.title}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="flex items-baseline gap-2.5 py-[5px]"
-          >
-            <span className="w-[70px] shrink-0 font-mono text-[8.5px] uppercase tracking-[0.1em] text-muted-foreground">
-              {r.kind}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[12px] leading-tight text-foreground">
-                {r.title}
-              </span>
-              <span className="block text-[10px] text-muted-foreground">{r.meta}</span>
-            </span>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* growth */}
-      <p className="border-t border-foreground/[0.07] px-4 py-2.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-accent">
-        <motion.span
-          key={linked}
-          initial={{ opacity: 0.45 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="tabular-nums"
-        >
-          {linked}
-        </motion.span>{" "}
-        linked sources
+      >
+        {o.kind}
+      </p>
+      <p className="mt-0.5 text-[12px] leading-snug text-foreground">
+        {o.variant === "ask" ? `“${o.title}”` : o.title}
+      </p>
+      <p className="mt-0.5 text-[10px] leading-tight text-muted-foreground">
+        {"due" in o && o.due ? `${o.meta} · ${o.due}` : o.meta}
       </p>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-
-const OUT_GLYPH: Record<string, string> = {
-  ask: "ask",
-  task: "task",
-  shared: "shared",
-  prep: "meeting",
-};
 
 const GLYPHS: Record<string, ReactNode> = {
   mail: (
@@ -460,44 +388,16 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M14 4v4h4M8.5 12h7M8.5 15.5h7" />
     </>
   ),
-  ask: (
-    <>
-      <circle cx="10.5" cy="10.5" r="6" />
-      <path d="m15 15 4.5 4.5" />
-      <path d="M8.8 8.6a1.8 1.8 0 1 1 1.9 2.1v1" />
-    </>
-  ),
-  task: (
-    <>
-      <rect x="3.5" y="4.5" width="17" height="15" rx="1.5" />
-      <path d="m7.5 12 2.6 2.5L16.5 8" />
-    </>
-  ),
-  shared: (
-    <>
-      <circle cx="8.5" cy="9" r="2.8" />
-      <circle cx="16" cy="10" r="2.2" />
-      <path d="M3.5 19c.7-2.8 2.6-4.3 5-4.3s4.3 1.5 5 4.3M15 14.8c2 .2 3.4 1.6 4 4.2" />
-    </>
-  ),
 };
 
-function Glyph({
-  name,
-  className,
-  small,
-}: {
-  name: string;
-  className?: string;
-  small?: boolean;
-}) {
+function Glyph({ name, className }: { name: string; className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className={cn(small ? "h-[13px] w-[13px]" : "h-[22px] w-[22px]", className)}
+      className={cn("h-[15px] w-[15px] shrink-0", className)}
       fill="none"
       stroke="currentColor"
-      strokeWidth={small ? 1.6 : 1.4}
+      strokeWidth="1.4"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"

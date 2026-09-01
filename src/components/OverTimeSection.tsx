@@ -1,7 +1,7 @@
-import { OVER_TIME, PORTFOLIO } from "@/lib/demo-data";
+import { OVER_TIME } from "@/lib/demo-data";
 import { SitePlan } from "./SitePlan";
 
-const HOME = PORTFOLIO.find((p) => p.hero)!;
+const HOME = { name: "Westmount Centre", plan: "anchored" };
 
 export function OverTimeSection() {
   const d = OVER_TIME;

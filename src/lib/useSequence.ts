@@ -33,8 +33,14 @@ export function useSequence(totalSteps: number, opts: SequenceOptions = {}) {
     if (!el || active) return;
 
     const check = () => {
-      const r = el.getBoundingClientRect();
       const vh = window.innerHeight || 0;
+      // a zero-height viewport tells us nothing, so start rather than
+      // stall — otherwise the sequence would never run at all
+      if (vh <= 0) {
+        setActive(true);
+        return;
+      }
+      const r = el.getBoundingClientRect();
       if (r.top < vh * 0.9 && r.bottom > vh * 0.1) setActive(true);
     };
     check();

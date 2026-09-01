@@ -55,90 +55,59 @@ export const HERO = {
   body: "Provenance helps property teams capture decisions, coordinate active work and preserve context across every asset in the portfolio.",
   primary: "Request early access",
   secondary: "See how it works",
-  caption: ["One property is manageable.", "Across a portfolio, context gets scattered fast."],
-
-  /** active work anchored to parts of the first property.
-   *  at = position within that property's own box, in percent */
-  work: [
-    { team: "Leasing", item: "Tenant revision", at: { x: 97, y: 20 } },
-    { team: "Development", item: "Concept review", at: { x: 97, y: 72 } },
-    { team: "Operations", item: "Maintenance issue", at: { x: 3, y: 24 } },
-    { team: "Legal", item: "Easement question", at: { x: 3, y: 84 } },
-  ],
+  caption: "Active work across the portfolio, and the context behind it.",
 } as const;
 
-/** the portfolio the camera pulls back to reveal. `plan` picks the site
- *  drawing, `at`/`w` place it in the field, in percent of the frame. */
-export const PORTFOLIO = [
+/** the hero field: a few properties with the work currently attached to
+ *  them. Reads as a still — no sequence to sit through. */
+export const PORTFOLIO_FIELD = [
   {
     id: "westmount",
     name: "Westmount Centre",
-    context: "3 open items",
     plan: "anchored",
-    at: { x: 34, y: 31 },
-    w: 33,
-    dots: 6,
-    hero: true,
+    people: ["sarah", "emma"],
+    work: [
+      { team: "Development", item: "Concept review" },
+      { team: "Legal", item: "Easement outstanding", live: true },
+    ],
   },
   {
     id: "riverstone",
     name: "Riverstone Plaza",
-    context: "Leasing · Development",
     plan: "plaza",
-    at: { x: 1, y: 8 },
-    w: 27,
-    dots: 4,
-    hero: false,
+    people: ["jordan"],
+    work: [{ team: "Leasing", item: "Tenant revision" }],
   },
   {
     id: "oakridge",
-    name: "Oakridge",
-    context: "2 decisions · 1 open issue",
-    plan: "pad",
-    at: { x: 71, y: 9 },
-    w: 21,
-    dots: 3,
-    hero: false,
+    name: "Oakridge Centre",
+    plan: "strip",
+    people: ["daniel", "sarah"],
+    work: [
+      { team: "Operations", item: "Roof issue" },
+      { team: "Task", item: "Due Thursday" },
+    ],
   },
   {
     id: "harbour",
-    name: "Harbour Quay",
-    context: "Operations",
+    name: "Harbour Point",
     plan: "mixed",
-    at: { x: 3, y: 62 },
-    w: 22,
-    dots: 2,
-    hero: false,
+    people: ["noah"],
+    work: [{ team: "Planning", item: "Municipal comments" }],
   },
   {
-    id: "kingsway",
-    name: "Kingsway",
-    context: "",
-    plan: "urban",
-    at: { x: 31, y: 77 },
-    w: 16,
-    dots: 2,
-    hero: false,
+    id: "cedar",
+    name: "Cedar Park",
+    plan: "pad",
+    people: ["maya"],
+    work: [{ team: "Asset Management", item: "Capex decision" }],
   },
   {
-    id: "northgate",
-    name: "Northgate",
-    context: "1 decision",
-    plan: "strip",
-    at: { x: 66, y: 57 },
-    w: 29,
-    dots: 4,
-    hero: false,
-  },
-  {
-    id: "riverside",
-    name: "Riverside",
-    context: "Redevelopment study",
+    id: "northline",
+    name: "Northline Centre",
     plan: "redev",
-    at: { x: 2, y: 33 },
-    w: 24,
-    dots: 3,
-    hero: false,
+    people: ["sarah", "jordan"],
+    work: [{ team: "Meeting", item: "Decision captured" }],
   },
 ] as const;
 /* ------------------------------------------------------------------ *
@@ -637,6 +606,12 @@ export const MEMORY_LAYER = {
     },
   ],
 
+  /** what the memory holds once the work has passed through it */
+  structure: ["Property matched", "Decisions linked", "Actions tracked", "Evidence connected"],
+
+  /** the three phases, named */
+  phases: ["Work in", "Property memory", "Work out"],
+
   payoff: ["Work goes in.", "Useful context comes out.", "The property remembers."],
 } as const;
 
@@ -649,35 +624,116 @@ export const ASK_PROVENANCE = {
   intro:
     "You are not searching documents. You are asking the property what happened, and getting the story with its sources attached.",
 
-  question:
-    "What's holding up the south pad, and what needs to happen before we can move it forward?",
-
-  lead: "3 things are holding it up.",
-  constraints: [
-    { team: "Leasing", text: "The 9,000 SF footprint needs to remain for the prospective tenant." },
-    { team: "Traffic", text: "Vehicle-turning analysis is still outstanding." },
-    { team: "Legal", text: "The eastern utility easement still needs confirmation." },
-  ],
-  rationale:
-    "The footprint was intentionally preserved at the February 12 development meeting.",
-  nextStep:
-    "Complete the turning analysis and confirm the easement before Thursday's concept review.",
-
-  sources: [
-    { title: "Development meeting", when: "Feb 12", kind: "Meeting" },
-    { title: "Leasing email", when: "May 18", kind: "Email" },
-    { title: "Traffic memo", when: "Rev. 03", kind: "Report" },
-    { title: "Legal correspondence", when: "Jan 27", kind: "Email" },
+  /** five questions, one per part of the organisation */
+  cases: [
+    {
+      id: "development",
+      category: "Development",
+      question:
+        "What's holding up the south pad, and what needs to happen before we can move it forward?",
+      lead: "3 things are holding it up.",
+      items: [
+        { team: "Leasing", text: "The 9,000 SF footprint needs to remain for the prospective tenant." },
+        { team: "Traffic", text: "Vehicle-turning analysis is still outstanding." },
+        { team: "Legal", text: "The eastern utility easement still needs confirmation." },
+      ],
+      nextStep:
+        "Complete the turning analysis and confirm the easement before Thursday's concept review.",
+      sources: 4,
+      sourceList: [
+        "Development meeting · Feb 12",
+        "Leasing email · May 18",
+        "Traffic memo · Rev. 03",
+        "Legal correspondence · Jan 27",
+      ],
+      actions: ["View sources", "Share"],
+      share: ["sarah", "jordan", "emma"],
+    },
+    {
+      id: "asset",
+      category: "Asset Management",
+      question: "Why was the remaining roof replacement deferred?",
+      para: [
+        "The remaining replacement was deferred during the 2024 capital review because the inspected areas were still performing adequately and the team prioritised the west roof section first.",
+        "The deferred area was expected to be reassessed during the 2027 capital planning cycle.",
+      ],
+      facts: [
+        { label: "Last inspection", value: "September 2026" },
+        { label: "Warranty", value: "West section through 2029" },
+        { label: "Next review", value: "2027 capital planning" },
+      ],
+      factsLabel: "Current state",
+      sources: 3,
+      sourceList: ["Capital plan", "Roof report", "Meeting notes"],
+      actions: ["View history", "Share"],
+      share: ["maya", "daniel"],
+    },
+    {
+      id: "leasing",
+      category: "Leasing",
+      question: "What do we need to know before Thursday's tenant meeting?",
+      lead: "3 items are relevant.",
+      items: [
+        { team: "", text: "The tenant requested the larger 9,000 SF footprint." },
+        { team: "", text: "The latest concept preserves the requested area but requires an alternate loading arrangement." },
+        { team: "", text: "Traffic analysis for that configuration is still outstanding." },
+      ],
+      note: "The previous proposal assumed a smaller footprint and should not be used for Thursday's discussion.",
+      noteLabel: "Also relevant",
+      sources: 5,
+      sourceList: ["Tenant email", "Concept plan · Rev. 07", "Traffic memo", "Prior proposal", "Meeting notes"],
+      actions: ["Prepare brief", "Share"],
+      share: ["jordan", "sarah"],
+    },
+    {
+      id: "operations",
+      category: "Operations",
+      question: "What's the history of RTU-4?",
+      para: ["RTU-4 was installed in 2020. Since installation:"],
+      timeline: [
+        { year: "2022", text: "Compressor repair" },
+        { year: "2024", text: "Recurring control issue reported" },
+        { year: "2025", text: "Control board replaced" },
+        { year: "2026", text: "No major deficiencies reported" },
+      ],
+      facts: [{ label: "Warranty expires", value: "March 2029" }],
+      sources: 6,
+      sourceList: ["Service records", "Commissioning report", "Warranty", "Inspection notes"],
+      actions: ["Open equipment history", "Share"],
+      share: ["daniel", "maya"],
+    },
+    {
+      id: "portfolio",
+      category: "Portfolio",
+      question: "Have we looked at redeveloping this site before?",
+      lead: "Yes. Two concepts were evaluated previously.",
+      concepts: [
+        {
+          year: "2023",
+          title: "Standalone retail pad",
+          outcome: "Paused after servicing constraints were identified.",
+        },
+        {
+          year: "2025",
+          title: "Multi-tenant concept",
+          outcome:
+            "Not advanced because the proposed access configuration did not work with the site circulation plan.",
+        },
+      ],
+      sources: 11,
+      sourceList: ["2023 concept set", "Servicing memo", "2025 concept set", "Circulation review"],
+      actions: ["View previous concepts", "Share"],
+      share: ["sarah", "noah"],
+    },
   ],
 
   share: {
     title: "Share this context",
     group: "South Pad Working Group",
-    people: ["sarah", "jordan", "emma"],
     include: ["Summary", "Sources", "Open actions"],
     action: "Share context",
     add: "+ Add people",
-    confirm: "Shared with Development, Leasing and Legal.",
+    confirm: "Shared with the group.",
   },
 
   payoff: "One answer. Shared context across every team involved.",
