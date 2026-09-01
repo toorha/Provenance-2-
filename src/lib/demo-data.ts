@@ -237,12 +237,45 @@ export const TODAY = {
   involved: ["sarah", "jordan", "emma", "daniel", "maya"],
 
   /** detection, kept small — a consequence of memory, not the pitch */
-  opportunity: {
-    kind: "Opportunity",
-    title: "Drive-through uses are now permitted",
-    why: "A previous QSR concept was paused because this use was prohibited.",
-    action: "Review previous concept",
-  },
+  /** the proactive layer — what the record pushes at you */
+  signals: [
+    {
+      id: "zoning",
+      kind: "Opportunity",
+      tone: "opportunity",
+      title: "Drive-through uses are now permitted",
+      why: "A previous QSR concept was paused because this use was prohibited.",
+      meta: "Westmount Centre",
+      action: "Review previous concept",
+    },
+    {
+      id: "overdue",
+      kind: "Open issue",
+      tone: "overdue",
+      title: "Turning analysis is overdue by 6 days",
+      why: "Blocks the South Pad review on Thursday.",
+      meta: "Sarah Chen · Development",
+      action: "Draft follow-up",
+    },
+    {
+      id: "warranty",
+      kind: "Expiry",
+      tone: "attention",
+      title: "Roof warranty expires in 42 days",
+      why: "An unresolved deficiency was recorded at the last inspection.",
+      meta: "Westmount Centre",
+      action: "Start warranty review",
+    },
+    {
+      id: "records",
+      kind: "New context",
+      tone: "info",
+      title: "8 new records were added yesterday",
+      why: "Emails, meeting notes and reports across 3 properties.",
+      meta: "3 properties",
+      action: "Review updates",
+    },
+  ],
 
   payoff: "One property. Many teams. Shared context.",
 } as const;
@@ -766,4 +799,30 @@ export const CTA = {
   headline: "Give every property a memory.",
   body: "Start with the work your team is already doing.",
   action: "Request early access",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * THE PRODUCT SHOWCASE — the three things Provenance does, in one frame
+ * ------------------------------------------------------------------ */
+export const SHOWCASE = {
+  label: "The product",
+  headline: ["Track what's happening.", "Ask what happened.", "Surface what matters next."],
+  body: "Three things, one record. The work your team is already doing is what makes the other two possible.",
+  modes: [
+    {
+      id: "track",
+      label: "Track work",
+      note: "Decisions, actions, deadlines, documents and open issues, connected across every team working on the property.",
+    },
+    {
+      id: "ask",
+      label: "Ask the property",
+      note: "Complicated questions, answered from the record with the sources attached, then shared with the teams that need them.",
+    },
+    {
+      id: "surface",
+      label: "Surface what matters",
+      note: "The record notices what changed, connects it to what happened before, and says what is worth doing about it.",
+    },
+  ],
 } as const;

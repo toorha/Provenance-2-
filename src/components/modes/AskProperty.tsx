@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MacWindow } from "./MacWindow";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Shell } from "./Chrome";
 import { ASK_PROVENANCE, PEOPLE } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
@@ -12,32 +12,71 @@ const CASES = A.cases;
 type Case = (typeof CASES)[number];
 type PersonKey = keyof typeof PEOPLE;
 
-export function AskProvenance() {
+export function AskProperty({ onInteract }: { onInteract?: () => void }) {
+  const reduced = useReducedMotion();
   const [i, setI] = useState(0);
   const [dir, setDir] = useState(1);
+  const [typed, setTyped] = useState(0);
+  const [answered, setAnswered] = useState(false);
   const [sources, setSources] = useState(false);
   const [share, setShare] = useState<"closed" | "open" | "sent">("closed");
+  const timers = useRef<number[]>([]);
 
   const c = CASES[i];
+  const clear = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  };
+
+  /* type the question in, then answer it */
+  const run = useCallback(
+    (idx: number) => {
+      clear();
+      const q = CASES[idx].question.length;
+      if (reduced) {
+        setTyped(q);
+        setAnswered(true);
+        return;
+      }
+      setTyped(0);
+      setAnswered(false);
+      let n = 0;
+      const step = Math.max(1, Math.round(q / 22));
+      const tick = () => {
+        n = Math.min(q, n + step);
+        setTyped(n);
+        if (n < q) timers.current.push(window.setTimeout(tick, 34));
+        else timers.current.push(window.setTimeout(() => setAnswered(true), 420));
+      };
+      timers.current.push(window.setTimeout(tick, 260));
+    },
+    [reduced]
+  );
+
+  useEffect(() => {
+    run(i);
+    return clear;
+  }, [i, run]);
 
   const go = (next: number) => {
-    setDir(next > i || (i === CASES.length - 1 && next === 0) ? 1 : -1);
+    onInteract?.();
+    setDir(next > i ? 1 : -1);
     setI((next + CASES.length) % CASES.length);
     setSources(false);
     setShare("closed");
   };
 
   return (
-    <div className="mx-auto max-w-3xl">
-      {/* jump straight to a part of the organisation */}
-      <div className="mb-4 flex flex-wrap items-center gap-x-1.5 gap-y-2">
+    <Shell tab="Overview">
+      {/* which part of the organisation is asking */}
+      <div className="flex flex-wrap items-center gap-x-1 gap-y-1.5 border-b border-foreground/[0.07] px-5 py-2.5">
         {CASES.map((x, k) => (
           <button
             key={x.id}
             type="button"
             onClick={() => go(k)}
             className={cn(
-              "rounded-[2px] px-2.5 py-1 text-[12px] transition-colors duration-200",
+              "rounded-[2px] px-2.5 py-1 text-[11.5px] transition-colors duration-200",
               k === i
                 ? "bg-accent/[0.09] font-medium text-accent"
                 : "text-graphite hover:bg-foreground/[0.04] hover:text-foreground"
@@ -48,110 +87,95 @@ export function AskProvenance() {
         ))}
       </div>
 
-      <MacWindow title="Provenance">
-        <div className="relative flex min-h-[440px] flex-col bg-warm-white font-sans text-foreground">
-          {/* header stays put; only the content behind it changes */}
-          <div className="flex items-center gap-2 border-b border-foreground/10 px-4 py-2.5">
-            <span className="flex h-4 w-4 items-center justify-center border-[1.5px] border-accent">
-              <span className="h-[3px] w-[3px] bg-accent" />
-            </span>
-            <span className="text-[12px] font-semibold">Westmount Centre</span>
-            <span className="text-[11px] text-muted-foreground">· Ask</span>
-            <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.13em] text-muted-foreground">
-              {c.category}
-            </span>
-          </div>
-
-          {/* the question */}
-          <div className="border-b border-foreground/10 px-4 py-3">
-            <div className="flex items-start gap-2.5">
-              <svg
-                viewBox="0 0 16 16"
-                className="mt-[3px] h-3.5 w-3.5 shrink-0 text-muted-foreground"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <circle cx="7" cy="7" r="4.5" />
-                <path d="m11 11 3.5 3.5" strokeLinecap="round" />
-              </svg>
-              {/* keyed, not AnimatePresence — the new question must not
-                  wait on the old one's exit before it can mount */}
-              <motion.p
-                key={c.id}
-                initial={{ opacity: 0, x: dir * 8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, ease: EASE }}
-                className="text-[13.5px] leading-[1.45]"
-              >
-                {c.question}
-              </motion.p>
-            </div>
-          </div>
-
-          {/* the answer */}
-          <div className="flex-1 px-4 py-4">
-            <motion.div
-              key={c.id}
-              initial={{ opacity: 0, x: dir * 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, ease: EASE }}
-              className="flex gap-3"
-            >
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-[1.5px] border-accent">
-                <span className="h-1 w-1 bg-accent" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <Answer c={c} showSources={sources} />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* actions and paging */}
-          <div className="flex items-center gap-2 border-t border-foreground/10 px-4 py-3">
-            <button
-              type="button"
-              onClick={() => (c.actions[0] === "View sources" ? setSources((v) => !v) : setSources((v) => !v))}
-              className="rounded-[2px] bg-accent px-3.5 py-[7px] text-[12px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
-            >
-              {c.actions[0]}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShare("open")}
-              className="rounded-[2px] border border-foreground/15 px-3.5 py-[7px] text-[12px] font-medium text-graphite transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
-            >
-              {c.actions[1]}
-            </button>
-
-            <div className="ml-auto flex items-center gap-2">
-              <Pager label="Previous" onClick={() => go(i - 1)}>
-                <path d="M9.5 3.5 5 8l4.5 4.5" />
-              </Pager>
-              <span className="font-mono text-[10.5px] tabular-nums text-muted-foreground">
-                {String(i + 1).padStart(2, "0")} / {String(CASES.length).padStart(2, "0")}
-              </span>
-              <Pager label="Next" onClick={() => go(i + 1)}>
-                <path d="M6.5 3.5 11 8l-4.5 4.5" />
-              </Pager>
-            </div>
-          </div>
-
-          {share !== "closed" && (
-            <SharePanel
-              people={c.share}
-              done={share === "sent"}
-              onSend={() => setShare("sent")}
-              onClose={() => setShare("closed")}
-            />
-          )}
+      {/* the question being typed */}
+      <div className="border-b border-foreground/[0.07] px-5 py-3">
+        <div className="flex items-start gap-2.5 rounded-[2px] border border-foreground/12 bg-background px-3 py-2">
+          <svg
+            viewBox="0 0 16 16"
+            className="mt-[3px] h-3.5 w-3.5 shrink-0 text-muted-foreground"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <circle cx="7" cy="7" r="4.5" />
+            <path d="m11 11 3.5 3.5" strokeLinecap="round" />
+          </svg>
+          <p className="min-w-0 flex-1 text-[13px] leading-[1.45] text-foreground">
+            {c.question.slice(0, typed)}
+            {typed < c.question.length && (
+              <span className="ml-px inline-block h-[1.05em] w-[2px] translate-y-[3px] animate-pulse bg-accent align-baseline" />
+            )}
+          </p>
         </div>
-      </MacWindow>
+      </div>
 
-      <p className="mt-5 max-w-[40ch] text-[13.5px] leading-[1.55] text-muted-foreground">
-        {A.payoff}
-      </p>
-    </div>
+      {/* the answer */}
+      <div className="flex-1 px-5 py-4">
+        {!answered ? (
+          <p className="text-[12px] text-muted-foreground">Reading the property memory…</p>
+        ) : (
+          <motion.div
+            key={c.id}
+            initial={{ opacity: 0, x: dir * 8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.28, ease: EASE }}
+            className="flex gap-3"
+          >
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-[1.5px] border-accent">
+              <span className="h-1 w-1 bg-accent" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <Answer c={c} showSources={sources} />
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* what you can do with it */}
+      <div className="flex items-center gap-2 border-t border-foreground/[0.07] px-5 py-3">
+        <button
+          type="button"
+          onClick={() => {
+            onInteract?.();
+            setSources((v) => !v);
+          }}
+          className="rounded-[2px] bg-accent px-3.5 py-[7px] text-[12px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
+        >
+          {c.actions[0]}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onInteract?.();
+            setShare("open");
+          }}
+          className="rounded-[2px] border border-foreground/15 px-3.5 py-[7px] text-[12px] font-medium text-graphite transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
+        >
+          {c.actions[1]}
+        </button>
+
+        <div className="ml-auto flex items-center gap-2">
+          <Pager label="Previous" onClick={() => go(i - 1)}>
+            <path d="M9.5 3.5 5 8l4.5 4.5" />
+          </Pager>
+          <span className="font-mono text-[10.5px] tabular-nums text-muted-foreground">
+            {String(i + 1).padStart(2, "0")} / {String(CASES.length).padStart(2, "0")}
+          </span>
+          <Pager label="Next" onClick={() => go(i + 1)}>
+            <path d="M6.5 3.5 11 8l-4.5 4.5" />
+          </Pager>
+        </div>
+      </div>
+
+      {share !== "closed" && (
+        <SharePanel
+          people={c.share}
+          done={share === "sent"}
+          onSend={() => setShare("sent")}
+          onClose={() => setShare("closed")}
+        />
+      )}
+    </Shell>
   );
 }
 
@@ -191,9 +215,7 @@ function Pager({
 function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
   return (
     <div className="space-y-3.5">
-      {"lead" in c && c.lead && (
-        <p className="text-[13px] leading-[1.5]">{c.lead}</p>
-      )}
+      {"lead" in c && c.lead && <p className="text-[13px] leading-[1.5]">{c.lead}</p>}
 
       {"para" in c &&
         c.para?.map((p) => (
@@ -202,7 +224,6 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
           </p>
         ))}
 
-      {/* numbered constraints */}
       {"items" in c && c.items && (
         <ol className="space-y-2.5">
           {c.items.map((it, k) => (
@@ -217,7 +238,6 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
         </ol>
       )}
 
-      {/* a dated history */}
       {"timeline" in c && c.timeline && (
         <ul className="space-y-1.5 border-l border-foreground/12 pl-3.5">
           {c.timeline.map((t) => (
@@ -231,7 +251,6 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
         </ul>
       )}
 
-      {/* prior concepts and how they ended */}
       {"concepts" in c && c.concepts && (
         <ul className="space-y-3">
           {c.concepts.map((x) => (
@@ -249,7 +268,6 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
         </ul>
       )}
 
-      {/* the state as it stands */}
       {"facts" in c && c.facts && (
         <div className="border-t border-foreground/10 pt-3">
           {"factsLabel" in c && c.factsLabel && (
@@ -281,14 +299,11 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
 
       {"nextStep" in c && c.nextStep && (
         <div className="border-l-2 border-accent pl-3">
-          <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-accent">
-            Next step
-          </p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-accent">Next step</p>
           <p className="mt-1 max-w-[58ch] text-[12.5px] leading-[1.5]">{c.nextStep}</p>
         </div>
       )}
 
-      {/* evidence */}
       <div className="border-t border-foreground/10 pt-3">
         <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-muted-foreground">
           {c.sources} linked sources
@@ -319,8 +334,6 @@ function Answer({ c, showSources }: { c: Case; showSources: boolean }) {
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
 
 function SharePanel({
   people,
@@ -381,13 +394,6 @@ function SharePanel({
                   </li>
                 ))}
               </ul>
-              <button
-                type="button"
-                className="text-[11.5px] text-graphite transition-colors hover:text-accent"
-              >
-                {A.share.add}
-              </button>
-
               <div className="space-y-1.5 border-t border-foreground/10 pt-3.5">
                 {A.share.include.map((item) => {
                   const on = include.includes(item);
@@ -405,11 +411,21 @@ function SharePanel({
                       <span
                         className={cn(
                           "flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-[2px] border transition-colors",
-                          on ? "border-accent bg-accent text-accent-foreground" : "border-foreground/25"
+                          on
+                            ? "border-accent bg-accent text-accent-foreground"
+                            : "border-foreground/25"
                         )}
                       >
                         {on && (
-                          <svg viewBox="0 0 12 12" className="h-2 w-2" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <svg
+                            viewBox="0 0 12 12"
+                            className="h-2 w-2"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
                             <path d="M2.5 6.2 5 8.5 9.5 3.5" />
                           </svg>
                         )}

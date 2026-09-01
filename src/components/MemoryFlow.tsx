@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { MEMORY_LAYER } from "@/lib/demo-data";
 import { useSequence } from "@/lib/useSequence";
@@ -65,6 +65,24 @@ export function MemoryFlow() {
   });
   const s = reduced ? STEPS : raw;
 
+  /* fit the fixed-size field to whatever width it is given */
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [boxW, setBoxW] = useState(W);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.clientWidth;
+      if (w > 0) setBoxW(w);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const scale = Math.min(1, boxW / W);
+  const offset = Math.max(0, (boxW - W * scale) / 2);
+
   /* emphasis, not movement */
   const inLit = s === 1 || s >= 4;
   const hubLit = s === 2 || s >= 4;
@@ -73,11 +91,21 @@ export function MemoryFlow() {
 
   return (
     <div ref={ref}>
-      {/* ---------------- the system, all at once ---------------- */}
-      <div
-        className="relative mx-auto hidden lg:block"
-        style={{ width: W, height: H, maxWidth: "100%" }}
-      >
+      {/* ---------------- the system, all at once ----------------
+          The SVG scales with its viewBox but absolutely-positioned HTML
+          does not, so the two come apart as soon as the container is
+          narrower than W. Scale the whole field as one object instead. */}
+      <div ref={boxRef} className="hidden w-full lg:block" style={{ height: H * scale }}>
+        <div
+          className="relative"
+          style={{
+            width: W,
+            height: H,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            marginLeft: offset,
+          }}
+        >
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="absolute inset-0 h-full w-full overflow-visible"
@@ -169,6 +197,7 @@ export function MemoryFlow() {
             );
           })}
         </motion.div>
+        </div>
       </div>
 
       {/* ---------------- stacked, small screens ---------------- */}
