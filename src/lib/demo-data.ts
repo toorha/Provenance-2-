@@ -103,7 +103,7 @@ export const CONTEXT_DECAY = {
       title: "Westmount Centre concept review",
       quote:
         "The team agreed to keep the larger tenant footprint, shift the loading area west, and have the traffic consultant test the revised truck path before the next concept review.",
-      note: "Three decisions made in one meeting.",
+      note: "Three decisions were made in a single meeting.",
       size: "lg",
     },
     {
@@ -114,7 +114,7 @@ export const CONTEXT_DECAY = {
       title: "2026 capital plan",
       quote:
         "The remaining roof replacement was deferred after the consultant found the membrane could remain in service for another 2 to 3 years with localized repairs.",
-      note: "Reassess during the 2027 capital planning cycle.",
+      note: "The area is to be reassessed during the 2027 capital planning cycle.",
       size: "md",
     },
     {
@@ -122,10 +122,10 @@ export const CONTEXT_DECAY = {
       team: "Legal",
       when: "2 years ago",
       person: "emma",
-      title: "Title review — east boundary",
+      title: "Title review for the east boundary",
       quote:
         "A registered utility easement runs through the eastern portion of the property. Any future building or loading area in that zone will need to be checked against the easement rights.",
-      note: "Constraint does not appear on the current concept drawing.",
+      note: "This constraint does not appear on the current concept drawing.",
       size: "md",
     },
     {
@@ -136,7 +136,7 @@ export const CONTEXT_DECAY = {
       title: "RTU-4 service history",
       quote:
         "RTU-4 has had three control-related service calls in the past 18 months. The last technician recommended replacing the control board if the fault returns.",
-      note: "Warranty expires March 2029.",
+      note: "The warranty expires in March 2029.",
       size: "sm",
     },
     {
@@ -147,7 +147,7 @@ export const CONTEXT_DECAY = {
       title: "Municipal pre-consultation",
       quote:
         "Municipal staff supported additional commercial development in principle, but required the team to maintain parking supply and demonstrate that site circulation would continue to function after redevelopment.",
-      note: "No outright rejection. Conditions still need to be solved.",
+      note: "Nothing was rejected outright, but the conditions still need to be solved.",
       size: "sm",
     },
   ],
@@ -250,7 +250,7 @@ export const TODAY = {
       kind: "Open issue",
       tone: "overdue",
       title: "Turning analysis is overdue by 6 days",
-      why: "Blocks the South Pad review on Thursday.",
+      why: "This blocks the South Pad review on Thursday.",
       meta: "Sarah Chen · Development",
       action: "Draft follow-up",
     },
@@ -268,7 +268,7 @@ export const TODAY = {
       kind: "New context",
       tone: "info",
       title: "8 new records were added yesterday",
-      why: "Emails, meeting notes and reports across 3 properties.",
+      why: "Emails, meeting notes and reports were added across three properties.",
       meta: "3 properties",
       action: "Review updates",
     },
@@ -276,173 +276,7 @@ export const TODAY = {
 
   payoff: "One property. Many teams. Shared context.",
 } as const;
-export const PRODUCT = {
-  label: "What it can do today",
-  headline: "For the work happening right now.",
-  body: "Provenance keeps track of decisions, actions, deadlines, documents and unresolved issues across every property, and preserves the context behind them.",
 
-  digest: {
-    label: "Daily Digest",
-    greeting: "Good morning, Alex",
-    summary: "5 things need your attention across 24 properties.",
-    meta: "Updated 8:30 AM",
-  },
-
-  signals: [
-    {
-      id: "zoning",
-      status: "New opportunity",
-      tone: "opportunity",
-      property: "Westmount Centre",
-      headline: "Drive-through uses are now permitted at Westmount Centre",
-      highlight: "Drive-through uses",
-      whySeeing:
-        "A zoning restriction was the primary reason this opportunity was paused in 2024.",
-      recommendation:
-        "Revisit the prior concept and confirm whether the remaining constraints still apply.",
-      actions: ["Review opportunity", "Schedule meeting"],
-      dismissible: true,
-      detail: {
-        whatChanged: "A local zoning amendment now permits drive-through uses.",
-        whyMatters:
-          "A 2024 QSR opportunity at this property was previously abandoned because the use was not permitted.",
-        whySurfaced:
-          "The new zoning change directly resolves the primary reason the prior deal was paused.",
-        prior: {
-          title: "2024 QSR opportunity",
-          status: "Paused",
-          reason: "Drive-through use not permitted",
-        },
-        sources: ["2024 deal history", "Prior zoning review", "Current by-law amendment"],
-        recommendation:
-          "Revisit the former concept and confirm whether the remaining deal constraints still apply.",
-      },
-    },
-    {
-      id: "consultant",
-      status: "Overdue",
-      tone: "overdue",
-      property: "Westmount Centre",
-      headline: "Consultant deliverable is 6 days late",
-      why: "The revised servicing plan is required before the next submission.",
-      actions: ["Draft follow-up", "Open task"],
-    },
-    {
-      id: "decision",
-      status: "Decision captured",
-      tone: "info",
-      property: "Westmount Centre",
-      headline: "Proceed with updated survey scope",
-      why: "Recorded from this morning's site review, with the reasoning and owner attached.",
-      actions: ["Open decision"],
-    },
-    {
-      id: "warranty",
-      status: "Due soon",
-      tone: "attention",
-      property: "Westmount Centre",
-      headline: "Roof warranty expires in 42 days",
-      why: "An unresolved deficiency was recorded during the last inspection.",
-      actions: ["Start warranty review", "View history"],
-    },
-    {
-      id: "records",
-      status: "Memory updated",
-      tone: "info",
-      property: "Westmount Centre",
-      headline: "6 new records added to Westmount Centre",
-      why: "New emails, meeting notes, reports and invoices updated the property record.",
-      actions: ["Review updates"],
-    },
-  ],
-
-  meeting: {
-    title: "Revisit 2024 QSR Opportunity",
-    agenda: [
-      "Review zoning amendment",
-      "Revisit prior deal constraints",
-      "Confirm updated feasibility",
-      "Decide whether to reopen the opportunity",
-    ],
-    attendees: ["Development", "Leasing", "Planning"],
-    created: "Meeting created and saved to Westmount Centre",
-  },
-
-  property: {
-    name: "Westmount Centre",
-    address: "1840 Westmount Avenue · Hamilton, ON",
-    status: "Active · monitored",
-    /* current state — what is live right now, not history */
-    current: {
-      openItems: [
-        "Revised servicing plan is unresolved",
-        "RTU-3 replacement PO awaiting sign-off",
-        "QSR feasibility not yet scheduled",
-      ],
-      needsAttention: [
-        "Consultant deliverable 6 days overdue",
-        "Roof warranty expires in 42 days",
-      ],
-      changedRecently: [
-        "Drive-through zoning permitted (today)",
-        "Survey scope decision captured (today)",
-        "6 records added yesterday",
-      ],
-    },
-    overview: {
-      recentDecisions: [
-        "RTU-3 replacement approved",
-        "Redevelopment review opened",
-      ],
-      deadlines: [
-        "Revised servicing plan — 6 days overdue",
-        "Roof warranty review — due in 42 days",
-      ],
-      updates: [
-        "Zoning amendment recorded",
-        "6 records added yesterday",
-        "Capital planning notes linked",
-      ],
-    },
-    memory: [
-      { year: "2026", title: "Drive-through zoning changed", sources: 3 },
-      {
-        year: "2024",
-        title: "QSR opportunity paused",
-        note: "Reason: drive-through use not permitted",
-        sources: 7,
-      },
-      { year: "2023", title: "HVAC replacement", note: "RTU-4 replaced", sources: 4 },
-      {
-        year: "2020",
-        title: "Environmental review",
-        note: "No further action required",
-        sources: 5,
-      },
-    ],
-    documents: [
-      { name: "Current zoning amendment", kind: "By-law", date: "2026" },
-      { name: "2024 QSR term sheet", kind: "Deal", date: "2024" },
-      { name: "Prior zoning review", kind: "Report", date: "2024" },
-      { name: "Roof condition assessment", kind: "Report", date: "2023" },
-      { name: "RTU-4 commissioning report", kind: "Report", date: "2023" },
-      { name: "Phase I environmental assessment", kind: "Report", date: "2020" },
-    ],
-    tasks: [
-      { title: "Draft consultant follow-up", owner: "Alex Morgan", due: "6 days overdue", status: "Open" },
-      { title: "Prepare roof warranty review", owner: "Sarah Chen", due: "In 42 days", status: "Open" },
-      { title: "Confirm QSR feasibility", owner: "Development", due: "Not scheduled", status: "New" },
-    ],
-  },
-
-  portfolio: [
-    { name: "Westmount Centre", city: "Hamilton, ON", signals: 3, active: true },
-    { name: "Harbour Industrial Park", city: "Burlington, ON", signals: 1, active: false },
-    { name: "Kingsway Office Tower", city: "Toronto, ON", signals: 0, active: false },
-    { name: "Northgate Retail Plaza", city: "Kitchener, ON", signals: 2, active: false },
-    { name: "Riverside Distribution Centre", city: "London, ON", signals: 0, active: false },
-  ],
-} as const;
 /* ------------------------------------------------------------------ *
  * HOW IT WORKS — step 1: you work the way you already work.
  * Four ordinary actions, each captured without changing the workflow.
@@ -823,17 +657,17 @@ export const CTA = {
 export const SHOWCASE = {
   label: "The product",
   headline: ["Track what's happening.", "Ask what happened.", "Surface what matters next."],
-  body: "Three things, one record. The work your team is already doing is what makes the other two possible.",
+  body: "All three run on the same record. The work your team is already doing is what makes the other two possible.",
   modes: [
     {
       id: "track",
       label: "Track work",
-      note: "Decisions, actions, deadlines, documents and open issues, connected across every team working on the property.",
+      note: "Provenance connects decisions, actions, deadlines, documents and open issues across every team working on the property.",
     },
     {
       id: "ask",
       label: "Ask the property",
-      note: "Complicated questions, answered from the record with the sources attached, then shared with the teams that need them.",
+      note: "Ask a complicated question and Provenance answers it from the record, with the sources attached, so the answer can go straight to the teams that need it.",
     },
     {
       id: "surface",

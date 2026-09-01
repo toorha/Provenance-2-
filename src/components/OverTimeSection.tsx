@@ -53,7 +53,7 @@ export function OverTimeSection() {
             <div className="relative">
               <IsoBuilding className="h-auto w-full" />
               <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted-foreground">
-                {HOME.name} &nbsp;·&nbsp; 2012 &ndash; present
+                {HOME.name} &nbsp;·&nbsp; 2012 to present
               </p>
             </div>
 
