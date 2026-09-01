@@ -22,31 +22,38 @@ const OUT = MEMORY_LAYER.outputs;
  */
 const STEPS = 4;
 
-/* ---- geometry ---- */
-const W = 1000;
-const H = 470;
-const CX = 500;
-const CY = 235;
-const HUB_X = 156;
+/* ---- geometry ----
+ * Everything is placed from an explicit left edge so nothing can run
+ * past W. The whole field has to fit the container at the lg
+ * breakpoint, which is narrower than the max-width suggests. */
+const W = 920;
+const H = 460;
+const CARD_W = 300;
+const CX = 460;
+const CY = 232;
+const HUB_X = CARD_W / 2; // the connectors meet the card's own edges
 
-const IN_X = 74;
-const IN_TOP = 40;
+const IN_LEFT = 18;
+const IN_ANCHOR = 188; // where an input's connector leaves
+const IN_TOP = 34;
 const IN_GAP = 62;
-const OUT_X = 926;
-const OUT_TOP = 62;
+
+const OUT_LEFT = 716;
+const OUT_W = 182;
+const OUT_TOP = 58;
 const OUT_GAP = 92;
 
-const inAt = (i: number) => ({ x: IN_X, y: IN_TOP + i * IN_GAP });
-const outAt = (i: number) => ({ x: OUT_X, y: OUT_TOP + i * OUT_GAP });
+const inAt = (i: number) => ({ x: IN_LEFT, y: IN_TOP + i * IN_GAP });
+const outAt = (i: number) => ({ x: OUT_LEFT, y: OUT_TOP + i * OUT_GAP });
 
 function curve(from: { x: number; y: number }, to: { x: number; y: number }) {
   const dx = (to.x - from.x) * 0.55;
   return `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
 }
 const pathIn = (i: number) =>
-  curve({ x: inAt(i).x + 84, y: inAt(i).y }, { x: CX - HUB_X, y: CY });
+  curve({ x: IN_ANCHOR, y: inAt(i).y }, { x: CX - HUB_X, y: CY });
 const pathOut = (i: number) =>
-  curve({ x: CX + HUB_X, y: CY }, { x: outAt(i).x - 96, y: outAt(i).y });
+  curve({ x: CX + HUB_X, y: CY }, { x: outAt(i).x - 10, y: outAt(i).y });
 
 export function MemoryFlow() {
   const reduced = useReducedMotion();
@@ -102,7 +109,7 @@ export function MemoryFlow() {
         </svg>
 
         {/* work in */}
-        <Phase label={MEMORY_LAYER.phases[0]} x={IN_X - 34} y={12} lit={inLit} />
+        <Phase label={MEMORY_LAYER.phases[0]} x={IN_LEFT} y={10} lit={inLit} />
         <motion.div
           initial={false}
           animate={{ opacity: dim(inLit), scale: inLit ? 1 : 0.985 }}
@@ -115,7 +122,7 @@ export function MemoryFlow() {
               <div
                 key={item.id}
                 className="absolute -translate-y-1/2"
-                style={{ left: p.x - 34, top: p.y }}
+                style={{ left: p.x, top: p.y }}
               >
                 <Row glyph={item.glyph} label={item.label} lit={inLit} />
               </div>
@@ -124,19 +131,25 @@ export function MemoryFlow() {
         </motion.div>
 
         {/* the memory */}
-        <Phase label={MEMORY_LAYER.phases[1]} x={CX - 150} y={12} lit={hubLit} centre />
+        <Phase
+          label={MEMORY_LAYER.phases[1]}
+          x={CX - CARD_W / 2}
+          y={10}
+          w={CARD_W}
+          lit={hubLit}
+        />
         <motion.div
           initial={false}
           animate={{ opacity: dim(hubLit), scale: hubLit ? 1 : 0.985 }}
           transition={{ duration: 0.7, ease: EASE }}
           className="absolute -translate-x-1/2 -translate-y-1/2"
-          style={{ left: CX, top: CY, width: 300 }}
+          style={{ left: CX, top: CY, width: CARD_W }}
         >
           <Memory lit={hubLit} />
         </motion.div>
 
         {/* work out */}
-        <Phase label={MEMORY_LAYER.phases[2]} x={OUT_X - 116} y={12} lit={outLit} />
+        <Phase label={MEMORY_LAYER.phases[2]} x={OUT_LEFT} y={10} lit={outLit} />
         <motion.div
           initial={false}
           animate={{ opacity: dim(outLit), scale: outLit ? 1 : 0.985 }}
@@ -148,8 +161,8 @@ export function MemoryFlow() {
             return (
               <div
                 key={o.id}
-                className="absolute w-[188px] -translate-y-1/2"
-                style={{ left: p.x - 96, top: p.y }}
+                className="absolute -translate-y-1/2"
+                style={{ left: p.x, top: p.y, width: OUT_W }}
               >
                 <Output o={o} lit={outLit} />
               </div>
@@ -196,23 +209,23 @@ function Phase({
   label,
   x,
   y,
+  w,
   lit,
-  centre,
 }: {
   label: string;
   x: number;
   y: number;
+  w?: number;
   lit: boolean;
-  centre?: boolean;
 }) {
   return (
     <p
       className={cn(
         "absolute font-mono text-[9px] uppercase tracking-[0.16em] transition-colors duration-700",
-        centre && "w-[300px] text-center",
+        w && "text-center",
         lit ? "text-accent" : "text-muted-foreground/70"
       )}
-      style={{ left: x, top: y }}
+      style={{ left: x, top: y, width: w }}
     >
       {label}
     </p>

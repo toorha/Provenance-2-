@@ -53,14 +53,16 @@ export function PortfolioField() {
             </ul>
 
             {/* who is carrying it */}
-            <div className="mt-2.5 flex -space-x-1.5">
+            {/* set apart, not stacked — at this size an overlap just
+                reads as one smudged shape */}
+            <div className="mt-2.5 flex gap-1">
               {p.people.map((k) => {
                 const person = PEOPLE[k as PersonKey];
                 return (
                   <span
                     key={k}
                     title={`${person.name} · ${person.dept}`}
-                    className="flex h-[17px] w-[17px] items-center justify-center rounded-full bg-accent/[0.12] text-[7.5px] font-semibold text-accent ring-[1.5px] ring-background"
+                    className="flex h-[19px] w-[19px] items-center justify-center rounded-full bg-accent/[0.13] text-[8px] font-semibold tracking-[0.02em] text-accent"
                   >
                     {person.initials}
                   </span>
