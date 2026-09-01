@@ -166,15 +166,22 @@ export function MemoryFlow() {
           w={CARD_W}
           lit={hubLit}
         />
-        <motion.div
-          initial={false}
-          animate={{ opacity: dim(hubLit), scale: hubLit ? 1 : 0.985 }}
-          transition={{ duration: 0.7, ease: EASE }}
+        {/* the centring lives on a plain wrapper — a motion element that
+            animates `scale` writes its own inline transform, which would
+            silently drop the -translate-x/y utilities and leave the card
+            sitting down-and-right of the connectors */}
+        <div
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ left: CX, top: CY, width: CARD_W }}
         >
-          <Memory lit={hubLit} />
-        </motion.div>
+          <motion.div
+            initial={false}
+            animate={{ opacity: dim(hubLit), scale: hubLit ? 1 : 0.985 }}
+            transition={{ duration: 0.7, ease: EASE }}
+          >
+            <Memory lit={hubLit} />
+          </motion.div>
+        </div>
 
         {/* work out */}
         <Phase label={MEMORY_LAYER.phases[2]} x={OUT_LEFT} y={10} lit={outLit} />

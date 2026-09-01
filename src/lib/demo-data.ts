@@ -789,6 +789,13 @@ export const OVER_TIME = {
     items: ["Decision history", "Property timeline", "Historical rationale", "Source lineage", "Institutional memory"],
   },
 
+  turnover: [
+    { who: "Acquisition lead", note: "Left", here: false },
+    { who: "Asset manager", note: "On vacation", here: false },
+    { who: "Development manager", note: "Still here", here: true },
+    { who: "Leasing team", note: "Left", here: false },
+  ],
+
   payoff: "The people move on. The record does not.",
 } as const;
 

@@ -12,7 +12,7 @@ const CASES = A.cases;
 type Case = (typeof CASES)[number];
 type PersonKey = keyof typeof PEOPLE;
 
-export function AskProperty({ onInteract }: { onInteract?: () => void }) {
+export function AskProperty() {
   const reduced = useReducedMotion();
   const [i, setI] = useState(0);
   const [dir, setDir] = useState(1);
@@ -59,7 +59,6 @@ export function AskProperty({ onInteract }: { onInteract?: () => void }) {
   }, [i, run]);
 
   const go = (next: number) => {
-    onInteract?.();
     setDir(next > i ? 1 : -1);
     setI((next + CASES.length) % CASES.length);
     setSources(false);
@@ -135,20 +134,14 @@ export function AskProperty({ onInteract }: { onInteract?: () => void }) {
       <div className="flex items-center gap-2 border-t border-foreground/[0.07] px-5 py-3">
         <button
           type="button"
-          onClick={() => {
-            onInteract?.();
-            setSources((v) => !v);
-          }}
+          onClick={() => setSources((v) => !v)}
           className="rounded-[2px] bg-accent px-3.5 py-[7px] text-[12px] font-medium text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
         >
           {c.actions[0]}
         </button>
         <button
           type="button"
-          onClick={() => {
-            onInteract?.();
-            setShare("open");
-          }}
+          onClick={() => setShare("open")}
           className="rounded-[2px] border border-foreground/15 px-3.5 py-[7px] text-[12px] font-medium text-graphite transition-colors duration-300 hover:border-foreground/40 hover:text-foreground"
         >
           {c.actions[1]}

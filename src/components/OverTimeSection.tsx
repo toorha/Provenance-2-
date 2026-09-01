@@ -1,7 +1,7 @@
 import { OVER_TIME } from "@/lib/demo-data";
-import { SitePlan } from "./SitePlan";
+import { IsoBuilding } from "./IsoBuilding";
 
-const HOME = { name: "Westmount Centre", plan: "anchored" };
+const HOME = { name: "Westmount Centre" };
 
 export function OverTimeSection() {
   const d = OVER_TIME;
@@ -44,24 +44,25 @@ export function OverTimeSection() {
           {/* the property stays put; the people around it turn over */}
           <div className="lg:pt-2">
             <div className="relative">
-              <SitePlan plan={HOME.plan} hero />
+              <IsoBuilding className="h-auto w-full" />
               <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted-foreground">
                 {HOME.name} &nbsp;·&nbsp; 2012 &ndash; present
               </p>
             </div>
 
             <ul className="mt-7 space-y-2.5 border-t border-foreground/15 pt-6">
-              {[
-                { yr: "2012", who: "Acquisitions team", note: "since moved on" },
-                { yr: "2018", who: "Second asset manager", note: "since moved on" },
-                { yr: "2024", who: "Current development team", note: "in place" },
-              ].map((r) => (
-                <li key={r.yr} className="flex items-baseline gap-4 text-[13.5px]">
-                  <span className="w-9 shrink-0 font-mono text-[11px] tabular-nums text-graphite">
-                    {r.yr}
-                  </span>
+              {OVER_TIME.turnover.map((r) => (
+                <li key={r.who} className="flex items-baseline gap-4 text-[13.5px]">
                   <span className="flex-1 text-foreground">{r.who}</span>
-                  <span className="text-[12px] text-muted-foreground">{r.note}</span>
+                  <span
+                    className={
+                      r.here
+                        ? "text-[12px] font-medium text-accent"
+                        : "text-[12px] text-muted-foreground"
+                    }
+                  >
+                    {r.note}
+                  </span>
                 </li>
               ))}
             </ul>
