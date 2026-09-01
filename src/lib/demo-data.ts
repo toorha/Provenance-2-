@@ -51,65 +51,14 @@ export const ORGS = {
  * HERO — the scale problem
  * ------------------------------------------------------------------ */
 export const HERO = {
-  headline: ["Keep track of what's happening now.", "Never lose why it happened."],
-  body: "Provenance helps property teams capture decisions, coordinate active work and preserve context across every asset in the portfolio.",
+  eyebrow: "Building the self-updating memory layer for commercial real estate",
+  headline: "Know what's happening across every property.",
+  body: "Provenance keeps track of what was decided, what still needs to happen, and the context behind it, then updates the property record as your team works.",
   primary: "Request early access",
   secondary: "See how it works",
-  caption: "Active work across the portfolio, and the context behind it.",
+  footnote: "Built for teams across Development, Leasing, Asset Management and Operations.",
 } as const;
 
-/** the hero field: a few properties with the work currently attached to
- *  them. Reads as a still — no sequence to sit through. */
-export const PORTFOLIO_FIELD = [
-  {
-    id: "westmount",
-    name: "Westmount Centre",
-    plan: "anchored",
-    people: ["sarah", "emma"],
-    work: [
-      { team: "Development", item: "Concept review" },
-      { team: "Legal", item: "Easement outstanding", live: true },
-    ],
-  },
-  {
-    id: "riverstone",
-    name: "Riverstone Plaza",
-    plan: "plaza",
-    people: ["jordan"],
-    work: [{ team: "Leasing", item: "Tenant revision" }],
-  },
-  {
-    id: "oakridge",
-    name: "Oakridge Centre",
-    plan: "strip",
-    people: ["daniel", "sarah"],
-    work: [
-      { team: "Operations", item: "Roof issue" },
-      { team: "Task", item: "Due Thursday" },
-    ],
-  },
-  {
-    id: "harbour",
-    name: "Harbour Point",
-    plan: "mixed",
-    people: ["noah"],
-    work: [{ team: "Planning", item: "Municipal comments" }],
-  },
-  {
-    id: "cedar",
-    name: "Cedar Park",
-    plan: "pad",
-    people: ["maya"],
-    work: [{ team: "Asset Management", item: "Capex decision" }],
-  },
-  {
-    id: "northline",
-    name: "Northline Centre",
-    plan: "redev",
-    people: ["sarah", "jordan"],
-    work: [{ team: "Meeting", item: "Decision captured" }],
-  },
-] as const;
 /* ------------------------------------------------------------------ *
  * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
