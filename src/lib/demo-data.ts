@@ -63,51 +63,99 @@ export const HERO = {
  * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
 export const CONTEXT_DECAY = {
-  label: "Context decay",
-  headline: "Everyone knows a piece. No one knows the whole thing.",
-  body: "Property context is constantly being created across meetings, emails, documents, consultants and different teams. The information usually exists. Getting enough of it together to actually make a decision is the hard part.",
-  question: "What's actually going on with the south pad?",
+  label: "Organizational amnesia",
+  headline: ["Everyone has part of the story.", "No one has the whole property."],
+  body: "A property is constantly changing through leasing, operations, development, capital planning, legal work and municipal approvals. Each team sees a different piece. Over time, the files stay, but the reasoning connecting them gets harder to recover.",
+  property: "Westmount Centre",
 
-  /* the fragments that hold parts of the answer, each in a different
-     place, created at a different time, owned by a different person */
+  /* Seven pieces of the same asset, each held by a different team at a
+     different time. Read together they form a chain — tenant footprint
+     to loading to turning conflict to easement to municipal conditions
+     — but nothing here draws that chain, because nothing does. */
   fragments: [
     {
       id: "leasing",
-      kind: "email",
-      system: "Leasing",
-      when: "3 months ago",
-      meta: { from: "Jordan Lee · Leasing", subject: "Re: South pad — footprint", context: "buried in a thread" },
-      quote: "Reducing the building any further would compromise the current tenant opportunity.",
+      team: "Leasing",
+      when: "Today",
+      person: "jordan",
+      title: "Prospective tenant requirements",
+      quote:
+        "The prospective tenant wants a 10-year term with two five-year options, but only if the landlord delivers the full 9,000 SF footprint shown on the latest concept.",
+      note: "Reducing the building size could require reopening commercial terms.",
+      size: "lg",
     },
     {
-      id: "traffic",
-      kind: "email",
-      system: "Traffic consultant",
-      when: "Last week",
-      meta: { from: "Northline Engineering", subject: "South pad — outstanding items", context: "attachment not opened" },
-      quote: "Vehicle-turning analysis is still outstanding.",
+      id: "development",
+      team: "Development",
+      when: "8 months ago",
+      person: "sarah",
+      title: "East pad concept study",
+      quote:
+        "The team tested a 7,500 SF standalone retail pad on the east side of the property, but the concept was paused after truck-turning analysis showed that the loading movement would conflict with the main customer drive aisle.",
+      note: "The concept was not paused because of tenant demand.",
+      size: "lg",
     },
     {
       id: "meeting",
-      kind: "notes",
-      system: "Meeting notes",
-      when: "Feb 12",
-      meta: { title: "Development review", attendees: "Dev, Leasing, Planning" },
-      quote: "Team agreed to preserve the larger building footprint and test an alternate loading configuration.",
+      team: "Development · Leasing · Operations",
+      when: "Yesterday",
+      person: null,
+      title: "Westmount Centre concept review",
+      quote:
+        "The team agreed to keep the larger tenant footprint, shift the loading area west, and have the traffic consultant test the revised truck path before the next concept review.",
+      note: "Three decisions made in one meeting.",
+      size: "lg",
+    },
+    {
+      id: "asset",
+      team: "Asset Management",
+      when: "May",
+      person: "maya",
+      title: "2026 capital plan",
+      quote:
+        "The remaining roof replacement was deferred after the consultant found the membrane could remain in service for another 2 to 3 years with localized repairs.",
+      note: "Reassess during the 2027 capital planning cycle.",
+      size: "md",
     },
     {
       id: "legal",
-      kind: "email",
-      system: "Legal",
-      when: "8 months ago",
-      meta: { from: "Emma Clarke · Legal", subject: "South pad — title review", context: "may be superseded" },
-      quote: "Utility easements along the eastern portion of the pad still need to be confirmed.",
+      team: "Legal",
+      when: "2 years ago",
+      person: "emma",
+      title: "Title review — east boundary",
+      quote:
+        "A registered utility easement runs through the eastern portion of the property. Any future building or loading area in that zone will need to be checked against the easement rights.",
+      note: "Constraint does not appear on the current concept drawing.",
+      size: "md",
+    },
+    {
+      id: "operations",
+      team: "Operations",
+      when: "Last week",
+      person: "daniel",
+      title: "RTU-4 service history",
+      quote:
+        "RTU-4 has had three control-related service calls in the past 18 months. The last technician recommended replacing the control board if the fault returns.",
+      note: "Warranty expires March 2029.",
+      size: "sm",
+    },
+    {
+      id: "planning",
+      team: "Planning",
+      when: "14 months ago",
+      person: "noah",
+      title: "Municipal pre-consultation",
+      quote:
+        "Municipal staff supported additional commercial development in principle, but required the team to maintain parking supply and demonstrate that site circulation would continue to function after redevelopment.",
+      note: "No outright rejection. Conditions still need to be solved.",
+      size: "sm",
     },
   ],
 
   closing: {
-    lead: "The answer exists. It's scattered across people, files and time.",
-    sub: "And every day spent reconstructing it is another day the property doesn't move forward.",
+    count: ["One property.", "Six teams.", "Years of decisions."],
+    lead: ["The information exists.", "The understanding is scattered."],
+    sub: "Before the next decision can be made, someone usually has to piece the story back together.",
   },
 } as const;
 
