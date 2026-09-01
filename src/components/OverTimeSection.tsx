@@ -29,9 +29,16 @@ export function OverTimeSection() {
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                     {col.label}
                   </p>
-                  <ul className="mt-3 space-y-1.5">
+                  <ul className="mt-3 space-y-2">
                     {col.items.map((item) => (
-                      <li key={item} className="text-[14.5px] text-foreground">
+                      <li
+                        key={item}
+                        className="flex items-baseline gap-2.5 text-[14.5px] text-foreground"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-[5px] w-[5px] shrink-0 -translate-y-[3px] rounded-full bg-accent/55"
+                        />
                         {item}
                       </li>
                     ))}

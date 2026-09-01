@@ -781,12 +781,24 @@ export const OVER_TIME = {
   body: "Every decision, project, issue and piece of evidence captured through Provenance becomes part of a source-backed record that survives team turnover and future ownership.",
 
   today: {
-    label: "Today it",
-    items: ["Coordinates work", "Captures decisions", "Tracks actions", "Answers questions", "Shares context"],
+    label: "With Provenance, your team can",
+    items: [
+      "Coordinate active work",
+      "Capture decisions as they happen",
+      "Track actions and deadlines",
+      "Answer questions from the record",
+      "Share context across departments",
+    ],
   },
   later: {
-    label: "Over time it becomes",
-    items: ["Decision history", "Property timeline", "Historical rationale", "Source lineage", "Institutional memory"],
+    label: "And the property gains",
+    items: [
+      "Decision history",
+      "Property timeline",
+      "Historical rationale",
+      "Source lineage",
+      "Institutional memory",
+    ],
   },
 
   turnover: [
