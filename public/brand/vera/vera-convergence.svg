@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-labelledby="vera-convergence-title">
+  <title id="vera-convergence-title">Vera convergence mark</title>
+  <!-- 32x32 grid, 6px module, 3px stroke, square caps.
+       Three separate signals enter on the left at three different heights,
+       meet at one node, and leave as a single resolved path. The V is in the
+       negative space between the incoming strokes, never drawn as a letter. -->
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="square">
+    <path d="M4 7 L15 16" />
+    <path d="M4 16 L15 16" />
+    <path d="M4 25 L15 16" />
+    <path d="M17 16 L28 16" />
+  </g>
+  <circle cx="16" cy="16" r="2.6" fill="currentColor" />
+</svg>

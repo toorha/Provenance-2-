@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-labelledby="vera-datum-title">
+  <title id="vera-datum-title">Vera datum mark</title>
+  <!-- 32x32 grid, 3px stroke, square caps.
+       Three records of different length and different origin: the left ends
+       are deliberately ragged, because that is how context actually arrives.
+       Their right ends land exactly on one vertical datum, the common
+       reference Vera holds them against. The node marks the reading.
+       A datum line is a drawing convention, not a building, so the mark
+       survives Provenance moving beyond real estate. -->
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="square">
+    <path d="M4 9 H23" />
+    <path d="M12 16 H23" />
+    <path d="M8 23 H23" />
+    <path d="M23 3 V29" />
+  </g>
+  <circle cx="23" cy="16" r="2.6" fill="currentColor" />
+</svg>

@@ -51,111 +51,79 @@ export const ORGS = {
  * HERO — the scale problem
  * ------------------------------------------------------------------ */
 export const HERO = {
-  eyebrow: "Building the self-updating memory layer for commercial real estate",
-  headline: "Know what's happening across every property.",
-  body: "Provenance keeps track of what was decided, what still needs to happen, and the context behind it, then updates the property record as your team works.",
+  headline: [
+    "Keep track of what is happening now.",
+    "Never lose why it happened.",
+  ],
+  body: "Vera is the AI teammate for teams running commercial real estate, keeping work connected across your portfolio while building the memory behind every property.",
   primary: "Request early access",
   secondary: "See how it works",
-  footnote: "Built for teams across Development, Leasing, Asset Management and Operations.",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * CONTEXT DECAY — the problem, stated once.
+ * ------------------------------------------------------------------ */
+export const VERA = {
+  label: "Meet Vera",
+  headline: "Your AI teammate across every function of your portfolio.",
+  body: "Vera works where your teams already work, capturing decisions, tracking actions, filing documents, answering questions and surfacing what matters across development, leasing, asset management, operations, legal and planning.",
+
+  /* the three jobs, named the way the product frame names them */
+  jobs: [
+    {
+      id: "track",
+      name: "Track the work",
+      teaser: "Every team on one property record",
+      line: "Decisions, actions, deadlines, meetings, open issues and documents, held in one place per property.",
+    },
+    {
+      id: "ask",
+      name: "Ask Vera",
+      teaser: "Answers with the sources attached",
+      line: "Ask a complicated question in plain language and get a structured answer with its sources attached.",
+    },
+    {
+      id: "surface",
+      name: "Proactive Insights",
+      teaser: "What needs attention next",
+      line: "Vera notices what changed, connects it to what happened before, and says what is worth doing next.",
+    },
+  ],
+
+  /* the bridge from today to over time */
+  bridge: {
+    line: "Everything Vera learns builds Provenance.",
+    today: "Vera helps your teams work today.",
+    later:
+      "Provenance becomes the persistent, source-backed memory of the property over time.",
+    payoff: ["Useful from day one.", "More valuable with every decision."],
+  },
 } as const;
 
 /* ------------------------------------------------------------------ *
  * CONTEXT DECAY — the problem, stated once.
  * ------------------------------------------------------------------ */
 export const CONTEXT_DECAY = {
-  label: "Organizational amnesia",
-  headline: ["Everyone has part of the story.", "No one has the whole property."],
-  body: "A property is constantly changing through leasing, operations, development, capital planning, legal work and municipal approvals. Each team sees a different piece. Over time, the files stay, but the reasoning connecting them gets harder to recover.",
-  property: "Westmount Centre",
+  label: "The problem",
+  headline: ["Simple questions shouldn't", "require a scavenger hunt."],
 
-  /* Seven pieces of the same asset, each held by a different team at a
-     different time. Read together they form a chain — tenant footprint
-     to loading to turning conflict to easement to municipal conditions
-     — but nothing here draws that chain, because nothing does. */
-  fragments: [
-    {
-      id: "leasing",
-      team: "Leasing",
-      when: "Today",
-      person: "jordan",
-      title: "Prospective tenant requirements",
-      quote:
-        "The prospective tenant wants a 10-year term with two five-year options, but only if the landlord delivers the full 9,000 SF footprint shown on the latest concept.",
-      note: "Reducing the building size could require reopening commercial terms.",
-      size: "lg",
-    },
-    {
-      id: "development",
-      team: "Development",
-      when: "8 months ago",
-      person: "sarah",
-      title: "East pad concept study",
-      quote:
-        "The team tested a 7,500 SF standalone retail pad on the east side of the property, but the concept was paused after truck-turning analysis showed that the loading movement would conflict with the main customer drive aisle.",
-      note: "The concept was not paused because of tenant demand.",
-      size: "lg",
-    },
-    {
-      id: "meeting",
-      team: "Development · Leasing · Operations",
-      when: "Yesterday",
-      person: null,
-      title: "Westmount Centre concept review",
-      quote:
-        "The team agreed to keep the larger tenant footprint, shift the loading area west, and have the traffic consultant test the revised truck path before the next concept review.",
-      note: "Three decisions were made in a single meeting.",
-      size: "lg",
-    },
-    {
-      id: "asset",
-      team: "Asset Management",
-      when: "May",
-      person: "maya",
-      title: "2026 capital plan",
-      quote:
-        "The remaining roof replacement was deferred after the consultant found the membrane could remain in service for another 2 to 3 years with localized repairs.",
-      note: "The area is to be reassessed during the 2027 capital planning cycle.",
-      size: "md",
-    },
-    {
-      id: "legal",
-      team: "Legal",
-      when: "2 years ago",
-      person: "emma",
-      title: "Title review for the east boundary",
-      quote:
-        "A registered utility easement runs through the eastern portion of the property. Any future building or loading area in that zone will need to be checked against the easement rights.",
-      note: "This constraint does not appear on the current concept drawing.",
-      size: "md",
-    },
-    {
-      id: "operations",
-      team: "Operations",
-      when: "Last week",
-      person: "daniel",
-      title: "RTU-4 service history",
-      quote:
-        "RTU-4 has had three control-related service calls in the past 18 months. The last technician recommended replacing the control board if the fault returns.",
-      note: "The warranty expires in March 2029.",
-      size: "sm",
-    },
-    {
-      id: "planning",
-      team: "Planning",
-      when: "14 months ago",
-      person: "noah",
-      title: "Municipal pre-consultation",
-      quote:
-        "Municipal staff supported additional commercial development in principle, but required the team to maintain parking supply and demonstrate that site circulation would continue to function after redevelopment.",
-      note: "Nothing was rejected outright, but the conditions still need to be solved.",
-      size: "sm",
-    },
+  body: [
+    "A property can have years of emails, meetings, reports, decisions and different teams behind it.",
+    "So when someone asks a basic question, the answer is often spread across different people and places.",
+  ],
+
+  /* three questions anyone would recognise, covering past decisions,
+     equipment history and current blockers, though the page never
+     says so */
+  questions: [
+    "What was the issue with the last submission, and what are we doing differently now?",
+    "When was this equipment last serviced, and what was done?",
+    "What is still outstanding before this can move ahead?",
   ],
 
   closing: {
-    count: ["One property.", "Six teams.", "Years of decisions."],
-    lead: ["The information exists.", "The understanding is scattered."],
-    sub: "Before the next decision can be made, someone usually has to piece the story back together.",
+    lead: ["The information usually exists.", "The answer is scattered."],
+    sub: "You shouldn't have to reconstruct the story before you can move the property forward.",
   },
 } as const;
 
@@ -201,7 +169,7 @@ export const TODAY = {
       tone: "filed",
       title: "Concept Plan Rev. 07",
       person: null,
-      meta: "Filed automatically",
+      meta: "Filed automatically by Vera",
     },
     {
       id: "easement",
@@ -264,11 +232,20 @@ export const TODAY = {
       action: "Start warranty review",
     },
     {
+      id: "followup",
+      kind: "Follow-up",
+      tone: "attention",
+      title: "Consultant deliverable has not been received",
+      why: "The revised turning analysis was due six days ago.",
+      meta: "Northline Engineering",
+      action: "Send a reminder",
+    },
+    {
       id: "records",
-      kind: "New context",
+      kind: "Document",
       tone: "info",
-      title: "8 new records were added yesterday",
-      why: "Emails, meeting notes and reports were added across three properties.",
+      title: "8 new records filed across 3 properties",
+      why: "Vera filed emails, meeting notes and reports against the properties they belong to.",
       meta: "3 properties",
       action: "Review updates",
     },
@@ -282,76 +259,104 @@ export const TODAY = {
  * Four ordinary actions, each captured without changing the workflow.
  * ------------------------------------------------------------------ */
 export const WORKFLOW = {
-  label: "How it works",
-  headline: "You work the way you already work.",
-  body: "No new system to keep up to date. Copy Provenance in, invite it, forward it something, or just tell it where a record belongs.",
+  label: "How Vera works",
+  headline: "Vera works where your teams already work.",
+  strap: "CC Vera. Invite Vera. Forward it to Vera. Ask Vera.",
+  body: "No new system to keep up to date. Vera picks the work up in the tools your teams are already in, files it against the right property, and confirms what it did.",
 
   methods: [
     {
       id: "email",
       nav: "Email",
-      title: "CC Provenance on an email",
+      tool: "Mail",
+      title: "CC Vera on an email",
       kind: "New message",
       fields: [
         { label: "To", value: `${PEOPLE.jordan.name} · ${ORGS.engineering}` },
-        { label: "Cc", value: "provenance", accent: true },
+        { label: "Cc", value: "vera@provenance.ai", accent: true },
         { label: "Subject", value: "RTU-3 replacement recommended" },
       ],
       body: "RTU-3 failed its third inspection this year. We recommend full replacement rather than another repair.",
-      result: "Captured",
-      resultDetail: "Decision, owner and due date filed to Westmount Centre",
+      result: "Vera captured it",
+      captured: [
+        { label: "Property matched", value: "Westmount Centre" },
+        { label: "Captured", value: "Replacement recommended over repair" },
+        { label: "Owner", value: "Daniel Kim · Operations" },
+      ],
+      updated: "Westmount Centre → HVAC",
     },
     {
       id: "meeting",
-      nav: "Meeting",
-      title: "Invite it to a meeting",
+      nav: "Calendar",
+      tool: "Calendar",
+      title: "Invite Vera to a meeting",
       kind: "Calendar invite",
       fields: [
-        { label: "Event", value: "Capital planning review" },
+        { label: "Event", value: "South Pad Review" },
         { label: "When", value: "Thursday · 2:00 PM" },
-        { label: "Guests", value: "Alex, Sarah, Jordan, Provenance", accent: true },
+        { label: "Guests", value: "Alex, Sarah, Jordan, Vera", accent: true },
       ],
-      body: "Provenance joins, takes the notes, and separates what was decided from what was only discussed.",
-      result: "Notes captured",
-      resultDetail: "Reasoning and follow-up actions filed against the decision",
+      body: "Vera joins, takes the notes, and separates what was decided from what was only discussed.",
+      result: "Vera captured the notes",
+      captured: [
+        { label: "Decision", value: "Preserve 9,000 SF footprint" },
+        { label: "Action", value: "Complete turning analysis" },
+        { label: "Owner", value: "Sarah Chen · Development" },
+        { label: "Open issue", value: "Utility easement confirmation" },
+      ],
+      updated: "Westmount Centre → South Pad",
     },
     {
       id: "forward",
       nav: "Document",
-      title: "Forward a document",
+      tool: "Mail",
+      title: "Forward a document to Vera",
       kind: "Forwarded message",
       fields: [
-        { label: "To", value: "provenance", accent: true },
-        { label: "Subject", value: "Fwd: Roof condition assessment" },
-        { label: "Attached", value: "Roof-condition-assessment.pdf" },
+        { label: "To", value: "vera@provenance.ai", accent: true },
+        { label: "Subject", value: "Fwd: RTU-4 warranty" },
+        { label: "Attached", value: "RTU-4 Warranty.pdf" },
       ],
-      body: "The report is read, summarised, and linked to the project it belongs to.",
-      result: "Filed",
-      resultDetail: "Linked to the 2014 roof project and the 2026 capital plan",
+      body: "Vera reads the document, files it where it belongs, and pulls out the dates that will matter later.",
+      result: "Vera filed it",
+      filedTo: ["Westmount Centre", "HVAC", "RTU-4", "Warranty"],
+      captured: [{ label: "Extracted", value: "Warranty expiry · March 2029" }],
+      updated: "Equipment history updated",
     },
     {
       id: "tell",
-      nav: "Instruction",
-      title: "Tell it where something belongs",
-      kind: "Message to Provenance",
-      fields: [{ label: "You", value: "File this under Westmount Centre, capital planning" }],
-      body: "Plain language works. Provenance confirms where it filed the record and what it linked.",
-      result: "Filed",
-      resultDetail: "Westmount Centre · Capital planning · 3 sources linked",
+      nav: "Ask Vera",
+      tool: "Vera",
+      title: "Ask Vera a question",
+      kind: "Message to Vera",
+      fields: [{ label: "You", value: "What is holding up the south pad?" }],
+      body: "Plain language works. Vera answers from the record and shows what it drew on.",
+      result: "Vera answered",
+      captured: [
+        { label: "Answered from", value: "4 linked sources" },
+        { label: "Blocked by", value: "Turning analysis, utility easement" },
+      ],
+      updated: "Answer and sources saved to the record",
     },
   ],
 } as const;
-
 
 /* ------------------------------------------------------------------ *
  * INPUTS -> PROPERTY MEMORY -> OUTPUTS
  * The work goes in, structure accumulates, useful work comes back out.
  * ------------------------------------------------------------------ */
 export const MEMORY_LAYER = {
-  label: "The memory layer",
-  headline: ["Everything your team does", "builds the property memory."],
+  label: "Vera and Provenance",
+  headline: ["Everything Vera learns", "builds Provenance."],
   subhead:
-    "Emails, meetings, drawings, decisions and actions flow into one shared record, then come back out as answers, tasks and context the team can actually use.",
+    "The work arrives in the tools your teams already use. Vera captures it, connects it and tracks it. What accumulates underneath is Provenance, the persistent memory of the property, which comes back out as answers, tasks and context.",
+
+  /** the middle of the diagram is two things, not one */
+  vera: {
+    name: "Vera",
+    role: "The AI teammate",
+    does: ["captures", "connects", "understands", "tracks"],
+  },
 
   property: "Westmount Centre",
 
@@ -368,7 +373,11 @@ export const MEMORY_LAYER = {
         { kind: "Property matched", value: "Westmount Centre" },
         { kind: "Decision captured", value: "Preserve 9,000 SF footprint" },
       ],
-      adds: { kind: "Decision", title: "South pad footprint preserved", meta: "Feb 12" },
+      adds: {
+        kind: "Decision",
+        title: "South pad footprint preserved",
+        meta: "Feb 12",
+      },
     },
     {
       id: "meeting",
@@ -380,7 +389,11 @@ export const MEMORY_LAYER = {
         { kind: "Action detected", value: "Complete turning analysis" },
         { kind: "Owner and due date", value: "Sarah Chen · Thursday" },
       ],
-      adds: { kind: "Open action", title: "Turning analysis", meta: "Sarah Chen · Thu" },
+      adds: {
+        kind: "Open action",
+        title: "Turning analysis",
+        meta: "Sarah Chen · Thu",
+      },
     },
     {
       id: "report",
@@ -388,8 +401,14 @@ export const MEMORY_LAYER = {
       label: "Report",
       title: "Traffic memo · Rev. 03",
       at: { x: 15, y: 60 },
-      steps: [{ kind: "Constraint linked", value: "South pad loading configuration" }],
-      adds: { kind: "Issue", title: "Turning analysis outstanding", meta: "Open" },
+      steps: [
+        { kind: "Constraint linked", value: "South pad loading configuration" },
+      ],
+      adds: {
+        kind: "Issue",
+        title: "Turning analysis outstanding",
+        meta: "Open",
+      },
     },
     {
       id: "drawing",
@@ -398,7 +417,11 @@ export const MEMORY_LAYER = {
       title: "Concept plan · Rev. 07",
       at: { x: 1, y: 84 },
       steps: [{ kind: "Revision identified", value: "South pad · Rev. 07" }],
-      adds: { kind: "Property event", title: "Concept Rev. 07 received", meta: "Evidence linked" },
+      adds: {
+        kind: "Property event",
+        title: "Concept Rev. 07 received",
+        meta: "Evidence linked",
+      },
     },
     {
       id: "lease",
@@ -414,7 +437,9 @@ export const MEMORY_LAYER = {
       label: "Correspondence",
       title: "Municipal comments",
       at: { x: 19, y: 78 },
-      steps: [{ kind: "Issue updated", value: "Servicing information required" }],
+      steps: [
+        { kind: "Issue updated", value: "Servicing information required" },
+      ],
     },
     {
       id: "invoice",
@@ -436,7 +461,7 @@ export const MEMORY_LAYER = {
   outputs: [
     {
       id: "ask",
-      kind: "Ask Provenance",
+      kind: "Ask Vera",
       variant: "ask",
       title: "What's holding up the south pad?",
       meta: "Answered from 4 sources",
@@ -471,22 +496,30 @@ export const MEMORY_LAYER = {
   ],
 
   /** what the memory holds once the work has passed through it */
-  structure: ["Property matched", "Decisions linked", "Actions tracked", "Evidence connected"],
+  structure: [
+    "Property matched",
+    "Decisions linked",
+    "Actions tracked",
+    "Evidence connected",
+  ],
 
   /** the three phases, named */
-  phases: ["Work in", "Property memory", "Work out"],
+  phases: ["Work in", "Vera builds Provenance", "Work out"],
 
-  payoff: ["Work goes in.", "Useful context comes out.", "The property remembers."],
+  payoff: [
+    "Vera works with your teams.",
+    "Provenance remembers for the property.",
+  ],
 } as const;
 
 /* ------------------------------------------------------------------ *
  * ASK PROVENANCE — one strong question, sourced, shareable.
  * ------------------------------------------------------------------ */
 export const ASK_PROVENANCE = {
-  label: "Ask the property",
-  headline: "Ask the property.",
+  label: "Ask Vera",
+  headline: "Ask Vera.",
   intro:
-    "You are not searching documents. You are asking the property what happened, and getting the story with its sources attached.",
+    "You are not searching documents. You are asking Vera what happened, and getting the story with its sources attached.",
 
   /** five questions, one per part of the organisation */
   cases: [
@@ -497,9 +530,18 @@ export const ASK_PROVENANCE = {
         "What's holding up the south pad, and what needs to happen before we can move it forward?",
       lead: "3 things are holding it up.",
       items: [
-        { team: "Leasing", text: "The 9,000 SF footprint needs to remain for the prospective tenant." },
-        { team: "Traffic", text: "Vehicle-turning analysis is still outstanding." },
-        { team: "Legal", text: "The eastern utility easement still needs confirmation." },
+        {
+          team: "Leasing",
+          text: "The 9,000 SF footprint needs to remain for the prospective tenant.",
+        },
+        {
+          team: "Traffic",
+          text: "Vehicle-turning analysis is still outstanding.",
+        },
+        {
+          team: "Legal",
+          text: "The eastern utility easement still needs confirmation.",
+        },
       ],
       nextStep:
         "Complete the turning analysis and confirm the easement before Thursday's concept review.",
@@ -538,14 +580,29 @@ export const ASK_PROVENANCE = {
       question: "What do we need to know before Thursday's tenant meeting?",
       lead: "3 items are relevant.",
       items: [
-        { team: "", text: "The tenant requested the larger 9,000 SF footprint." },
-        { team: "", text: "The latest concept preserves the requested area but requires an alternate loading arrangement." },
-        { team: "", text: "Traffic analysis for that configuration is still outstanding." },
+        {
+          team: "",
+          text: "The tenant requested the larger 9,000 SF footprint.",
+        },
+        {
+          team: "",
+          text: "The latest concept preserves the requested area but requires an alternate loading arrangement.",
+        },
+        {
+          team: "",
+          text: "Traffic analysis for that configuration is still outstanding.",
+        },
       ],
       note: "The previous proposal assumed a smaller footprint and should not be used for Thursday's discussion.",
       noteLabel: "Also relevant",
       sources: 5,
-      sourceList: ["Tenant email", "Concept plan · Rev. 07", "Traffic memo", "Prior proposal", "Meeting notes"],
+      sourceList: [
+        "Tenant email",
+        "Concept plan · Rev. 07",
+        "Traffic memo",
+        "Prior proposal",
+        "Meeting notes",
+      ],
       actions: ["Prepare brief", "Share"],
       share: ["jordan", "sarah"],
     },
@@ -553,8 +610,9 @@ export const ASK_PROVENANCE = {
       id: "operations",
       category: "Operations",
       question: "What's the history of RTU-4?",
-      para: ["RTU-4 was installed in 2020. Since installation:"],
+      para: ["The full service history for RTU-4:"],
       timeline: [
+        { year: "2020", text: "Installed" },
         { year: "2022", text: "Compressor repair" },
         { year: "2024", text: "Recurring control issue reported" },
         { year: "2025", text: "Control board replaced" },
@@ -562,7 +620,12 @@ export const ASK_PROVENANCE = {
       ],
       facts: [{ label: "Warranty expires", value: "March 2029" }],
       sources: 6,
-      sourceList: ["Service records", "Commissioning report", "Warranty", "Inspection notes"],
+      sourceList: [
+        "Service records",
+        "Commissioning report",
+        "Warranty",
+        "Inspection notes",
+      ],
       actions: ["Open equipment history", "Share"],
       share: ["daniel", "maya"],
     },
@@ -585,7 +648,12 @@ export const ASK_PROVENANCE = {
         },
       ],
       sources: 11,
-      sourceList: ["2023 concept set", "Servicing memo", "2025 concept set", "Circulation review"],
+      sourceList: [
+        "2023 concept set",
+        "Servicing memo",
+        "2025 concept set",
+        "Circulation review",
+      ],
       actions: ["View previous concepts", "Share"],
       share: ["sarah", "noah"],
     },
@@ -607,39 +675,130 @@ export const ASK_PROVENANCE = {
  * OVER TIME — the same work, compounding.
  * ------------------------------------------------------------------ */
 export const OVER_TIME = {
-  label: "Over time",
-  headline: ["Teams change.", "The property persists.", "Its context should too."],
-  body: "Every decision, project, issue and piece of evidence captured through Provenance becomes part of a source-backed record that survives team turnover and future ownership.",
+  label: "Provenance over time",
+  headline: [
+    "Teams change.",
+    "The property persists.",
+    "Its context should too.",
+  ],
+  body: "Every decision, project, issue and source captured through Vera becomes part of a property record that survives team turnover and keeps accumulating over the life of the asset.",
 
-  today: {
-    label: "With Provenance, your team can",
-    items: [
-      "Coordinate active work",
-      "Capture decisions as they happen",
-      "Track actions and deadlines",
-      "Answer questions from the record",
-      "Share context across departments",
-    ],
-  },
-  later: {
-    label: "And the property gains",
-    items: [
-      "Decision history",
-      "Property timeline",
-      "Historical rationale",
-      "Source lineage",
-      "Institutional memory",
-    ],
-  },
-
-  turnover: [
-    { who: "Acquisition lead", note: "Left", here: false },
-    { who: "Asset manager", note: "On vacation", here: false },
-    { who: "Development manager", note: "Still here", here: true },
-    { who: "Leasing team", note: "Left", here: false },
+  /** the property stays; the roles around it rotate */
+  roles: [
+    { who: "Acquisitions", note: "Moved on" },
+    { who: "Development", note: "Second manager" },
+    { who: "Asset Management", note: "Changed twice" },
+    { who: "Operations", note: "Still here" },
+    { who: "Consultants", note: "Three firms" },
+    { who: "Owner", note: "One sale" },
   ],
 
+  constant: {
+    label: "Constant",
+    name: "Westmount Centre",
+    note: "The record stays attached to the property.",
+  },
+
   payoff: "The people move on. The record does not.",
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * FAQ — the questions the distinction has to survive
+ * ------------------------------------------------------------------ */
+export const FAQ = {
+  label: "Questions",
+  headline: "Questions, answered.",
+  items: [
+    {
+      q: "Why can I not just use ChatGPT or Claude?",
+      a: [
+        "General AI can read a set of documents in a conversation.",
+        "Vera works continuously with your team, capturing the property work happening across emails, meetings, documents and decisions.",
+        "That activity builds Provenance, an ongoing source-backed record that becomes richer as the property changes and can, if the owner chooses, transfer with the asset in the future.",
+      ],
+    },
+    {
+      q: "How does Provenance handle privacy and sensitive information?",
+      a: [
+        "Access is controlled by your organisation.",
+        "Teams can decide who can view specific records, answers and shared context, so sensitive information does not need to be available to everyone.",
+      ],
+    },
+    {
+      q: "What data does Provenance collect?",
+      a: [
+        "Provenance builds context from the information your organisation chooses to provide or connect, including emails, meetings, reports, drawings, documents, decisions and tasks.",
+        "It is focused on property-related work, not unrelated personal information.",
+      ],
+    },
+    {
+      q: "Do we need to change how our team already works?",
+      a: [
+        "No.",
+        "Vera is designed to work alongside existing workflows. Teams can CC Vera on emails, invite Vera to meetings, forward documents and interact with Vera alongside the tools they already use.",
+      ],
+    },
+    {
+      q: "Does Provenance replace our project or document management software?",
+      a: [
+        "Not necessarily.",
+        "Those systems help manage tasks or store documents.",
+        "Vera connects the decisions, actions, people and documents around a property, while Provenance preserves the context behind that work over time.",
+      ],
+    },
+    {
+      q: "Does everything transfer if a property is sold?",
+      a: [
+        "No. Any transfer is permissioned.",
+        "Property-level history and evidence can move with the asset if the owner chooses, while internal underwriting, negotiations, strategy, returns and other company-specific information can remain private.",
+      ],
+    },
+  ],
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * ONBOARDING — the brief a new consultant gets instead of a week of
+ * meetings. Same fictional property, same fictional firm.
+ * ------------------------------------------------------------------ */
+export const ONBOARDING = {
+  label: "Onboarding",
+  headline: "Bring new people up to speed faster.",
+  body: "Give consultants and new team members the property history, active decisions, open issues, prior work and supporting sources they need, without rebuilding the story from scratch.",
+
+  ask: "Bring Northline Engineering up to speed on the south pad before Thursday's kickoff.",
+
+  brief: {
+    property: "Westmount Centre",
+    title: "South pad consultant brief",
+    sections: [
+      {
+        label: "Current objective",
+        lines: ["Advance the revised concept for internal review."],
+      },
+      {
+        label: "Key decision",
+        lines: ["Preserve the 9,000 SF tenant footprint."],
+      },
+      {
+        label: "Open issues",
+        lines: ["Vehicle-turning analysis", "Utility easement confirmation"],
+      },
+      {
+        label: "Previous work",
+        lines: [
+          "Concept Rev. 05",
+          "Concept Rev. 07",
+          "Municipal comments",
+          "Previous traffic review",
+        ],
+      },
+    ],
+    sources: "12 linked records",
+    action: "Share with Northline Engineering",
+  },
+
+  payoff:
+    "A new consultant should not need someone to manually rebuild six months of history before they can start useful work.",
 } as const;
 
 /* ------------------------------------------------------------------ *
@@ -648,31 +807,179 @@ export const OVER_TIME = {
 export const CTA = {
   headline: "Give every property a memory.",
   body: "Start with the work your team is already doing.",
-  action: "Request early access",
+  call: "Request early access",
+  callUrl: "https://cal.com/harnav-toor-rninws",
 } as const;
 
 /* ------------------------------------------------------------------ *
  * THE PRODUCT SHOWCASE — the three things Provenance does, in one frame
  * ------------------------------------------------------------------ */
 export const SHOWCASE = {
-  label: "The product",
-  headline: ["Track what's happening.", "Ask what happened.", "Surface what matters next."],
-  body: "All three run on the same record. The work your team is already doing is what makes the other two possible.",
+  label: "What Vera does",
+  headline: ["Track the work.", "Ask Vera.", "Proactive Insights."],
+  body: "Three modes of the same product, running on the same record. The work your team is already doing is what makes the other two possible.",
   modes: [
     {
       id: "track",
-      label: "Track work",
-      note: "Provenance connects decisions, actions, deadlines, documents and open issues across every team working on the property.",
+      label: "Track the work",
+      note: "One property, many functions, one shared operating view. Vera keeps decisions, actions, deadlines, documents and open issues together across every team touching the asset.",
     },
     {
       id: "ask",
-      label: "Ask the property",
-      note: "Ask a complicated question and Provenance answers it from the record, with the sources attached, so the answer can go straight to the teams that need it.",
+      label: "Ask Vera",
+      note: "Ask in plain language. Vera answers from the record, with the sources attached, so the answer can go straight to the teams that need it.",
     },
     {
       id: "surface",
-      label: "Surface what matters",
-      note: "The record notices what changed, connects it to what happened before, and says what is worth doing about it.",
+      label: "Proactive Insights",
+      note: "Vera notices what changed, connects it to what happened before, and says what is worth doing about it.",
     },
   ],
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * THESIS — the belief under the product. Its own page, deliberately,
+ * so the homepage does not have to carry it.
+ * ------------------------------------------------------------------ */
+export const THESIS = {
+  eyebrow: "Thesis",
+  headline: [
+    "Buildings outlive the people who work on them.",
+    "Their memory should too.",
+  ],
+
+  opening:
+    "A commercial property can exist for decades. Over that time, owners change, employees leave, consultants rotate, systems are replaced, projects are paused and restarted, and thousands of decisions accumulate around the asset.",
+
+  /* the idea the rest of the argument rests on: the volume grows while the
+     people who understand it keep changing */
+  accumulation: {
+    lead: "The longer a property exists, the more context it accumulates.",
+    body: "Emails, reports, drawings, leases, approvals, project decisions, capital work, consultant advice, operational history, legal context and ownership history all build up around the asset. The volume grows every year. The people who understand it do not stay.",
+  },
+
+  /* what happens to a building across a few decades */
+  churn: {
+    label: "Across the life of a property",
+    items: [
+      "Owners change",
+      "Employees leave",
+      "Consultants rotate",
+      "Development ideas are paused and revisited",
+      "Capital work is completed or deferred",
+      "Leases change",
+      "Systems are repaired and replaced",
+      "Municipal approvals evolve",
+      "Hundreds of decisions are made",
+    ],
+  },
+
+  pivot: {
+    lead: [
+      "The files often survive.",
+      "The reasoning connecting them does not.",
+    ],
+    body: "Over time, that creates corporate amnesia. The organization keeps the records, but loses why decisions were made, what was tried, what changed, and what still matters.",
+  },
+
+  belief: {
+    lead: [
+      "Property knowledge should accumulate.",
+      "It should not reset every time a team changes.",
+    ],
+  },
+
+  /* how the product follows from the belief */
+  model: {
+    label: "The model",
+    steps: [
+      { name: "Work happens", note: "Emails, meetings, documents, decisions." },
+      {
+        name: "Vera captures the context",
+        note: "In the work teams already do.",
+      },
+      {
+        name: "Provenance builds the property memory",
+        note: "Source-backed and connected over time.",
+      },
+      {
+        name: "The memory compounds",
+        note: "Every new decision starts with what the property already knows.",
+      },
+    ],
+  },
+
+  /* one is active, one is persistent, and they are one system */
+  roles: {
+    label: "Vera and Provenance",
+    line: "Vera works with the team. Provenance remembers for the property.",
+    items: [
+      {
+        name: "Vera",
+        note: "The active intelligence. Vera reads, listens, captures, connects, understands and surfaces.",
+      },
+      {
+        name: "Provenance",
+        note: "The persistent memory. Provenance preserves, accumulates, connects history and keeps the evidence across time.",
+      },
+    ],
+  },
+
+  horizons: [
+    {
+      label: "Today",
+      lead: "Vera helps teams",
+      items: [
+        "Answer property questions",
+        "Track decisions and open issues",
+        "Prepare for meetings",
+        "Share context across teams",
+        "Onboard new people faster",
+        "Surface risks and opportunities",
+      ],
+    },
+    {
+      label: "Over time",
+      lead: "Provenance becomes",
+      items: [
+        "Decision history",
+        "Property history",
+        "Project memory",
+        "Source-backed rationale",
+        "Context across team changes",
+        "Continuity across ownership",
+      ],
+    },
+  ],
+
+  payoff: ["Useful today.", "Compounding over the life of the property."],
+
+  /* the part that has to be stated carefully */
+  transfer: {
+    label: "On transfer",
+    headline: "If a property changes hands, the history can go with it.",
+    body: "The owner chooses what property-level history and evidence transfers with the asset. Internal strategy, underwriting, negotiations, returns, and other company-specific context can remain private.",
+    close:
+      "The next owner should not always need to rebuild the history of the property from zero.",
+  },
+
+  /* the distinction that makes the transfer answer credible */
+  memory: {
+    label: "Two kinds of memory",
+    items: [
+      {
+        name: "Organization memory",
+        note: "Private context belonging to the organization. Strategy, underwriting, returns, negotiations and internal analysis.",
+      },
+      {
+        name: "Property memory",
+        note: "Context tied to the property itself. History, decisions, approvals, drawings, warranties, work completed and the evidence behind them.",
+      },
+    ],
+  },
+
+  horizon:
+    "Starting with real estate, Provenance is building a memory layer for long-lived physical assets.",
+
+  conclusion: "Properties should not start over every time the people around them do.",
 } as const;

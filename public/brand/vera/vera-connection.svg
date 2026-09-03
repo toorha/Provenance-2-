@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-labelledby="vera-connection-title">
+  <title id="vera-connection-title">Vera connection mark</title>
+  <!-- Two independent records, drawn as two open square brackets facing away
+       from each other, joined by one diagonal: the single intervention that
+       found the relationship. Not a chain link, and not a letter. -->
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M11 5 H5 V14 H11" />
+    <path d="M21 18 H27 V27 H21" />
+    <path d="M10.5 21.5 L21.5 10.5" />
+  </g>
+</svg>

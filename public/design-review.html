@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Provenance Design System Review</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:Pliant;src:url(/Pliant.woff2)format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:Garamond;src:url(/EBGaramond.woff2)format('woff2');font-weight:400 800;font-display:swap}
+
+:root{
+  --m0:#FBFCFB; --m50:#F4F6F5; --m100:#E9ECEB; --m200:#DCE1DF;
+  --m300:#C9D0CD; --m400:#A8B2AF; --m500:#7E8A88;
+  --slate:#56636A; --graphite:#323A3B; --graphite-lift:#3D4749;
+  --ink:#1E2422; --ink-deep:#161B1A;
+  --v50:#EFF5F1; --v100:#E1EDE6; --v300:#A6C7B5; --v400:#6FA98C;
+  --v600:#2A6249; --v700:#1F4A38; --v800:#173329;
+  --clay100:#F3E4DE; --clay600:#A35F45; --clay700:#8F5038;
+  --ochre100:#EFE9DA; --ochre600:#9A7B3F; --ochre700:#7D6229;
+  --on:#E9ECEB; --onmut:#A8B4B0; --onsub:#77837F;
+  --hl:rgba(233,236,235,.12); --hl2:rgba(233,236,235,.20);
+  --lift2:0 1px 1px rgba(30,36,34,.03),0 2px 4px rgba(30,36,34,.04);
+  --lift3:0 1px 2px rgba(30,36,34,.04),0 8px 24px rgba(30,36,34,.08);
+  --e-ent:cubic-bezier(.16,1,.30,1); --e-st:cubic-bezier(.40,0,.20,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--m100);color:var(--ink);
+  font-family:Pliant,system-ui,-apple-system,sans-serif;font-weight:430;
+  font-size:17px;line-height:1.6;letter-spacing:-.003em;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+section{padding:88px 0;border-top:1px solid var(--m300)}
+section:first-of-type{border-top:0}
+
+/* type scale */
+.d1{font-size:76px;font-weight:600;line-height:1.0;letter-spacing:-.020em;margin:0}
+.d2{font-size:56px;font-weight:600;line-height:1.04;letter-spacing:-.018em;margin:0}
+.d3{font-size:40px;font-weight:600;line-height:1.10;letter-spacing:-.015em;margin:0}
+.h1{font-size:30px;font-weight:600;line-height:1.18;letter-spacing:-.012em;margin:0}
+.h2{font-size:22px;font-weight:600;line-height:1.28;letter-spacing:-.008em;margin:0}
+.lead{font-size:20px;font-weight:430;line-height:1.5;letter-spacing:-.005em;color:var(--slate);max-width:56ch;margin:0}
+.body{font-size:17px;line-height:1.6;max-width:62ch}
+.sm{font-size:15px;line-height:1.55}
+.ui{font-size:14px;font-weight:500;line-height:1.4}
+.uism{font-size:13px;font-weight:500;line-height:1.35;letter-spacing:.004em}
+.micro{font-size:12px;font-weight:500;line-height:1.3;letter-spacing:.010em}
+.mn{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.45;letter-spacing:.020em}
+.mnsm{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;line-height:1.3;letter-spacing:.040em}
+
+/* section label — the corrected treatment */
+.rule{height:2px;width:24px;background:var(--v700);margin-bottom:14px}
+.slabel{font-size:20px;font-weight:600;line-height:1.2;letter-spacing:-.006em;margin:0 0 20px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:60;height:60px;background:var(--m100);
+  border-bottom:1px solid var(--m300);display:flex;align-items:center}
+nav .wrap{display:flex;align-items:center;gap:26px;width:100%}
+nav a{font-size:14px;font-weight:500;color:var(--slate);text-decoration:none;position:relative;padding:2px 0}
+nav a:hover{color:var(--ink)}
+nav a::after{content:'';position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--ink);
+  transition:width 140ms var(--e-st)}
+nav a:hover::after{width:100%}
+nav .brand{font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin-right:8px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:6px;
+  font-size:15px;font-weight:500;border:1px solid transparent;text-decoration:none;cursor:pointer;
+  transition:background-color 90ms var(--e-st),color 90ms var(--e-st);font-family:inherit}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--m100),0 0 0 4px var(--v600)}
+.b-pri{background:var(--ink);color:var(--m50)} .b-pri:hover{background:var(--ink-deep)}
+.b-vera{background:var(--v700);color:var(--m50)} .b-vera:hover{background:var(--v800)}
+.b-sec{background:transparent;color:var(--ink);border-color:var(--m400)} .b-sec:hover{background:var(--m50)}
+.b-inv{background:var(--m100);color:var(--ink)} .b-inv:hover{background:var(--m0)}
+
+/* swatches */
+.sw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:1px;background:var(--m300);
+  border:1px solid var(--m300);border-radius:10px;overflow:hidden}
+.sw{background:var(--m0);padding:0}
+.sw .chip{height:64px}
+.sw .meta{padding:10px 12px}
+.sw .nm{font-size:13px;font-weight:600;letter-spacing:-.004em}
+.sw .hx{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--slate);letter-spacing:.03em}
+.sw .cr{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;margin-top:3px}
+.pass{color:var(--v600)} .warn{color:var(--clay700)}
+
+/* product frame */
+.frame{background:var(--m0);border:1px solid var(--m300);border-radius:14px;box-shadow:var(--lift2);overflow:hidden}
+.fbar{height:44px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--m200);
+  font-size:13px;font-weight:500;color:var(--slate)}
+.fbar .crumb{color:var(--ink)}
+.prow{position:relative;display:grid;grid-template-columns:16px 1fr 132px 140px 104px;gap:14px;align-items:center;
+  height:52px;padding:0 16px;border-bottom:1px solid var(--m200);font-size:14px;font-weight:500;
+  transition:background-color 90ms var(--e-st)}
+.prow:last-child{border-bottom:0}
+.prow:hover{background:var(--m50)}
+.prow .bar{position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--v600);opacity:0;
+  transition:opacity 90ms var(--e-st)}
+.prow:hover .bar{opacity:1}
+.dot{width:7px;height:7px;border-radius:3px}
+.tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.01em;margin-left:10px}
+.t-blk{background:var(--clay100);color:var(--clay700)}
+.t-opp{background:var(--v100);color:var(--v700)}
+.t-exp{background:var(--ochre100);color:var(--ochre700)}
+.meta{font-size:13px;font-weight:500;color:var(--slate)}
+.mmeta{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;color:var(--slate);letter-spacing:.04em}
+
+/* record line */
+.rec{position:relative;padding-left:26px;list-style:none;margin:0}
+.rec::before{content:'';position:absolute;left:3px;top:6px;bottom:6px;width:1px;background:var(--m300)}
+.rec li{position:relative;padding-bottom:24px}
+.rec li:last-child{padding-bottom:0}
+.rec .node{position:absolute;left:-23px;top:6px;width:7px;height:7px;border-radius:3px;background:var(--graphite)}
+.rec .node.v{background:var(--v700)}
+
+/* two-up compare */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.cmp .lbl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:14px}
+.bad{color:var(--clay700)} .good{color:var(--v600)}
+.fakecard{background:var(--m0);border:1px solid var(--m300);border-radius:12px;padding:20px;margin-bottom:12px}
+.fakecard .ic{width:36px;height:36px;border-radius:8px;background:var(--m200);margin-bottom:12px}
+.blk{padding-bottom:22px;margin-bottom:22px;border-bottom:1px solid var(--m300)}
+.blk:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+
+/* ===== DEEP HALF ===== */
+.deep{background:var(--ink);color:var(--on);border-top:0}
+.deep .slabel{color:var(--on)}
+.deep .rule{background:var(--v400)}
+.deep .lead{color:var(--onmut)}
+.deep section{border-top:1px solid var(--hl)}
+.descent{height:0}
+
+/* composition */
+.comp{position:relative;margin-top:30px}
+.compgrid{position:absolute;inset:-40px -32px;pointer-events:none;
+  background-image:repeating-linear-gradient(90deg,rgba(233,236,235,.025) 0 1px,transparent 1px 103px),
+                   repeating-linear-gradient(0deg,rgba(233,236,235,.025) 0 1px,transparent 1px 80px)}
+.heads{position:relative;display:grid;grid-template-columns:230px 1fr 320px;margin-bottom:22px}
+.heads div{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--onmut)}
+.heads .c{text-align:center}
+.stage{position:relative;display:grid;grid-template-columns:230px 1fr 320px}
+#curves{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#curves path{transition:stroke-opacity 520ms var(--e-st)}
+.win{display:flex;flex-direction:column}
+.wrow{display:flex;align-items:center;gap:12px;height:75px;font-size:14px;font-weight:500;
+  color:var(--onsub);transition:color 520ms var(--e-st)}
+.wrow svg{stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:square;stroke-linejoin:miter;flex:none}
+.corewrap{display:flex;align-items:center;justify-content:center}
+.core{width:400px;background:var(--m0);border-radius:14px;color:var(--ink);overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.22),0 10px 26px rgba(0,0,0,.28);
+  transition:box-shadow 520ms var(--e-st),opacity 520ms var(--e-st)}
+.cz{padding:18px 20px}
+.crow{display:flex;align-items:center;gap:9px}
+.mark{width:20px;height:20px;border-radius:3px;background:var(--v700);display:grid;place-items:center;
+  color:#F4F6F5;font-size:11px;font-weight:600;font-family:'IBM Plex Mono',monospace;flex:none}
+.mark.p{background:var(--graphite)}
+.cname{font-size:22px;font-weight:600;letter-spacing:-.008em}
+.ctag{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--slate)}
+.verbs{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--graphite);margin-top:12px}
+.hinge{background:var(--m50);border-top:1px solid var(--m200);border-bottom:1px solid var(--m200);
+  padding:11px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--slate)}
+.cdesc{font-size:15px;line-height:1.55;margin-top:9px}
+.wout{display:flex;flex-direction:column;justify-content:space-between}
+.oent{border-left:1px solid var(--hl);padding-left:14px;transition:border-color 520ms var(--e-st)}
+.olab{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--onsub);transition:color 520ms var(--e-st)}
+.ocon{font-size:14px;font-weight:500;color:var(--onsub);margin-top:5px;line-height:1.35;
+  transition:color 520ms var(--e-st)}
+.odet{font-size:13px;font-weight:500;color:var(--onsub);margin-top:4px;transition:color 520ms var(--e-st)}
+/* emphasis states */
+.on .wrow{color:var(--on)}
+.on .oent{border-color:var(--v400)}
+.on .olab{color:var(--v400)}
+.on .ocon{color:var(--on)}
+.on .odet{color:var(--onmut)}
+.on .core{box-shadow:0 2px 4px rgba(0,0,0,.26),0 20px 46px rgba(0,0,0,.42)}
+
+.ctrls{display:flex;align-items:center;gap:8px;margin-top:34px;flex-wrap:wrap}
+.ctrl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;padding:7px 12px;border-radius:6px;border:1px solid var(--hl);
+  background:transparent;color:var(--onmut);cursor:pointer;transition:all 140ms var(--e-st)}
+.ctrl:hover{border-color:var(--hl2);color:var(--on)}
+.ctrl[aria-pressed="true"]{background:var(--v700);border-color:var(--v700);color:var(--m50)}
+.tick{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--onsub);letter-spacing:.04em;margin-left:6px}
+
+/* faq ledger */
+.faq{border-top:1px solid var(--hl)}
+.faqrow{border-bottom:1px solid var(--hl);padding:22px 0;cursor:pointer}
+.faqq{display:flex;align-items:center;gap:14px;font-size:22px;font-weight:600;letter-spacing:-.008em}
+.faqq .cv{margin-left:auto;transition:transform 220ms var(--e-st);color:var(--onmut)}
+.faqrow.open .cv{transform:rotate(90deg)}
+.faqa{max-height:0;overflow:hidden;transition:max-height 220ms var(--e-st);color:var(--onmut)}
+.faqrow.open .faqa{max-height:200px}
+.faqa p{margin:14px 0 0;font-size:15px;line-height:1.6;max-width:62ch}
+
+.note{background:var(--m50);border-left:2px solid var(--v700);padding:14px 18px;margin:18px 0;
+  font-size:15px;line-height:1.55;max-width:70ch}
+.deep .note{background:rgba(233,236,235,.04);border-left-color:var(--v400);color:var(--onmut)}
+table.spec{border-collapse:collapse;width:100%;font-size:14px}
+table.spec td,table.spec th{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--m300);vertical-align:baseline}
+table.spec th{font-size:11.5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:500}
+.deep table.spec td,.deep table.spec th{border-bottom-color:var(--hl)}
+.deep table.spec th{color:var(--onsub)}
+@media (max-width:900px){
+  .cmp,.heads,.stage{grid-template-columns:1fr}
+  #curves{display:none}
+  .d1{font-size:44px}.d2{font-size:36px}.d3{font-size:28px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:0ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <span class="brand">Provenance</span>
+  <a href="#colour">Colour</a><a href="#type">Type</a><a href="#labels">Labels</a>
+  <a href="#cards">Anti-card</a><a href="#buttons">Buttons</a><a href="#product">Product UI</a>
+  <a href="#composition">Composition</a>
+  <a class="btn b-pri" style="margin-left:auto;height:38px;padding:0 16px;font-size:14px" href="#composition">Jump to composition</a>
+</div></nav>
+
+<section><div class="wrap">
+  <div class="rule"></div><p class="slabel">Design system review</p>
+  <h1 class="d1" style="max-width:17ch">Keep track of what is happening now. Never lose why it happened.</h1>
+  <p class="lead" style="margin-top:22px">One shared record of what’s happening, what happened, and why, across every property in the portfolio.</p>
+  <div style="margin-top:30px;display:flex;gap:12px">
+    <a class="btn b-pri" href="#composition">Request access</a>
+    <a class="btn b-sec" href="#product">See how Vera works</a>
+  </div>
+  <div class="note" style="margin-top:38px">
+    This page renders the rules in <strong>DESIGN.md</strong> so they can be judged by eye rather than read.
+    It is not the website and not a component library. It is a specimen. Hover the product rows, and use
+    the state controls in the composition section to step through the motion spec.
+  </div>
+</div></section>
+
+<!-- COLOUR -->
+<section id="colour"><div class="wrap">
+  <div class="rule"></div><p class="slabel">Colour</p>
+  <h2 class="d3" style="max-width:24ch;margin-bottom:10px">The canvas is not white, so white becomes a lift.</h2>
+  <p class="body" style="color:var(--slate);margin:0 0 30px">Contrast ratios below are computed live against the surface each token actually sits on. Anything under 4.5:1 is flagged.</p>
+  <div class="sw-grid" id="swatches"></div>
+</div></section>
+
+<!-- TYPE -->
+<section id="type"><div class="wrap">
+  <div class="rule"></div><p class="slabel">Typography</p>
+  <h2 class="d3" style="max-width:22ch;margin-bottom:26px">Pliant needs far less negative tracking than the corpus.</h2>
+  <div style="display:grid;gap:26px">
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">DISPLAY-1 · 76px · 600 · −0.020em</div><div class="d1">Never lose why it happened.</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">DISPLAY-2 · 56px · 600 · −0.018em</div><div class="d2">Simple questions shouldn’t require a scavenger hunt.</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">DISPLAY-3 · 40px · 600 · −0.015em</div><div class="d3">“What’s holding up the south pad?”</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">HEADING-1 · 30px · 600</div><div class="h1">Everything Vera learns builds Provenance.</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">LEAD · 20px · 430</div><div class="lead">Vera works with your teams. Provenance remembers for the property.</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">BODY · 17px · 430</div><div class="body">The information usually exists. The answer is scattered. Over time that becomes organisational amnesia: the files survive, the reasoning connecting them often does not.</div></div>
+    <div><div class="mnsm" style="color:var(--slate);margin-bottom:6px">UI 14 · UI-SM 13 · MICRO 12 · MONO 13</div>
+      <span class="ui">Turning analysis overdue</span> &nbsp;·&nbsp;
+      <span class="uism" style="color:var(--slate)">Development</span> &nbsp;·&nbsp;
+      <span class="micro" style="color:var(--slate)">BLOCKER</span> &nbsp;·&nbsp;
+      <span class="mn" style="color:var(--slate)">Due 12 Aug 2026</span>
+    </div>
+  </div>
+  <div class="note">
+    <strong>Measured, not assumed.</strong> Pliant’s <code>wdth</code> axis is extended-only, so it cannot be condensed.
+    It has <strong>no tabular figures</strong> (a “1” is nearly half the width of a “0”), which is why every numeral that
+    must align across rows is set in IBM Plex Mono. And Linear’s −3px display tracking collides Pliant’s words;
+    −0.020em is the tested ceiling.
+  </div>
+  <div style="margin-top:28px">
+    <div class="mnsm" style="color:var(--slate);margin-bottom:8px">NUMERAL ALIGNMENT: WHY MONO</div>
+    <div class="cmp">
+      <div>
+        <div class="lbl bad">Pliant: drifts</div>
+        <div style="font-size:15px;font-weight:500;line-height:1.9">11 Jul 2026<br>04 Aug 2026<br>12 Aug 2026</div>
+      </div>
+      <div>
+        <div class="lbl good">Plex Mono: aligns</div>
+        <div class="mono" style="font-size:14px;line-height:2.05;color:var(--slate)">11 Jul 2026<br>04 Aug 2026<br>12 Aug 2026</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- LABELS -->
+<section id="labels"><div class="wrap">
+  <div class="rule"></div><p class="slabel">Section labels</p>
+  <div class="cmp">
+    <div>
+      <div class="lbl bad">Before: the dainty eyebrow</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--m500);margin-bottom:14px">The problem</div>
+      <div style="font-size:34px;font-weight:430;letter-spacing:-.01em;color:var(--slate);line-height:1.15">Simple questions shouldn’t require a scavenger hunt.</div>
+    </div>
+    <div>
+      <div class="lbl good">After: 20px / 600 / sentence case</div>
+      <div class="rule"></div>
+      <p class="slabel">The problem</p>
+      <div class="d3" style="font-size:34px">Simple questions shouldn’t require a scavenger hunt.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ANTI-CARD -->
+<section id="cards"><div class="wrap">
+  <div class="rule"></div><p class="slabel">The anti-card doctrine</p>
+  <div class="cmp">
+    <div>
+      <div class="lbl bad">Before: every idea in a box</div>
+      <div class="fakecard"><div class="ic"></div><div class="h2" style="font-size:18px">Capture decisions</div><p class="sm" style="color:var(--slate);margin:6px 0 0">Vera records what was decided and why.</p></div>
+      <div class="fakecard"><div class="ic"></div><div class="h2" style="font-size:18px">Track actions</div><p class="sm" style="color:var(--slate);margin:6px 0 0">Deadlines and owners stay visible.</p></div>
+      <div class="fakecard"><div class="ic"></div><div class="h2" style="font-size:18px">Surface blockers</div><p class="sm" style="color:var(--slate);margin:6px 0 0">Vera flags what is holding work up.</p></div>
+    </div>
+    <div>
+      <div class="lbl good">After: rules and space</div>
+      <div class="blk"><div class="h2">Capture decisions</div><p class="sm" style="color:var(--slate);margin:6px 0 0;max-width:44ch">Vera records what was decided and why, with the evidence attached.</p></div>
+      <div class="blk"><div class="h2">Track actions</div><p class="sm" style="color:var(--slate);margin:6px 0 0;max-width:44ch">Deadlines and owners stay visible across every function.</p></div>
+      <div class="blk"><div class="h2">Surface blockers</div><p class="sm" style="color:var(--slate);margin:6px 0 0;max-width:44ch">Vera flags what is holding work up before the review.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- BUTTONS -->
+<section id="buttons"><div class="wrap">
+  <div class="rule"></div><p class="slabel">Buttons and surfaces</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <button class="btn b-pri">Request access</button>
+    <button class="btn b-sec">See how Vera works</button>
+    <button class="btn b-vera">Ask Vera</button>
+    <button class="btn b-sec" disabled style="opacity:.45;cursor:not-allowed">Disabled</button>
+  </div>
+  <p class="sm" style="color:var(--slate);margin-top:14px">Hover them. Colour changes only, with no scale, no shadow and no lift. Tab to one to see the focus ring.</p>
+  <div class="note"><strong>Ink is the system primary, not green.</strong> Green is reserved for Vera product actions.
+  The two are shown together here only for review; they never appear in the same viewport on the real site.</div>
+  <div style="margin-top:34px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px">
+    <div><div style="height:74px;background:var(--m0);border:1px solid var(--m300);border-radius:14px"></div><div class="mnsm" style="margin-top:8px;color:var(--slate)">FRAME 14px</div></div>
+    <div><div style="height:74px;background:var(--m50);border:1px solid var(--m200);border-radius:10px"></div><div class="mnsm" style="margin-top:8px;color:var(--slate)">PANEL 10px</div></div>
+    <div><div style="height:74px;background:var(--ink);border-radius:6px"></div><div class="mnsm" style="margin-top:8px;color:var(--slate)">CONTROL 6px</div></div>
+    <div><div style="height:74px;background:var(--m200);border-radius:3px"></div><div class="mnsm" style="margin-top:8px;color:var(--slate)">CHIP 3px</div></div>
+  </div>
+</div></section>
+
+<!-- PRODUCT -->
+<section id="product"><div class="wrap">
+  <div class="rule"></div><p class="slabel">Product UI</p>
+  <h2 class="d3" style="max-width:20ch;margin-bottom:8px">One property, many functions, shared context.</h2>
+  <p class="body" style="color:var(--slate);margin:0 0 26px">Hover a row: background steps up, a 2px Vera bar appears on the left edge. No lift, no shadow, no scale.</p>
+  <div class="frame">
+    <div class="fbar"><span class="crumb">Westmount Centre</span><span>/</span><span>South Pad</span>
+      <span class="mmeta" style="margin-left:auto">UPDATED 14:02 · 6 SOURCES</span></div>
+    <div class="prow"><span class="bar"></span><span class="dot" style="background:var(--clay600)"></span>
+      <span>Turning analysis overdue<span class="tag t-blk">Blocker</span></span>
+      <span class="meta">Development</span><span class="mmeta">DUE 12 AUG 2026</span><span class="meta">R. Okonjo</span></div>
+    <div class="prow"><span class="bar"></span><span class="dot" style="background:var(--v600)"></span>
+      <span>Zoning change may reopen prior concept<span class="tag t-opp">Opportunity</span></span>
+      <span class="meta">Planning</span><span class="mmeta">NOTED 04 AUG 2026</span><span class="meta">Unassigned</span></div>
+    <div class="prow"><span class="bar"></span><span class="dot" style="background:var(--ochre600)"></span>
+      <span>Roof warranty expires<span class="tag t-exp">Expiry</span></span>
+      <span class="meta">Operations</span><span class="mmeta">IN 42 DAYS</span><span class="meta">D. Fairweather</span></div>
+    <div class="prow"><span class="bar"></span><span class="dot" style="background:var(--m300)"></span>
+      <span>RTU-4 serviced, filters and belts replaced</span>
+      <span class="meta">Operations</span><span class="mmeta">11 JUL 2026</span><span class="meta">Northline</span></div>
+    <div class="prow"><span class="bar"></span><span class="dot" style="background:var(--m300)"></span>
+      <span>Lease revision received, Suite 400</span>
+      <span class="meta">Leasing</span><span class="mmeta">09 JUL 2026</span><span class="meta">S. Chen</span></div>
+  </div>
+
+  <div style="margin-top:52px;max-width:520px">
+    <div class="mnsm" style="color:var(--slate);margin-bottom:14px">THE RECORD LINE: GREEN NODE = CAPTURED BY VERA</div>
+    <ul class="rec">
+      <li><span class="node v"></span><div class="mn" style="color:var(--slate)">12 Aug 2026</div><div class="ui">Turning analysis flagged as blocking Thursday review</div></li>
+      <li><span class="node"></span><div class="mn" style="color:var(--slate)">04 Aug 2026</div><div class="ui">Concept B deferred pending zoning confirmation</div></li>
+      <li><span class="node v"></span><div class="mn" style="color:var(--slate)">28 Jul 2026</div><div class="ui">Consultant scope agreed with Northline Engineering</div></li>
+      <li><span class="node"></span><div class="mn" style="color:var(--slate)">11 Jul 2026</div><div class="ui">Roof replacement phase 2 deferred to FY27</div></li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- ================= DESCENT ================= -->
+<div class="deep">
+<section id="composition" style="border-top:0;padding-top:96px"><div class="wrap">
+  <div class="rule"></div><p class="slabel">The memory layer</p>
+  <h2 class="d2" style="max-width:16ch;margin-bottom:16px">Everything Vera learns builds Provenance.</h2>
+  <p class="lead">Work in is thin and uniform. Work out is short and specific. That asymmetry is the argument.</p>
+
+  <div class="comp" id="comp">
+    <div class="compgrid"></div>
+    <div class="heads"><div>Work in</div><div class="c">Vera builds Provenance</div><div>Work out</div></div>
+    <div class="stage" id="stage">
+      <svg id="curves" preserveAspectRatio="none"></svg>
+      <div class="win" id="win">
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="10"/><path d="M2 4l7 6 7-6"/></svg>Email</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="3" width="14" height="13"/><path d="M2 7h14M6 1v4M12 1v4"/></svg>Meeting</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 1h8l4 4v12H3z"/><path d="M11 1v4h4"/></svg>Report</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="2" width="14" height="14"/><path d="M2 7h14M7 7v9"/></svg>Drawing</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="3" y="1" width="12" height="16"/><path d="M6 6h6M6 10h6"/></svg>Lease memo</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 1h8l4 4v12H3z"/><path d="M6 9h6M6 13h4"/></svg>Correspondence</div>
+        <div class="wrow"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="3" y="1" width="12" height="16"/><path d="M6 5h6M6 9h6M6 13h3"/></svg>Invoice</div>
+      </div>
+      <div class="corewrap"><div class="core" id="core">
+        <div class="cz">
+          <div class="crow"><span class="mark">V</span><span class="cname">Vera</span><span class="ctag">The AI teammate</span></div>
+          <div class="verbs">Captures &nbsp;·&nbsp; Connects &nbsp;·&nbsp; Understands &nbsp;·&nbsp; Tracks</div>
+        </div>
+        <div class="hinge">↓ &nbsp; Builds</div>
+        <div class="cz">
+          <div class="crow"><span class="mark p">P</span><span class="cname">Provenance</span></div>
+          <div class="cdesc">The shared memory of the property, built from everyday work.</div>
+        </div>
+      </div></div>
+      <div class="wout" id="wout">
+        <div class="oent"><div class="olab">Ask Vera</div><div class="ocon">“What’s holding up the south pad?”</div><div class="odet">Answered from 4 sources</div></div>
+        <div class="oent"><div class="olab">Task</div><div class="ocon">Complete turning analysis</div><div class="odet">Sarah Chen · Development · Due Thursday</div></div>
+        <div class="oent"><div class="olab">Shared context</div><div class="ocon">South pad status</div><div class="odet">Development · Leasing · Legal</div></div>
+        <div class="oent"><div class="olab">Meeting prep</div><div class="ocon">Thursday South Pad Review</div><div class="odet">5 relevant updates</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrls">
+    <button class="ctrl" data-s="1">State 1: Work in</button>
+    <button class="ctrl" data-s="2">State 2: Vera + Provenance</button>
+    <button class="ctrl" data-s="3">State 3: Work out</button>
+    <button class="ctrl" data-s="4">State 4: Settled</button>
+    <button class="ctrl" id="replay">↻ Replay sequence</button>
+    <span class="tick" id="tick">idle</span>
+  </div>
+
+  <div class="note" style="margin-top:30px">
+    <strong>Four states, ~6.6s, emphasis only.</strong> Every element exists from the first frame. Nothing enters,
+    nothing draws, nothing moves. The curves change opacity but never animate their stroke. State 4 is the
+    permanent rest and is the most complete state, which is the argument the section makes.
+    Under <code>prefers-reduced-motion</code> it renders state 4 directly.
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rule"></div><p class="slabel">Provenance over time</p>
+  <h2 class="d2" style="max-width:14ch">Teams change. The property persists. Its context should too.</h2>
+</div></section>
+
+<section><div class="wrap">
+  <div class="rule"></div><p class="slabel">FAQ</p>
+  <div class="faq" style="margin-top:26px">
+    <div class="faqrow"><div class="faqq">Why not ChatGPT or Claude?<span class="cv">›</span></div>
+      <div class="faqa"><p>General assistants have no persistent record of your property. Vera answers from the property’s own history, and shows the sources behind every answer.</p></div></div>
+    <div class="faqrow"><div class="faqq">Do teams have to change how they work?<span class="cv">›</span></div>
+      <div class="faqa"><p>No. Vera works where the work already happens: email, meetings, documents. Capture is a side effect of normal activity.</p></div></div>
+    <div class="faqrow"><div class="faqq">What transfers when a property is sold?<span class="cv">›</span></div>
+      <div class="faqa"><p>The property’s record: decisions, rationale, evidence and open issues. That is the point of a memory layer attached to the asset rather than to the team.</p></div></div>
+  </div>
+</div></section>
+
+<section style="padding-bottom:110px"><div class="wrap">
+  <h2 class="d2" style="max-width:16ch;margin-bottom:26px">Building the memory layer for real assets.</h2>
+  <a class="btn b-inv" href="#colour">Back to the top</a>
+</div></section>
+</div>
+
+<script>
+/* ---- live contrast ---- */
+function lum(h){const c=h.replace('#','').match(/\w\w/g).map(x=>{let v=parseInt(x,16)/255;
+  return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)});
+  return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];}
+function cr(a,b){const l1=lum(a),l2=lum(b),hi=Math.max(l1,l2),lo=Math.min(l1,l2);
+  return (hi+0.05)/(lo+0.05);}
+const SW=[
+ ['mineral-000','#FBFCFB','#1E2422','ink on it'],['mineral-050','#F4F6F5','#1E2422','ink on it'],
+ ['mineral-100','#E9ECEB','#1E2422','CANVAS · ink on it'],['mineral-200','#DCE1DF','#1E2422','ink on it'],
+ ['mineral-300','#C9D0CD',null,'hairline'],['mineral-400','#A8B2AF',null,'structural rule'],
+ ['mineral-500','#7E8A88','#E9ECEB','on canvas'],['slate','#56636A','#E9ECEB','on canvas'],
+ ['graphite','#323A3B','#FBFCFB','on mineral-000'],['ink','#1E2422','#E9ECEB','CANVAS on it'],
+ ['vera-100','#E1EDE6','#1F4A38','vera-700 on it'],['vera-300','#A6C7B5',null,'curve field'],
+ ['vera-400','#6FA98C','#1E2422','on ink'],['vera-600','#2A6249','#E9ECEB','on canvas'],
+ ['vera-700','#1F4A38','#F4F6F5','fill · text on it'],['clay-600','#A35F45',null,'blocker dot'],
+ ['clay-700','#8F5038','#E9ECEB','on canvas'],['ochre-700','#7D6229','#E9ECEB','on canvas'],
+];
+document.getElementById('swatches').innerHTML = SW.map(([n,hex,against,role])=>{
+  let crHtml='';
+  if(against){
+    const bg = ['mineral-500','slate','graphite','vera-400','vera-600','clay-700','ochre-700'].includes(n)
+      ? (n==='graphite' ? '#FBFCFB' : (n==='vera-400' ? '#1E2422' : '#E9ECEB')) : hex;
+    const fg = ['mineral-500','slate','graphite','vera-400','vera-600','clay-700','ochre-700'].includes(n) ? hex : against;
+    const r = cr(fg,bg);
+    crHtml = `<div class="cr ${r>=4.5?'pass':'warn'}">${r.toFixed(2)}:1 ${r>=4.5?'✓ AA':'✕ below AA'}</div>`;
+  }
+  return `<div class="sw"><div class="chip" style="background:${hex}"></div>
+    <div class="meta"><div class="nm">${n}</div><div class="hx">${hex.toUpperCase()}</div>
+    <div class="cr" style="color:var(--m500)">${role}</div>${crHtml}</div></div>`;
+}).join('');
+
+/* ---- curves ---- */
+function draw(){
+  const stage=document.getElementById('stage'); if(!stage) return;
+  const sb=stage.getBoundingClientRect(), core=document.getElementById('core').getBoundingClientRect();
+  const svg=document.getElementById('curves');
+  if(sb.width<900){svg.innerHTML='';return;}
+  svg.setAttribute('viewBox',`0 0 ${sb.width} ${sb.height}`); svg.innerHTML='';
+  const fxL=core.left-sb.left, fxR=core.right-sb.left, fy=core.top-sb.top+core.height/2;
+  const mk=(x1,y1,x2,y2,cls)=>{const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    const dx=x2-x1;
+    p.setAttribute('d',`M${x1} ${y1} C ${x1+dx*.55} ${y1}, ${x2-dx*.55} ${y2}, ${x2} ${y2}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke','#A6C7B5');
+    p.setAttribute('stroke-width','1'); p.setAttribute('stroke-opacity','.22');
+    p.setAttribute('class',cls); svg.appendChild(p);};
+  document.querySelectorAll('#win .wrow').forEach(r=>{const b=r.getBoundingClientRect();
+    mk(b.right-sb.left+18, b.top-sb.top+b.height/2, fxL, fy, 'cin');});
+  document.querySelectorAll('#wout .oent').forEach(r=>{const b=r.getBoundingClientRect();
+    mk(fxR, fy, b.left-sb.left-18, b.top-sb.top+b.height/2, 'cout');});
+}
+window.addEventListener('load',()=>{draw();document.fonts.ready.then(draw)});
+window.addEventListener('resize',draw);
+
+/* ---- four-state sequence ---- */
+const win=document.getElementById('win'), core=document.getElementById('core').parentElement,
+      wout=document.getElementById('wout'), tick=document.getElementById('tick');
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setCurves(sel,op){document.querySelectorAll('#curves path'+(sel?'.'+sel:''))
+  .forEach(p=>p.setAttribute('stroke-opacity',op));}
+const V={on:'#E9ECEB',mut:'#A8B4B0',sub:'#77837F',v4:'#6FA98C',hl:'rgba(233,236,235,.12)'};
+function paint(inOn,coreOn,outOn){
+  document.querySelectorAll('#win .wrow').forEach(e=>e.style.color = inOn?V.on:V.sub);
+  document.querySelectorAll('#wout .oent').forEach(e=>e.style.borderLeftColor = outOn?V.v4:V.hl);
+  document.querySelectorAll('#wout .olab').forEach(e=>e.style.color = outOn?V.v4:V.sub);
+  document.querySelectorAll('#wout .ocon').forEach(e=>e.style.color = outOn?V.on:V.sub);
+  document.querySelectorAll('#wout .odet').forEach(e=>e.style.color = outOn?V.mut:V.sub);
+  document.getElementById('core').style.boxShadow = coreOn
+    ? '0 2px 4px rgba(0,0,0,.26),0 20px 46px rgba(0,0,0,.42)'
+    : '0 1px 2px rgba(0,0,0,.22),0 10px 26px rgba(0,0,0,.28)';
+}
+function apply(s){
+  [win,core,wout].forEach(el=>el.classList.remove('on'));
+  setCurves('cin','.22'); setCurves('cout','.22');
+  paint(s===1||s===4, s===2||s===4, s===3||s===4);
+  if(s===1){win.classList.add('on'); setCurves('cin','.45');}
+  if(s===2){core.classList.add('on');}
+  if(s===3){wout.classList.add('on'); setCurves('cout','.45');}
+  if(s===4){[win,core,wout].forEach(el=>el.classList.add('on')); setCurves('cin','.45'); setCurves('cout','.45');}
+  document.querySelectorAll('.ctrl[data-s]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.s==String(s)));
+  tick.textContent = s===4 ? 'state 4 · settled (rest)' : 'state '+s;
+}
+let timers=[], played=false;
+function clear(){timers.forEach(clearTimeout);timers=[]}
+function run(){
+  clear();
+  if(reduce){apply(4);tick.textContent='reduced motion · state 4 only';return;}
+  apply(1);
+  timers.push(setTimeout(()=>apply(2),2020));
+  timers.push(setTimeout(()=>apply(3),4040));
+  timers.push(setTimeout(()=>{apply(4);tick.textContent='state 4 · settled (rest) · total 6.58s'},6060));
+}
+document.querySelectorAll('.ctrl[data-s]').forEach(b=>b.addEventListener('click',()=>{clear();apply(+b.dataset.s)}));
+document.getElementById('replay').addEventListener('click',run);
+new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting&&!played){played=true;draw();setTimeout(run,220)}})},
+  {threshold:.25}).observe(document.getElementById('comp'));
+apply(4);
+
+/* ---- faq ---- */
+document.querySelectorAll('.faqrow').forEach(r=>r.addEventListener('click',()=>r.classList.toggle('open')));
+</script>
+</body>
+</html>

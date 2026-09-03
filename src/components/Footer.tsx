@@ -1,34 +1,37 @@
+import Link from "next/link";
+import { ProvenanceLockup } from "@/components/ProvenanceMark";
+
+/* Placeholder for this build stage. The real closing CTA and footer are a later
+   pass. One tonal step up from the canvas, so the page closes without ever
+   leaving the dark environment (DESIGN.md §6.3). */
+
 export function Footer() {
   return (
-    <footer className="bg-background border-t border-border py-16 lg:py-20">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-10">
-        <div>
-          <div className="flex items-center gap-2.5 mb-3">
-            <div className="h-5 w-5 border-2 border-accent flex items-center justify-center">
-              <div className="h-1.5 w-1.5 bg-accent" />
-            </div>
-            <span className="text-[16px] font-semibold text-foreground tracking-[-0.01em]">
-              Provenance
-            </span>
+    <footer className="border-t border-[rgba(243,244,240,0.10)] bg-canvas">
+      <div className="track py-band">
+        <div className="grid12 gap-y-10">
+          <div className="col-span-12 lg:col-span-6">
+            <ProvenanceLockup className="text-paper" markSize={22} />
+            {/* the ambition line — its one permitted homepage appearance (§24.1),
+                as a signature rather than a claim */}
+            <p className="mt-3 text-mono-sm uppercase text-paper-muted">
+              Building the memory layer for real assets
+            </p>
           </div>
-          <p className="text-[15px] text-slate max-w-xs">
-            The memory layer for commercial real estate.
-          </p>
+
+          <div className="col-span-12 lg:col-span-6 lg:justify-self-end">
+            <Link
+              href="/thesis"
+              className="-my-2 inline-flex min-h-[44px] items-center text-ui text-paper-muted transition-colors duration-instant hover:text-paper"
+            >
+              Thesis
+            </Link>
+          </div>
         </div>
 
-        <a
-          id="request-access"
-          href="mailto:hello@provenance.example"
-          className="inline-flex items-center justify-center text-[15px] font-semibold text-warm-white bg-accent px-8 py-3.5 rounded-sm hover:bg-accent-light transition-colors duration-200"
-        >
-          Request early access
-        </a>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 mt-12 pt-8 border-t border-border">
-        <p className="text-[13px] text-muted-foreground">
-          &copy; {new Date().getFullYear()} Provenance. Illustrative demo. All
-          property data is fictional.
+        <p className="mt-16 text-mono-sm uppercase text-paper-subtle">
+          Sections 4 to 8 are not built yet. This stage is the shell, hero,
+          problem section and Meet Vera.
         </p>
       </div>
     </footer>

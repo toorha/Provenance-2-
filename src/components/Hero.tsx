@@ -1,41 +1,58 @@
-import { HERO } from "@/lib/demo-data";
+import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
+
+/* HOMEPAGE.md §5, Section 1 — the hero states the thesis. Not the product, not
+   an outcome, not Vera.
+
+   Typography and composition carry it. No animation beyond one entrance, no
+   dashboard, no map, no floating anything: it has to work as a still image.
+
+   LAYOUT — measured. display-1 at 76px needs ~980px for a line of this length,
+   so the headline takes c1–c11 and the supporting copy sits beneath at c1–c5.
+   A side-by-side split orphans words (DESIGN.md §6.2). */
 
 export function Hero() {
   return (
-    <section className="tex tex-paper tex-draft relative flex min-h-[86vh] items-center overflow-hidden bg-background pt-32 pb-24 lg:min-h-screen lg:pt-28">
-      <div className="mx-auto w-full max-w-6xl px-6 lg:px-8">
-        <div className="max-w-[54rem]">
-          <p className="font-mono text-[10px] uppercase leading-[1.5] tracking-[0.16em] text-muted-foreground sm:text-[10.5px]">
-            {HERO.eyebrow}
-          </p>
-
-          <h1 className="mt-8 max-w-[19ch] font-display text-[2.3rem] leading-[1.04] tracking-[-0.028em] text-foreground sm:text-[2.9rem] lg:text-[3.3rem]">
-            {HERO.headline}
+    <section className="track pt-[152px] pb-[104px] md:pt-[188px] md:pb-[132px]">
+      <div className="grid12">
+        <Reveal className="col-span-12 lg:col-span-11">
+          <h1 className="text-[2.5rem] font-semibold leading-[1.04] tracking-[-0.018em] text-paper [text-wrap:balance] sm:text-[2.75rem] md:text-[3rem] lg:text-[3.75rem] lg:leading-[1.0] xl:text-display-1">
+            Buildings outlive the people who work on them.{" "}
+            {/* the second sentence takes its own line where there is room for
+                one, and simply follows on where there is not */}
+            <span className="lg:block">Their memory should too.</span>
           </h1>
+        </Reveal>
 
-          <p className="mt-8 max-w-[58ch] text-[17px] leading-[1.62] text-graphite lg:text-[18px]">
-            {HERO.body}
+        <Reveal
+          delay={80}
+          className="col-span-12 mt-10 sm:col-span-10 lg:col-span-6 lg:mt-12"
+        >
+          {/* what actually has to survive, named plainly. "Institutional
+              knowledge" and "property intelligence" say the same thing and
+              mean nothing: these four nouns are the ones a visitor recognises
+              from their own week. */}
+          <p className="text-lead text-paper-muted">
+            Keep the decisions, documents, history, and context behind every
+            property, even as the people around it change.
           </p>
 
-          <div className="mt-10 flex flex-col gap-x-7 gap-y-4 sm:flex-row sm:items-center">
-            <a
-              href="#request-access"
-              className="inline-flex items-center justify-center rounded-[2px] bg-accent px-7 py-[13px] text-[13.5px] font-medium tracking-[0.01em] text-accent-foreground transition-colors duration-300 hover:bg-accent-light"
-            >
-              {HERO.primary}
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-[13.5px] font-medium text-graphite transition-colors duration-300 hover:text-foreground"
-            >
-              {HERO.secondary}
-            </a>
+          {/* The product, in five words. Subordinate to the thesis by size and
+              weight — it is the second thing read, never a competing headline.
+              The closing CTA turns the same line into an instruction. */}
+          <p className="mt-6 text-heading-3 text-paper">
+            Give every property a memory.
+          </p>
+
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Button href="#access" variant="primary">
+              Request early access
+            </Button>
+            <Button href="#product" variant="secondary">
+              See how it works
+            </Button>
           </div>
-
-          <p className="mt-14 border-t border-foreground/10 pt-5 text-[13px] leading-[1.5] text-muted-foreground">
-            {HERO.footnote}
-          </p>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,33 +1,31 @@
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { ProblemSection } from "@/components/ProblemSection";
-import { ProductSection } from "@/components/ProductSection";
-import { HowItWorksSection } from "@/components/HowItWorksSection";
-import { SystemSection } from "@/components/SystemSection";
-import { OverTimeSection } from "@/components/OverTimeSection";
-import { LongViewSection } from "@/components/LongViewSection";
+import { MeetVera } from "@/components/vera/MeetVera";
+import { HowVeraWorks } from "@/components/HowVeraWorks";
+import { ProvenanceSystem } from "@/components/ProvenanceSystem";
+import { FaqSection } from "@/components/FaqSection";
+import { ClosingCta } from "@/components/ClosingCta";
 import { Footer } from "@/components/Footer";
+
+/* Build stage: shell, hero, problem, Meet Vera, How Vera works and the
+   Provenance system. Provenance over time, FAQ and the closing CTA are later
+   passes, each with its own review. */
 
 export default function Home() {
   return (
     <>
       <Navigation />
       <main>
-        {/* 1 the scale problem */}
         <Hero />
-        {/* 2 why context is hard to assemble */}
         <ProblemSection />
-        {/* 3 the product: track work, ask the property, surface what matters */}
-        <ProductSection />
-        {/* 4 how the work gets captured */}
-        <HowItWorksSection />
-        {/* 5 inputs -> property memory -> outputs */}
-        <SystemSection />
-        {/* 6 what it compounds into */}
-        <OverTimeSection />
-        {/* 7 close */}
-        <LongViewSection />
+        <MeetVera />
+        <HowVeraWorks />
+        <ProvenanceSystem />
+        <FaqSection />
+        <ClosingCta />
       </main>
+      {/* THE DESCENT — hard edge, full bleed, no fade and no gradient (§6.3) */}
       <Footer />
     </>
   );

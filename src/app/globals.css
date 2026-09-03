@@ -2,34 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Provenance design system — DESIGN.md is the source of truth.
+   Tokens here mirror §25.1. Do not add a value that is not in DESIGN.md. */
+
 @layer base {
+  /* Every enabled control shows a pointer. A control that does not change the
+     cursor is read as text, which was the whole problem with the mode switcher
+     and the role selector. */
+  button:not(:disabled),
+  [role="tab"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
   :root {
-    /* bone / stone neutrals — cooler and drier than the old cream */
-    --background: 42 13% 92%;
-    --foreground: 60 4% 7%;
+    /* mineral ground */
+    --mineral-000: #fbfcfb;
+    --mineral-050: #f4f6f5;
+    --mineral-100: #e9eceb; /* canvas */
+    --mineral-200: #dce1df;
+    --mineral-300: #c9d0cd; /* hairline */
+    --mineral-400: #a8b2af; /* structural rule */
+    --mineral-500: #7e8a88; /* 3.0:1 — large text, borders, disabled only */
 
-    --primary: 158 34% 22%;
-    --primary-foreground: 42 16% 96%;
+    --slate: #56636a;
+    --graphite: #323a3b;
+    --graphite-lift: #3d4749;
+    --ink: #1e2422;
+    --ink-deep: #161b1a;
 
-    /* a real second surface, not a tint of white */
-    --secondary: 42 10% 87%;
-    --secondary-foreground: 60 4% 7%;
+    /* ── THE BRAND ENVIRONMENT ──────────────────────────────────────────
+       Dark is the primary canvas; light is a product surface, not a section.
+       Tonal variation comes from this ladder, never from theme flipping. */
+    --canvas: #0d0f0e; /* L* 4.1 */
+    --canvas-2: #131614;
+    --canvas-3: #171a18;
+    --canvas-4: #1e221f;
 
-    --muted: 42 8% 84%;
-    --muted-foreground: 55 4% 30%;
+    --paper: #f3f4f0; /* 17.4:1 on canvas */
+    --paper-muted: #a9b0aa; /*  8.7:1 */
+    --paper-subtle: #7e867f; /*  5.1:1 — still AA */
 
-    /* oxidised forest — architectural, not startup */
-    --accent: 158 33% 25%;
-    --accent-foreground: 42 16% 96%;
+    --hairline: rgba(243, 244, 240, 0.1);
+    --hairline-strong: rgba(243, 244, 240, 0.18);
 
-    --destructive: 12 52% 42%;
-    --destructive-foreground: 42 16% 96%;
+    /* Vera on dark: 500 fills, 400 is the text colour (7.1:1) */
+    --vera-fill: #2f6b4f;
+    --vera-on-dark: #6fa98c;
 
-    --border: 42 9% 76%;
-    --input: 42 9% 76%;
-    --ring: 158 33% 25%;
+    /* Vera */
+    --vera-050: #eff5f1;
+    --vera-100: #e1ede6;
+    --vera-300: #a6c7b5;
+    --vera-400: #6fa98c;
+    --vera-600: #2a6249;
+    --vera-700: #1f4a38;
+    --vera-800: #173329;
 
-    --radius: 0.125rem;
+    /* signals — product surfaces only */
+    --clay-100: #f3e4de;
+    --clay-600: #a35f45;
+    --clay-700: #8f5038;
+    --ochre-100: #efe9da;
+    --ochre-600: #9a7b3f;
+    --ochre-700: #7d6229;
+
+    /* motion */
+    --d-instant: 90ms;
+    --d-quick: 140ms;
+    --d-base: 220ms;
+    --d-considered: 340ms;
+    --d-deliberate: 520ms;
+    --e-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+    --e-state: cubic-bezier(0.4, 0, 0.2, 1);
+    --e-exit: cubic-bezier(0.4, 0, 1, 1);
+    --e-cursor: cubic-bezier(0.33, 0, 0.15, 1);
   }
 
   html {
@@ -38,185 +84,120 @@
     text-rendering: optimizeLegibility;
   }
 
-  :target,
+  body {
+    background: var(--canvas);
+    color: var(--paper);
+    font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* body weight is 430, not 400 — the extra optical weight is the fix for
+       the previous site reading pale (DESIGN.md §4.3) */
+    font-weight: 430;
+    font-size: 17px;
+    line-height: 1.6;
+    letter-spacing: -0.003em;
+  }
+
   [id] {
     scroll-margin-top: 88px;
   }
 
-  body {
-    @apply bg-background text-foreground;
-    font-size: 17px;
-    line-height: 1.55;
-    font-weight: 400;
-    letter-spacing: -0.001em;
+  /* Focus is always visible and is never removed (§18.2). Dark by default;
+     light product surfaces re-scope it so the ring reads on both. */
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--canvas),
+      0 0 0 4px var(--vera-on-dark);
+    border-radius: 6px;
   }
-
-  /* Display serif: sculptural, set tight and large. Never small, never body. */
-  .font-display {
-    font-weight: 400;
-    letter-spacing: -0.022em;
-  }
-
-  h1,
-  h2,
-  h3 {
-    font-weight: 600;
-  }
-
-  ::selection {
-    @apply bg-accent/25 text-foreground;
+  .surface-light :focus-visible {
+    box-shadow:
+      0 0 0 2px var(--mineral-000),
+      0 0 0 4px var(--vera-600);
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer components {
+  /* A light product surface floating in the dark environment. This is the
+     only place light appears, and the contrast is the point: marketing
+     environment → real software. */
+  .surface-light {
+    background: var(--mineral-000);
+    color: var(--ink);
   }
 
-  /* ---------------------------------------------------------------- *
-   * Drafting labels. Mono, tracked out, small. The technical voice.
-   * ---------------------------------------------------------------- */
-  .label-caps {
-    @apply font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-accent;
+  /* 12-column content track, 1240px, 32px margins (24px under 768px). */
+  .track {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 32px;
   }
-
-  .label-mono {
-    @apply font-mono text-[10.5px] font-medium uppercase tracking-[0.16em];
-  }
-
-  /* ---------------------------------------------------------------- *
-   * Texture. Applied to whole sections, never to small elements.
-   * Grain sits above the background and below the content.
-   * ---------------------------------------------------------------- */
-  .tex {
-    position: relative;
-    isolation: isolate;
-  }
-
-  .tex::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 140px 140px;
-  }
-
-  /* paper grain for the bone surfaces */
-  .tex-paper::before {
-    opacity: 0.05;
-    mix-blend-mode: multiply;
-  }
-
-  /* film grain for the dark surfaces */
-  .tex-film::before {
-    opacity: 0.055;
-    mix-blend-mode: overlay;
-  }
-
-  .tex > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* a drafting-board grid, only where the work is being laid out */
-  .tex-draft::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(to right, hsl(var(--foreground) / 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--foreground) / 0.035) 1px, transparent 1px);
-    background-size: 96px 96px;
-    mask-image: radial-gradient(ellipse 78% 62% at 50% 42%, #000 30%, transparent 78%);
-  }
-
-  /* lighting falloff behind a hero object */
-  .glow-pool {
-    background: radial-gradient(
-      ellipse 62% 54% at 62% 46%,
-      rgba(255, 255, 255, 0.055),
-      transparent 68%
-    );
-  }
-
-  /* a document fragment surface — mineral, lit from above, faint grain */
-  .frag {
-    background-color: #F7F5EF;
-    border: 1px solid hsl(var(--foreground) / 0.09);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.9) inset,
-      0 2px 4px hsl(var(--foreground) / 0.05),
-      0 22px 40px -26px hsl(var(--foreground) / 0.35);
-  }
-
-  .frag-ruled {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 21px,
-      hsl(var(--foreground) / 0.07) 21px,
-      hsl(var(--foreground) / 0.07) 22px
-    );
-  }
-
-  /* the dark sections get depth at the seams, not a hard edge */
-  .edge-top {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
-
-  /* ---------------------------------------------------------------- *
-   * Motion
-   * ---------------------------------------------------------------- */
-  .bld-fade {
-    animation: bldFade 0.5s ease both;
-  }
-
-  @keyframes bldFade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
+  @media (max-width: 768px) {
+    .track {
+      padding-inline: 24px;
     }
   }
 
-  .bld-rise {
-    animation: bldRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* The product frame is a depiction of software, so it may be rendered at
+     less than full size. A wider internal layout wraps less and is then drawn
+     down, which takes height out of the window without reflowing anything,
+     truncating anything, or changing a single measured position inside it.
+     1300 local by 0.9 renders at 1170, just inside the 1176 track. */
+  .demo-scale {
+    width: 100%;
+  }
+  @media (min-width: 1024px) {
+    .demo-scale {
+      width: 1300px;
+      zoom: 0.9;
+    }
   }
 
-  @keyframes bldRise {
-    from {
-      opacity: 0;
-      transform: translate(0, 12px);
+  .grid12 {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+  @media (max-width: 1024px) {
+    .grid12 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
-    to {
-      opacity: 1;
-      transform: translate(0, 0);
+  }
+  @media (max-width: 768px) {
+    .grid12 {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
-  /* a single dot travelling a connector path into the memory layer */
-  .flow-dot {
-    fill: none;
-    stroke-dasharray: 3 100;
-    animation: flowDot 0.85s ease both;
+  /* Structural rules span the grid — they never close around prose (§7.1). */
+  .rule-full {
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    margin: 0;
   }
+}
 
-  @keyframes flowDot {
-    0% {
-      stroke-dashoffset: 0;
-      opacity: 0.15;
-    }
-    35% {
-      opacity: 1;
-    }
-    100% {
-      stroke-dashoffset: -100;
-      opacity: 0;
-    }
+/* Reveals are opacity + 12px, once, and never re-run (§15.4). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+}
+
+/* click ring for the fake cursor (DESIGN.md §16.4) */
+@keyframes vera-ping {
+  from { opacity: 0.5; transform: scale(0.4); }
+  to   { opacity: 0;   transform: scale(1); }
+}
+
+/* Ask Vera thinking state: a 1px rule filling left to right (DESIGN.md §10.6).
+   Not a spinner, not three bouncing dots. */
+@keyframes vera-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }

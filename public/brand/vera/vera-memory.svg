@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-labelledby="vera-memory-title">
+  <title id="vera-memory-title">Vera memory signal mark</title>
+  <!-- Three historical points, receding in scale, resolving into one solid
+       present point that carries forward. Not a clock and not a timeline
+       rule: the points sit on a diagonal so the mark reads as ascent rather
+       than as a row of dates. -->
+  <circle cx="5" cy="27" r="1.8" fill="currentColor" opacity="0.45" />
+  <circle cx="12" cy="21" r="2.3" fill="currentColor" opacity="0.7" />
+  <circle cx="19" cy="15" r="2.8" fill="currentColor" />
+  <path d="M23 11 L28 6" stroke="currentColor" stroke-width="3" stroke-linecap="square" />
+  <path d="M28 6 V12 M28 6 H22" stroke="currentColor" stroke-width="3" stroke-linecap="square" />
+</svg>
