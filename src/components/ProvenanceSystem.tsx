@@ -398,8 +398,8 @@ export function ProvenanceSystem() {
                       Provenance
                     </p>
                     <p className="mx-auto mt-2 max-w-[46ch] text-[14px] leading-[1.55] text-slate">
-                      The memory layer for the property. What happened, why it
-                      happened, what changed, and what still matters.
+                      The Memory Layer for the Property. What Happened, Why
+                      It Happened, What Changed, and What Still Matters.
                     </p>
                   </div>
                 </div>
