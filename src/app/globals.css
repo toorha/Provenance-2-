@@ -232,3 +232,39 @@
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
+
+/* ── The hero aerial ───────────────────────────────────────────────────────
+   Almost still. One entrance, then 1.6% of scale unwinding over half a minute
+   so the frame is never quite dead but is never caught moving either. The
+   reduced-motion block above collapses both to their end state, which is the
+   fully visible, unscaled image. */
+@keyframes hero-aerial-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes hero-aerial-drift {
+  from { transform: scale(1.016); }
+  to   { transform: scale(1); }
+}
+.hero-aerial-drift {
+  animation:
+    hero-aerial-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) both,
+    hero-aerial-drift 32s cubic-bezier(0.33, 0, 0.15, 1) both;
+}
+
+/* Property outlines arrive one after another rather than together, then hold.
+   The marker keeps a slow pulse; nothing else moves. */
+@keyframes hero-highlight-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.hero-highlight {
+  animation: hero-highlight-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hero-highlight-pin {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+.hero-highlight-pin {
+  animation: hero-highlight-pin 4.2s ease-in-out infinite;
+}
