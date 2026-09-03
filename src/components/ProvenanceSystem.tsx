@@ -46,7 +46,6 @@ const WORK_IN = [
   "Reports",
   "Leases",
   "Decisions",
-  "Updates",
 ];
 
 const VERA_VERBS = ["Captures", "connects", "understands", "tracks"];
@@ -327,7 +326,7 @@ export function ProvenanceSystem() {
                   emph(1),
                 )}
               >
-                <Stage label="Work in" className="lg:text-right" />
+                <Stage label="Inputs" className="lg:text-right" />
                 <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px] lg:text-right">
                   {WORK_IN.map((w, i) => (
                     <li
@@ -414,7 +413,7 @@ export function ProvenanceSystem() {
                   emph(4),
                 )}
               >
-                <Stage label="Work out" />
+                <Stage label="Outputs" />
                 <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px]">
                   {WORK_OUT.map((o, i) => (
                     <li
