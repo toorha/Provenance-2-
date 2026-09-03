@@ -19,7 +19,8 @@ import { VeraMark } from "@/components/vera/VeraMark";
    functions it serves, the argument, and the questions.
 
    Four destinations and one action. Every one of them resolves: #product and
-   #faq and #access are real sections on this page, /thesis is a real route.
+   #faq is a real section on this page, /thesis and /request-access are real
+   routes.
 
    Below 768px the links collapse to a full-height overlay panel, not a
    dropdown (§9.2). */
@@ -171,7 +172,7 @@ export function Navigation() {
           </ul>
 
           <div className="ml-auto flex items-center gap-2">
-            <Button href="#access" variant="primary" size="md">
+            <Button href="/request-access" variant="primary" size="md">
               Request access
             </Button>
 
@@ -230,7 +231,7 @@ export function Navigation() {
             ))}
           </ul>
 
-          <Button href="#access" variant="primary" className="mt-8">
+          <Button href="/request-access" variant="primary" className="mt-8">
             Request access
           </Button>
         </div>

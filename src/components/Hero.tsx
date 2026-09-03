@@ -45,7 +45,7 @@ export function Hero() {
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Button href="#access" variant="primary">
+            <Button href="/request-access" variant="primary">
               Request early access
             </Button>
             <Button href="#product" variant="secondary">

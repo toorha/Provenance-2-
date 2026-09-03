@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CTA } from "@/lib/demo-data";
 
 /* The closing block, shared by the homepage and the Thesis page.
@@ -20,7 +21,7 @@ import { CTA } from "@/lib/demo-data";
 
 export function ClosingCta() {
   return (
-    <section id="access" className="section-major anchor-offset bg-canvas">
+    <section className="section-major bg-canvas">
       <div className="track">
         <h2 className="max-w-[16ch] text-[2.4rem] leading-[1.02] tracking-[-0.032em] text-paper sm:text-[3.1rem] lg:text-[3.5rem]">
           {CTA.headline}
@@ -30,10 +31,8 @@ export function ClosingCta() {
         </p>
 
         <div className="mt-10 border-t border-[rgba(243,244,240,0.16)] pt-10">
-          <a
-            href={CTA.callUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/request-access"
             className="inline-flex min-h-[44px] w-fit items-center gap-2.5 text-[15px] font-semibold text-paper transition-colors duration-instant hover:text-white"
           >
             {CTA.call}
@@ -49,7 +48,7 @@ export function ClosingCta() {
             >
               <path d="M3.5 10.5 10.5 3.5M5 3.5h5.5V9" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -100,7 +100,7 @@ export function ProblemSection() {
                 stands alone as a slogan */}
             <p className="mt-5 text-body text-paper-muted md:text-lead">
               Over time, that creates{" "}
-              <span className="font-medium text-paper">corporate amnesia</span>:
+              <span className="font-medium text-vera-400">corporate amnesia</span>:
               the organization keeps the files, but loses why decisions were
               made, what changed, and what still matters.
             </p>
