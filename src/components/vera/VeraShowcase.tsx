@@ -40,11 +40,6 @@ export function VeraShowcase({
   const shown = (i: number) => i < revealed;
   const n = story.evidence.length;
 
-  /* The mode explains itself before it demonstrates itself. Two seconds on a
-     near-empty panel is the difference between "records and a green box" and
-     "oh, that is what it is doing". */
-  if (revealed < 0) return <Intro story={story} />;
-
   /* step order: 0 header, 1..n evidence, n+1 conclusion, n+2 next.
      Ask puts the conclusion first, so it reveals with the header. */
   const conclusionStep = story.answerFirst ? 0 : n + 1;
@@ -69,9 +64,10 @@ export function VeraShowcase({
   );
 
   return (
-    <div className="flex min-h-[372px] flex-col px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
-      {/* the property this is all about, stated once and quietly */}
-      <div
+    <div className="relative">
+      <div className="flex min-h-[372px] flex-col px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
+        {/* the property this is all about, stated once and quietly */}
+        <div
         className={clsx(
           "transition-opacity duration-considered ease-state",
           shown(0) ? "opacity-100" : "opacity-0",
@@ -142,6 +138,22 @@ export function VeraShowcase({
           </p>
         </div>
         <p className="shrink-0 text-[12px] text-mineral-500">{story.sources}</p>
+        </div>
+      </div>
+
+      {/* The mode explains itself before it demonstrates itself, then gets out
+          of the way. It is a LAYER rather than a branch so it can dissolve:
+          swapping the panel outright made the sentence vanish mid-read, which
+          is worse than never showing it. Opaque, because the story underneath
+          is already fading in behind it. */}
+      <div
+        className={clsx(
+          "pointer-events-none absolute inset-0 bg-mineral-0",
+          "transition-opacity duration-deliberate ease-state",
+          revealed < 0 ? "opacity-100" : "opacity-0",
+        )}
+      >
+        <Intro story={story} />
       </div>
     </div>
   );
@@ -237,7 +249,7 @@ export const stepsFor = (id: VeraStory["id"]) =>
    a pixel when the intro gives way to the evidence. */
 function Intro({ story }: { story: VeraStory }) {
   return (
-    <div className="flex min-h-[372px] flex-col justify-center px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
+    <div className="flex h-full min-h-[372px] flex-col justify-center px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
       <div className="hero-intro-in max-w-[38ch]">
         <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-vera-700">
           <VeraMark size={14} />

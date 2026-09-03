@@ -38,10 +38,10 @@ const STEP_MS = 620;
 const HOLD_MS = 3600;
 /* long enough to read one sentence and understand what is about to happen,
    short enough that nobody feels held up by it */
-const INTRO_MS = 2600;
+const INTRO_MS = 3400;
 /* shorter when somebody asked for the mode themselves: they have already
    decided to look, so the sentence is a caption rather than a preamble */
-const PICKED_INTRO_MS = 1900;
+const PICKED_INTRO_MS = 2600;
 
 /* below zero is the intro panel: the mode saying what it is for before it
    does it. Also the state the section sits in before anything has played, so
