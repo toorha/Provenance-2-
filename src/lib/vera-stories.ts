@@ -1,108 +1,156 @@
 /* The three stories the landing page tells.
 
-   PLAIN LANGUAGE IS THE POINT. Every earlier version of this was written for
-   somebody who already knows what a site plan agreement is, what Rev. 07
-   means, and why an access corridor matters. A visitor who has never worked
-   in real estate could not follow a word of it, and they are most of the
-   people who will read this page.
+   THE BALANCE THIS FILE IS TRYING TO HOLD. Written for insiders it became
+   unreadable: Rev. 07 encroaching on an access easement means nothing to most
+   people who will see this page. Stripped to plain sentences it read as
+   marketing copy in a fake browser, because two bare facts and a conclusion
+   is not evidence, it is a claim.
 
-   The scenarios underneath are unchanged. Only the vocabulary moved: "a 2019
-   property agreement says this area must remain clear" is the same fact as
-   the access corridor clause, and anyone can read it.
+   So the metadata is real and the explanation is plain. "Site Plan Agreement,
+   2019" is exactly what the record is called, and the excerpt beside it says
+   what it means in words anyone can read. Vera's conclusion never uses a term
+   the evidence has not already made obvious.
 
-   FOUR BLOCKS PER STORY, NEVER MORE. A label, what Vera concluded, two or
-   three pieces of context, one next step. Anything else belongs in the real
-   product rather than on a page somebody is skimming. */
+   THREE RECORDS, ALWAYS. Two is a coincidence, four is a list. Three is the
+   smallest number that reads as Vera having connected something. */
 
-export type StoryBlock = {
-  /** the small label above the line */
+export type EvidenceKind = "drawing" | "agreement" | "meeting" | "rules";
+
+export type Evidence = {
+  kind: EvidenceKind;
+  /** what sort of record this is */
   label: string;
-  body: string;
-  /** the one block that carries Vera's conclusion, rendered as such */
-  isConclusion?: boolean;
+  /** when, in human terms. Never a timestamp or an id. */
+  date: string;
+  /** what the record is actually called */
+  title: string;
+  /** the one line from it that matters here */
+  excerpt: string;
 };
 
 export type VeraStory = {
   id: "track" | "ask" | "insights";
-  /** the one-line framing above the story */
+  property: { name: string; project: string };
   framing: string;
-  /** the question, for Ask Vera only. Shown complete, never typed. */
+  /** Ask only. The question is the entry point, so it leads. */
   question?: string;
-  /** the headline, for Insights only */
+  /** Insights only. */
   headline?: string;
-  blocks: StoryBlock[];
+  /** Ask answers first and shows its working underneath. Track and Insights
+      build to the conclusion. That ordering is the difference between the
+      modes, and it is why they do not read as the same screen. */
+  answerFirst?: boolean;
+  evidence: Evidence[];
+  conclusionLabel: string;
+  conclusion: string;
   next: string;
-  /** quiet, and never the visual focus */
-  sources?: string;
+  sources: string;
 };
 
 export const STORIES: Record<VeraStory["id"], VeraStory> = {
   track: {
     id: "track",
-    framing: "Vera keeps up with what is changing across a property.",
-    blocks: [
+    property: { name: "Westmount Centre", project: "South Pad redevelopment" },
+    framing: "Vera keeps up with what is changing across the property.",
+    evidence: [
       {
-        label: "New plan",
-        body: "A new loading plan was added today.",
+        kind: "drawing",
+        label: "Drawing",
+        date: "Today",
+        title: "Concept Plan Rev. 07",
+        excerpt: "Loading area moved into the east access corridor.",
       },
       {
-        label: "Older agreement",
-        body: "A 2019 property agreement says this area must remain clear.",
+        kind: "agreement",
+        label: "Agreement",
+        date: "2019",
+        title: "Site Plan Agreement",
+        excerpt: "East access corridor must remain unobstructed.",
       },
       {
-        label: "Vera connected them",
-        body: "The new plan conflicts with an existing property requirement.",
-        isConclusion: true,
+        kind: "meeting",
+        label: "Meeting",
+        date: "Today, 10:30",
+        title: "Design coordination",
+        excerpt: "Team plans to advance Rev. 07 at Thursday's review.",
       },
     ],
-    next: "Revise the plan before Thursday's review.",
-    sources: "Based on 3 property records",
+    conclusionLabel: "Vera connected them",
+    conclusion:
+      "The latest plan conflicts with an existing property requirement, and it is going to review on Thursday.",
+    next: "Revise the loading layout or confirm whether the agreement can be changed.",
+    sources: "3 records connected",
   },
 
   ask: {
     id: "ask",
-    framing: "Ask a question. Vera answers from the property's history.",
-    question: "Can we move forward with this project?",
-    blocks: [
+    property: { name: "Westmount Centre", project: "South Pad redevelopment" },
+    framing: "Asked this morning",
+    question: "Can we move forward with the South Pad?",
+    answerFirst: true,
+    evidence: [
       {
-        label: "Vera",
-        body: "Not yet. The current plan conflicts with an older property agreement, and the issue needs to be resolved before the next review.",
-        isConclusion: true,
+        kind: "agreement",
+        label: "Agreement",
+        date: "2019",
+        title: "Site Plan Agreement",
+        excerpt: "Access corridor must remain clear.",
       },
       {
-        label: "2019",
-        body: "Property agreement requires the area to remain clear.",
+        kind: "drawing",
+        label: "Drawing",
+        date: "Today",
+        title: "Concept Plan Rev. 07",
+        excerpt: "The new loading area now overlaps that corridor.",
       },
       {
-        label: "Today",
-        body: "The latest plan places loading in that same area.",
+        kind: "meeting",
+        label: "Meeting",
+        date: "Today",
+        title: "Design coordination",
+        excerpt: "Rev. 07 is scheduled for Thursday's review.",
       },
     ],
-    next: "Revise the layout or confirm whether the agreement can be changed.",
-    sources: "Based on 3 property records",
+    conclusionLabel: "Not yet",
+    conclusion:
+      "The latest plan conflicts with an older property agreement, and the team plans to review that same plan on Thursday.",
+    next: "Revise the loading layout or confirm whether the agreement can be changed.",
+    sources: "Answer based on 3 property records",
   },
 
   insights: {
     id: "insights",
+    property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Nobody asked. Vera noticed on its own.",
     headline: "A project paused in 2023 may now be possible.",
-    blocks: [
+    evidence: [
       {
-        label: "2023",
-        body: "The project was stopped because the proposed use was not allowed.",
+        kind: "drawing",
+        label: "Concept",
+        date: "2023",
+        title: "Drive-through concept paused",
+        excerpt: "The proposed use was not allowed under the rules at the time.",
       },
       {
-        label: "2026",
-        body: "The rules changed. That use is now allowed.",
+        kind: "rules",
+        label: "Rules update",
+        date: "2026",
+        title: "Municipal rules updated",
+        excerpt: "The same use is now permitted on this site.",
       },
       {
-        label: "Vera connected the change",
-        body: "The original reason for stopping the project may no longer apply.",
-        isConclusion: true,
+        kind: "agreement",
+        label: "Property record",
+        date: "Kept since 2023",
+        title: "Original concept drawings",
+        excerpt: "The paused concept is still in the property's records.",
       },
     ],
-    next: "Revisit the old concept.",
-    sources: "Based on 3 property records",
+    conclusionLabel: "Vera connected the change",
+    conclusion:
+      "The main reason this project stopped in 2023 may no longer apply.",
+    next: "Revisit the old concept against today's site conditions.",
+    sources: "3 records connected across 3 years",
   },
 };
 

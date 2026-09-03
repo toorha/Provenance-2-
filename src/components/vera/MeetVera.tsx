@@ -62,16 +62,19 @@ export function MeetVera() {
      Fades and nothing else. The animation supports reading; it is not the
      thing being watched. */
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setRevealed(Infinity);
-      return;
-    }
+    /* Decide whether to animate BEFORE touching the ref, and fail open.
+       Gating this on sectionRef.current meant that whenever the ref was not
+       populated on the first commit the effect returned early, revealed
+       stayed at zero, and the whole panel rendered at opacity zero with no
+       way to recover. A section that silently shows nothing is far worse
+       than one that skips its animation. */
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     /* no autoplay below the desktop breakpoint: on a phone each mode is one
        tap and shows itself complete */
-    if (!window.matchMedia("(min-width: 1024px)").matches) {
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+    const el = sectionRef.current;
+
+    if (reduced || !desktop || !el) {
       setRevealed(Infinity);
       return;
     }

@@ -221,15 +221,11 @@ export const MODES = [
   {
     id: "track",
     label: "Track the work",
-    /* every unselected mode carries the cue, so whichever two you are not
-       looking at both invite a click */
-    hint: "Try me",
     question: "What is happening?",
   },
   {
     id: "ask",
     label: "Ask Vera",
-    hint: "Try me",
     question: "What happened, why, and what do I need to know?",
   },
   {
@@ -238,7 +234,6 @@ export const MODES = [
        to put. */
     id: "insights",
     label: "Proactive Insights",
-    hint: "Try me",
     question: "What should I know that I did not think to ask?",
   },
 ] as const;
