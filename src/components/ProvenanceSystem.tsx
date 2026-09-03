@@ -48,7 +48,7 @@ const WORK_IN = [
   "Decisions",
 ];
 
-const VERA_VERBS = ["Captures", "connects", "understands", "tracks"];
+const VERA_VERBS = ["Captures", "Connects", "Understands", "Tracks"];
 
 /* Named after the modes the page has already demonstrated. */
 const WORK_OUT = [

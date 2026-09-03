@@ -229,19 +229,16 @@ export function MeetVera() {
         <div className="grid12">
           <div className="col-span-12 lg:col-span-8">
             <Reveal>
-              <SectionLabel>Meet Vera</SectionLabel>
-            </Reveal>
-            <Reveal delay={30}>
-              {/* the one place the visitor learns the Vera identity. Small,
-                  and deliberately not a second company logo: Provenance owns
-                  the masthead, Vera is the intelligence inside it. */}
-              <div className="mt-6 flex items-center gap-2.5 text-vera-400">
-                <VeraMark size={22} title="Vera" />
-                <span className="text-heading-2 text-paper">Vera</span>
-                <span className="ml-1 text-ui text-paper-muted">
-                  Vera connects what matters.
+              {/* the mark rides the section label rather than repeating the
+                  name on a line of its own. Saying "Meet Vera", then "Vera",
+                  then a descriptor was three introductions to the same thing
+                  before the product had shown anything. */}
+              <SectionLabel>
+                <span className="inline-flex items-center gap-2.5">
+                  <VeraMark size={20} className="text-vera-400" title="Vera" />
+                  Meet Vera
                 </span>
-              </div>
+              </SectionLabel>
             </Reveal>
             <Reveal delay={40}>
               <h2 className="mt-5 max-w-[20ch] text-[2rem] font-semibold leading-[1.08] tracking-[-0.016em] text-paper sm:text-[2.5rem] lg:text-display-2">

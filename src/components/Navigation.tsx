@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { Button } from "@/components/ui/Button";
 import { ProvenanceLockup } from "@/components/ProvenanceMark";
+import { VeraMark } from "@/components/vera/VeraMark";
 
 /* DESIGN.md §9.
    60px. Sans at ui 14px/500. Transparent over the hero, solid canvas with a
@@ -23,8 +24,10 @@ import { ProvenanceLockup } from "@/components/ProvenanceMark";
    Below 768px the links collapse to a full-height overlay panel, not a
    dropdown (§9.2). */
 
+const PRODUCTS = [{ href: "#product", name: "Vera" }];
+
 const LINKS = [
-  { href: "#product", label: "Meet Vera" },
+  { href: "#product", label: "Products", menu: true },
   /* the system graphic on the homepage is the destination. It is not
      duplicated onto a route of its own. */
   { href: "#how-it-works", label: "How it works" },
@@ -35,6 +38,8 @@ const LINKS = [
 export function Navigation() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const menuRef = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 24);
@@ -56,6 +61,20 @@ export function Navigation() {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
+    const onDown = (e: MouseEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) setMenu(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("mousedown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("mousedown", onDown);
+    };
+  }, [menu]);
+
   return (
     <>
       <header
@@ -76,18 +95,79 @@ export function Navigation() {
           </Link>
 
           <ul className="hidden items-center gap-7 md:flex">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="group relative inline-block py-0.5 text-ui text-paper-muted transition-colors duration-instant before:absolute before:inset-x-0 before:-top-[11px] before:-bottom-[11px] before:content-[''] hover:text-paper"
+            {LINKS.map((l) =>
+              l.menu ? (
+                <li
+                  key={l.href}
+                  ref={menuRef}
+                  className="relative"
+                  onMouseEnter={() => setMenu(true)}
+                  onMouseLeave={() => setMenu(false)}
+                  onFocus={() => setMenu(true)}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget as Node))
+                      setMenu(false);
+                  }}
                 >
-                  {l.label}
-                  {/* underline grows from 0 to full width, left origin (§9.2) */}
-                  <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-paper transition-transform duration-quick ease-state group-hover:scale-x-100" />
-                </Link>
-              </li>
-            ))}
+                  <Link
+                    href={l.href}
+                    aria-haspopup="true"
+                    aria-expanded={menu}
+                    onClick={() => setMenu(false)}
+                    className="group relative inline-flex items-center gap-1.5 py-0.5 text-ui text-paper-muted transition-colors duration-instant before:absolute before:inset-x-0 before:-top-[11px] before:-bottom-[11px] before:content-[''] hover:text-paper"
+                  >
+                    {l.label}
+                    <svg
+                      width="9"
+                      height="9"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      aria-hidden
+                      className={clsx(
+                        "transition-transform duration-quick ease-state",
+                        menu && "rotate-180",
+                      )}
+                    >
+                      <path
+                        d="M2 4l3 3 3-3"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="square"
+                      />
+                    </svg>
+                    <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-paper transition-transform duration-quick ease-state group-hover:scale-x-100" />
+                  </Link>
+
+                  <div
+                    hidden={!menu}
+                    className="absolute left-0 top-full z-50 w-[236px] border border-[rgba(243,244,240,0.10)] bg-canvas-2 p-1.5"
+                  >
+                    {PRODUCTS.map((p) => (
+                      <Link
+                        key={p.href}
+                        href={p.href}
+                        onClick={() => setMenu(false)}
+                        className="flex items-center gap-3 rounded-control px-3 py-2.5 transition-colors duration-instant hover:bg-canvas-3"
+                      >
+                        <VeraMark size={18} className="shrink-0 text-vera-400" />
+                        <span className="text-ui text-paper">{p.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              ) : (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="group relative inline-block py-0.5 text-ui text-paper-muted transition-colors duration-instant before:absolute before:inset-x-0 before:-top-[11px] before:-bottom-[11px] before:content-[''] hover:text-paper"
+                  >
+                    {l.label}
+                    {/* underline grows from 0 to full width, left origin (§9.2) */}
+                    <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-paper transition-transform duration-quick ease-state group-hover:scale-x-100" />
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
 
           <div className="ml-auto flex items-center gap-2">
@@ -139,9 +219,12 @@ export function Navigation() {
                 <Link
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block border-b border-[rgba(243,244,240,0.10)] py-5 text-heading-2 text-paper"
+                  className="flex items-center gap-3 border-b border-[rgba(243,244,240,0.10)] py-5 text-heading-2 text-paper"
                 >
-                  {l.label}
+                  {l.menu && (
+                    <VeraMark size={20} className="shrink-0 text-vera-400" />
+                  )}
+                  {l.menu ? "Vera" : l.label}
                 </Link>
               </li>
             ))}
