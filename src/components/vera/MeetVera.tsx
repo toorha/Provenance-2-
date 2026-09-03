@@ -39,6 +39,9 @@ const HOLD_MS = 3600;
 /* long enough to read one sentence and understand what is about to happen,
    short enough that nobody feels held up by it */
 const INTRO_MS = 2600;
+/* shorter when somebody asked for the mode themselves: they have already
+   decided to look, so the sentence is a caption rather than a preamble */
+const PICKED_INTRO_MS = 1900;
 
 /* below zero is the intro panel: the mode saying what it is for before it
    does it. Also the state the section sits in before anything has played, so
@@ -161,13 +164,23 @@ export function MeetVera() {
     };
   }, [clear]);
 
-  /* Choosing a mode ends the run for good and shows that story whole. */
+  /* Choosing a mode ends the run for good.
+
+     It still opens on the intro, because a visitor who picks Proactive
+     Insights off the tab bar has no idea what Proactive Insights is, and
+     jumping them straight to three records and a green box answers a question
+     they were never asked. What they do NOT get is the drip: after the
+     sentence the whole story arrives at once, so the cost of asking is one
+     line of explanation rather than eight seconds of animation. */
   const onModeChange = useCallback(
     (m: ModeId) => {
       takenOver.current = true;
       clear();
       setMode(m);
-      setRevealed(Infinity);
+      setRevealed(INTRO);
+      timers.current.push(
+        setTimeout(() => setRevealed(Infinity), PICKED_INTRO_MS),
+      );
     },
     [clear],
   );

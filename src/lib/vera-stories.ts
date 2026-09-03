@@ -32,6 +32,14 @@ export type VeraStory = {
   id: "track" | "ask" | "insights";
   /** What this mode is FOR, said before any of it happens.
 
+      THE THREE ROLES ARE DISTINCT AND HAVE TO STAY DISTINCT.
+        Track     what is happening, what is blocking it, what moves it forward
+        Ask       what do I need to know
+        Insights  what should I know that I have not thought to ask
+      Track is the project execution layer: Vera derives live project state
+      from the work already happening, rather than a team maintaining tasks by
+      hand. It is not conflict detection and it is not a status report.
+
       Somebody who lands mid-scroll sees records and a green conclusion and has
       to reverse-engineer what they are looking at. One sentence on an almost
       empty panel costs two seconds and means the evidence that follows is read
@@ -58,7 +66,7 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
   track: {
     id: "track",
     intro:
-      "Vera reads everything that arrives on a property, and tells you when two things stop agreeing with each other.",
+      "Vera keeps the project state up to date, tracks what is blocking progress, and shows your team what needs to happen next.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Vera keeps up with what is changing across the property.",
     evidence: [
@@ -94,7 +102,7 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
   ask: {
     id: "ask",
     intro:
-      "Ask a question in your own words. Vera answers from the property's own records, and shows you which ones it used.",
+      "Ask Vera anything about a property. Vera pieces together the relevant history and context to give you the answer.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Asked this morning",
     question: "Can we move forward with the South Pad?",
@@ -132,7 +140,7 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
   insights: {
     id: "insights",
     intro:
-      "Vera keeps watching long after the work stops. When something changes that makes an old decision worth revisiting, it says so.",
+      "Vera proactively monitors your properties for internal and external changes, surfacing risks, opportunities, and anything your team should know.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Nobody asked. Vera noticed on its own.",
     headline: "A project paused in 2023 may now be possible.",
