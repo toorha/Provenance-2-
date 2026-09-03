@@ -53,7 +53,7 @@ export type Highlight = {
   hideBelowLg?: boolean;
 };
 
-/* SIX ASSETS, FIVE CLASSES, ALL OF THEM WHERE THE IMAGE IS ACTUALLY VISIBLE.
+/* EIGHT ASSETS, SIX CLASSES, ALL OF THEM WHERE THE IMAGE IS ACTUALLY VISIBLE.
 
    The point of the variety is that a portfolio is not a set of office towers.
    A grocery-anchored plaza and a logistics shed say "these are real assets
@@ -63,12 +63,14 @@ export type Highlight = {
    so nothing is marked there: an outline with no visible building under it
    reads as a bug, not as restraint. */
 export const HERO_HIGHLIGHTS: Highlight[] = [
-  { id: "residences", type: "residential", x: 74.22, y: 23.86, w: 5.33, h: 15.85, pin: 7, hideBelowLg: true },
-  { id: "office", type: "office", x: 74.24, y: 41.89, w: 5.42, h: 3.88 },
-  { id: "plaza", type: "retail", x: 74.03, y: 53.49, w: 5.42, h: 5.60, pin: 6 },
-  { id: "tower", type: "mixed-use", x: 84.59, y: 50.61, w: 1.74, h: 4.19, pin: 9 },
-  { id: "neighbourhood", type: "retail", x: 89.13, y: 53.73, w: 9.21, h: 5.60, hideBelowLg: true },
-  { id: "logistics", type: "industrial", x: 80.90, y: 69.25, w: 6.67, h: 8.96, pin: 6 },
+  { id: "civic", type: "institutional", x: 87.39, y: 21.46, w: 4.96, h: 3.57, hideBelowLg: true },
+  { id: "residences", type: "residential", x: 72.03, y: 32.21, w: 3.92, h: 4.52, pin: 6 },
+  { id: "office", type: "office", x: 76.66, y: 37.02, w: 6.08, h: 3.03, hideBelowLg: true },
+  { id: "tower", type: "mixed-use", x: 85.39, y: 49.80, w: 1.14, h: 2.15, pin: 10 },
+  { id: "plaza", type: "retail", x: 71.90, y: 64.03, w: 3.96, h: 3.41, pin: 5 },
+  { id: "neighbourhood", type: "retail", x: 93.14, y: 64.15, w: 4.25, h: 3.41, hideBelowLg: true },
+  { id: "logistics", type: "industrial", x: 83.63, y: 74.85, w: 1.25, h: 3.12, pin: 5 },
+  { id: "highstreet", type: "retail", x: 76.50, y: 83.41, w: 6.08, h: 3.41 },
 ];
 
 /* Street names, so the frame reads as a place rather than as a texture.
@@ -85,11 +87,9 @@ export type StreetLabel = {
 };
 
 export const HERO_STREETS: StreetLabel[] = [
-  { name: "Meridian Avenue", axis: "h", along: 43.22, at: 84, hideBelowLg: true },
-  { name: "Foundry Road", axis: "h", along: 68.85, at: 71 },
-  { name: "Canal Road", axis: "h", along: 82.67, at: 76, hideBelowLg: true },
-  /* 62, not 30: at 30 the label ran down the side of the residences block and
-     clipped its outline. Vertical names need a clear stretch of road. */
-  { name: "Market Street", axis: "v", along: 80.08, at: 62, hideBelowLg: true },
-  { name: "Port Street", axis: "v", along: 88.40, at: 26 },
+  { name: "Meridian Avenue", axis: "h", along: 33.07, at: 84, hideBelowLg: true },
+  { name: "Foundry Road", axis: "h", along: 75.19, at: 70 },
+  { name: "Market Street", axis: "v", along: 71.33, at: 45 },
+  { name: "Harbour Street", axis: "v", along: 86.67, at: 55, hideBelowLg: true },
+  { name: "Port Street", axis: "v", along: 92.56, at: 38, hideBelowLg: true },
 ];
