@@ -2,214 +2,181 @@ import type { Metadata } from "next";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ClosingCta } from "@/components/ClosingCta";
-import { THESIS } from "@/lib/demo-data";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Thesis · Provenance",
   description:
-    "Buildings outlive the people who work on them. Their memory should too. The belief behind Vera and Provenance.",
+    "Buildings outlive the people who work on them. Their memory should too.",
 };
 
-/* ------------------------------------------------------------------ *
- * THE THESIS
- *
- * Product philosophy, so it is set as an argument rather than a feature
- * page: one column, long measure, almost no containment. The only
- * structures on the page are the two lists the argument actually needs.
- * ------------------------------------------------------------------ */
-export default function ThesisPage() {
-  const t = THESIS;
+/* The thesis.
 
+   FIVE MOMENTS, AND NOT ONE OF THEM IS THE PRODUCT. This page used to run to
+   ten sections and spent most of them re-explaining Vera: a four step model,
+   a "useful today" list, a "compounds over time" list, an organization versus
+   property memory taxonomy, and a section on transfer mechanics. All of that
+   is argued better on the homepage by a product that demonstrates it.
+
+   The division is: the homepage answers what Provenance is and why you would
+   use it. This page answers why the category should exist at all. When those
+   two blur, the thesis becomes a second homepage and stops being an argument.
+
+   Typography and rules carry it. No cards, no diagrams, no product terms. */
+
+export default function ThesisPage() {
   return (
     <>
       <Navigation />
       <main>
-        <article className="tex tex-paper tex-draft relative bg-background pt-36 pb-24 lg:pt-44 lg:pb-32">
-          <div className="mx-auto max-w-3xl px-6 lg:px-8">
-            <p className="label-caps">{t.eyebrow}</p>
-
-            <h1 className="mt-7 font-display text-[2.4rem] leading-[1.05] tracking-[-0.03em] text-foreground sm:text-[3rem] lg:text-[3.4rem]">
-              {t.headline[0]}
-              <br />
-              <span className="text-paper">{t.headline[1]}</span>
-            </h1>
-
-            <p className="mt-9 text-[19px] leading-[1.6] text-paper lg:text-[20px]">
-              {t.opening}
-            </p>
-
-            <section className="mt-14 lg:mt-16">
-              <p className="max-w-[26ch] font-display text-[1.6rem] leading-[1.18] tracking-[-0.022em] text-foreground sm:text-[1.9rem]">
-                {t.accumulation.lead}
-              </p>
-              <p className="mt-6 text-[17px] leading-[1.65] text-paper">
-                {t.accumulation.body}
-              </p>
-            </section>
-
-            {/* the churn, as a plain list because it is a list */}
-            <section className="mt-16 lg:mt-20">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-paper-muted">
-                {t.churn.label}
-              </p>
-              <ul className="mt-5 grid gap-x-10 gap-y-0 sm:grid-cols-2">
-                {t.churn.items.map((item) => (
-                  <li
-                    key={item}
-                    className="border-b border-border py-2.5 text-[15.5px] text-foreground"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {/* the turn */}
-            <section className="mt-16 lg:mt-20">
-              <p className="max-w-[24ch] font-display text-[1.9rem] leading-[1.14] tracking-[-0.026em] text-foreground sm:text-[2.3rem]">
-                {t.pivot.lead[0]}{" "}
-                <span className="text-paper">{t.pivot.lead[1]}</span>
-              </p>
-              <p className="mt-7 text-[17px] leading-[1.65] text-paper">
-                {t.pivot.body}
-              </p>
-            </section>
-
-            <section className="mt-16 border-l-2 border-accent pl-6 lg:mt-20">
-              <p className="max-w-[30ch] font-display text-[1.6rem] leading-[1.18] tracking-[-0.022em] text-foreground sm:text-[1.9rem]">
-                {t.belief.lead[0]}{" "}
-                <span className="text-paper">{t.belief.lead[1]}</span>
-              </p>
-            </section>
-
-            {/* how the product follows from that */}
-            <section className="mt-16 lg:mt-20">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-paper-muted">
-                {t.model.label}
-              </p>
-              <ol className="mt-6">
-                {t.model.steps.map((step, i) => (
-                  <li
-                    key={step.name}
-                    className="grid grid-cols-[2.5rem_1fr] items-baseline gap-x-4 border-t border-border py-5"
-                  >
-                    <span className="text-[10.5px] text-paper-muted">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span>
-                      <span className="block text-[17px] font-semibold tracking-[-0.014em] text-foreground">
-                        {step.name}
-                      </span>
-                      <span className="mt-1 block text-[15px] leading-[1.5] text-paper">
-                        {step.note}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </section>
-
-            {/* one is active, one is persistent, and they are one system */}
-            <section className="mt-16 border-t border-border pt-10 lg:mt-20">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-paper-muted">
-                {t.roles.label}
-              </p>
-              <div className="mt-6 grid gap-8 sm:grid-cols-2 sm:gap-12">
-                {t.roles.items.map((r) => (
-                  <div key={r.name}>
-                    <p className="text-[17px] font-semibold tracking-[-0.014em] text-foreground">
-                      {r.name}
-                    </p>
-                    <p className="mt-2 text-[15.5px] leading-[1.55] text-paper">
-                      {r.note}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-8 text-[17px] leading-[1.6] text-foreground">
-                {t.roles.line}
-              </p>
-            </section>
-
-            {/* the two horizons, side by side once */}
-            <section className="mt-16 grid gap-10 border-t border-border pt-10 sm:grid-cols-2 sm:gap-14 lg:mt-20">
-              {t.horizons.map((h) => (
-                <div key={h.label}>
-                  <p className="text-[10px] uppercase tracking-[0.07em] text-accent">
-                    {h.label}
-                  </p>
-                  <p className="mt-2 text-[16px] font-semibold text-foreground">
-                    {h.lead}
-                  </p>
-                  <ul className="mt-3 space-y-1.5">
-                    {h.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-baseline gap-2.5 text-[15px] leading-[1.5] text-paper"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="h-[4px] w-[4px] shrink-0 -translate-y-[3px] rounded-full bg-accent/55"
-                        />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </section>
-
-            <p className="mt-14 font-display text-[1.5rem] leading-[1.2] tracking-[-0.022em] text-foreground sm:text-[1.75rem]">
-              <span className="text-vera-400">{t.payoff[0]}</span>{" "}
-              {t.payoff[1]}
-            </p>
-
-            {/* the careful part */}
-            <section className="mt-16 border-t border-border pt-10 lg:mt-20">
-              <p className="text-[10px] uppercase tracking-[0.07em] text-paper-muted">
-                {t.transfer.label}
-              </p>
-              <p className="mt-5 max-w-[30ch] text-[19px] font-semibold leading-[1.35] tracking-[-0.016em] text-foreground sm:text-[21px]">
-                {t.transfer.headline}
-              </p>
-              <p className="mt-5 text-[17px] leading-[1.65] text-paper">
-                {t.transfer.body}
-              </p>
-              <p className="mt-6 text-[16px] leading-[1.6] text-paper-muted">
-                {t.transfer.close}
-              </p>
-
-              <div className="mt-10 grid gap-8 sm:grid-cols-2 sm:gap-12">
-                {t.memory.items.map((mem) => (
-                  <div key={mem.name}>
-                    <p className="text-[15px] font-semibold tracking-[-0.012em] text-foreground">
-                      {mem.name}
-                    </p>
-                    <p className="mt-2 text-[15px] leading-[1.55] text-paper">
-                      {mem.note}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* one restrained line about where this goes, then the conclusion.
-                The promise itself is the closing section below, so it is not
-                repeated here. */}
-            <section className="mt-16 border-t border-border pt-10 lg:mt-20">
-              <p className="text-[17px] leading-[1.65] text-paper">
-                {t.horizon}
-              </p>
-              <p className="mt-8 max-w-[28ch] font-display text-[1.6rem] leading-[1.18] tracking-[-0.022em] text-foreground sm:text-[1.9rem]">
-                {t.conclusion}
-              </p>
-            </section>
+        {/* ── 1. the thesis ─────────────────────────────────────────────── */}
+        <section className="track pb-[88px] pt-[132px] md:pb-[104px] md:pt-[164px]">
+          <div className="grid12">
+            <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">
+              <SectionLabel>Thesis</SectionLabel>
+            </Reveal>
           </div>
-        </article>
 
-        <ClosingCta />
+          <div className="grid12 mt-6">
+            <Reveal
+              delay={40}
+              className="col-span-12 md:col-span-6 lg:col-span-9"
+            >
+              <h1 className="text-[2rem] font-semibold leading-[1.08] tracking-[-0.018em] text-paper sm:text-[2.5rem] lg:text-display-2">
+                Buildings outlive the people who work on them.{" "}
+                <span className="lg:block">Their memory should too.</span>
+              </h1>
+            </Reveal>
+          </div>
+
+          <div className="grid12 mt-8">
+            <Reveal
+              delay={60}
+              className="col-span-12 md:col-span-6 lg:col-span-7"
+            >
+              <p className="text-lead text-paper-muted">
+                A commercial property can exist for decades. Over that time,
+                owners change, employees leave, consultants rotate, systems are
+                replaced, projects are paused and restarted, and thousands of
+                decisions accumulate around the asset.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── 2. the problem ────────────────────────────────────────────── */}
+        <Section label="The problem" heading="The asset persists. Its context does not.">
+          <p className="text-body text-paper-muted">
+            A property accumulates drawings, reports, approvals, emails,
+            repairs, leases and decisions over many years. Those records end up
+            spread across people, companies, consultants, systems, inboxes,
+            shared drives and data rooms. Some of it simply disappears.
+          </p>
+          {/* the line the whole page is built around */}
+          <p className="mt-8 max-w-[26ch] text-[1.5rem] font-semibold leading-[1.2] tracking-[-0.012em] text-paper sm:text-[1.75rem]">
+            The files often survive. The reasoning connecting them does not.
+          </p>
+          <p className="mt-8 text-body text-paper-muted">
+            Every team change forces part of the property to be relearned. That
+            is{" "}
+            <span className="font-medium text-vera-400">corporate amnesia</span>
+            : the records remain, but the thinking behind them is gone.
+          </p>
+        </Section>
+
+        {/* ── 3. the belief ─────────────────────────────────────────────── */}
+        <Section
+          label="The belief"
+          heading="The memory should belong to the property."
+        >
+          <p className="text-body text-paper-muted">
+            Today, almost everything a property knows belongs implicitly to
+            whichever organization happens to be managing it. When that
+            organization changes, so does the memory.
+          </p>
+          <p className="mt-6 text-body text-paper-muted">
+            We believe there should also be a persistent layer of memory
+            organized around the property itself. What happened, why it
+            happened, what changed, what evidence supports it, and what still
+            matters. That record should become more useful as a property gets
+            older, not less complete.
+          </p>
+        </Section>
+
+        {/* ── 4. why it matters over time ───────────────────────────────── */}
+        <Section
+          label="Over time"
+          heading="Property memory should compound."
+        >
+          <p className="text-body text-paper-muted">
+            Every project, repair, approval, lease and decision should add to
+            what the property already knows.
+          </p>
+          <p className="mt-6 text-body text-paper-muted">
+            A decision made ten years ago should make a decision today easier. A
+            consultant&rsquo;s report should not become detached from what
+            happened after it. A new employee should not need five years of
+            tenure to understand five years of history. A future owner should
+            not have to reconstruct a property from a data room.
+          </p>
+        </Section>
+
+        {/* ── 5. continuity, then the conviction ────────────────────────── */}
+        <Section label="Continuity" heading="Memory should outlast ownership.">
+          <p className="text-body text-paper-muted">
+            Not every piece of company information should transfer. Internal
+            strategy, negotiations and underwriting can stay private. But the
+            property-level history and evidence an owner chooses to preserve
+            should not have to disappear simply because the asset changed
+            hands.
+          </p>
+
+          <hr className="rule-full mt-16 md:mt-20" />
+          <p className="mt-12 max-w-[24ch] text-[1.75rem] font-semibold leading-[1.14] tracking-[-0.015em] text-paper sm:text-[2.125rem] md:mt-14 lg:max-w-[30ch] lg:text-[2.5rem]">
+            Properties should not start over every time the people around them
+            do.
+          </p>
+        </Section>
       </main>
+
+      {/* the conclusion is the promise itself, and the one action on the page */}
+      <ClosingCta />
       <Footer />
     </>
+  );
+}
+
+/* One shape for all four body moments: a quiet label, a headline, and prose
+   at a readable measure. The rule above each is the only ornament. */
+function Section({
+  label,
+  heading,
+  children,
+}: {
+  label: string;
+  heading: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="track pb-[72px] md:pb-[88px]">
+      <hr className="rule-full" />
+      <div className="grid12 mt-12 md:mt-14">
+        <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">
+          <p className="text-mono-sm uppercase tracking-[0.08em] text-paper-subtle">
+            {label}
+          </p>
+        </Reveal>
+        <Reveal
+          delay={40}
+          className="col-span-12 mt-6 md:col-span-6 lg:col-span-8 lg:mt-0"
+        >
+          <h2 className="max-w-[22ch] text-[1.5rem] font-semibold leading-[1.16] tracking-[-0.014em] text-paper sm:text-[1.875rem] lg:text-[2.25rem]">
+            {heading}
+          </h2>
+          <div className="mt-7 max-w-[62ch]">{children}</div>
+        </Reveal>
+      </div>
+    </section>
   );
 }
