@@ -78,7 +78,7 @@ export function FaqSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-[60px] bg-canvas py-[104px] md:py-[128px]">
+    <section id="faq" className="section anchor-offset bg-canvas">
       <div className="track">
         <div className="grid12">
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">

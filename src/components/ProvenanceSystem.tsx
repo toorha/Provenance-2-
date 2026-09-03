@@ -160,7 +160,10 @@ export function ProvenanceSystem() {
     lit(s) ? "opacity-100" : stage === 0 ? "opacity-100" : "opacity-[0.5]";
 
   return (
-    <section className="overflow-hidden bg-canvas py-[104px] md:py-[128px]">
+    <section
+      id="how-it-works"
+      className="section anchor-offset overflow-hidden bg-canvas"
+    >
       <div className="track">
         <div className="grid12">
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">

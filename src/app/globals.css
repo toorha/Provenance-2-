@@ -153,6 +153,37 @@
     }
   }
 
+  /* Section rhythm. Adjacent sections both contribute, so these values are
+     half of the intended seam: 72 + 72 = 144 on mobile, 88 + 88 = 176 on
+     desktop. Anything larger reads as the page having ended. */
+  .section {
+    padding-block: 72px;
+  }
+  /* the one product moment on the page earns a little more room */
+  .section-major {
+    padding-block: 88px;
+  }
+  /* a section that continues directly from the one above it */
+  .section-tight {
+    padding-block: 56px;
+  }
+  @media (min-width: 768px) {
+    .section {
+      padding-block: 88px;
+    }
+    .section-major {
+      padding-block: 108px;
+    }
+    .section-tight {
+      padding-block: 68px;
+    }
+  }
+
+  /* anchored sections must clear the 60px fixed bar with room to breathe */
+  .anchor-offset {
+    scroll-margin-top: 84px;
+  }
+
   .grid12 {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));

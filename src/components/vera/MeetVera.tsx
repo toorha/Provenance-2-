@@ -222,7 +222,7 @@ export function MeetVera() {
       /* back to the base canvas: the product window is the bright surface, so
          the section around it must be the darkest thing near it. That contrast
          IS the point — marketing environment, then real software. */
-      className="overflow-hidden bg-canvas py-[104px] md:py-[128px]"
+      className="section-major anchor-offset overflow-hidden bg-canvas"
     >
       <div className="track">
         {/* intro — concise, so the product appears quickly */}

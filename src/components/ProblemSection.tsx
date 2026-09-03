@@ -1,62 +1,41 @@
-import { clsx } from "clsx";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Reveal } from "@/components/ui/Reveal";
 
 /* HOMEPAGE.md §5, Section 2. Layout A, one column, typography only.
 
-   The questions ARE the content. No supporting column, no source labels, no
-   context lists, no cards, no diagrams, no fake documents.
+   THE PROBLEM IS NOT THAT SEARCH IS SLOW. An earlier version led with
+   "simple questions should not require a scavenger hunt" and three worked
+   questions, which framed Provenance as document search and made the product
+   look like a faster way to find a file. Meet Vera already proves the
+   question answering, and proves it far better than a static list of
+   questions ever could.
 
-   FOUR LEVELS, AND ONLY ONE OF THEM IS LOUD.
+   The real problem is structural and it compounds. A property runs for
+   decades, records pile up across people and systems, some are duplicated,
+   some are buried, some are gone, and the reasoning that connected them was
+   never written down anywhere. Then the people who held that reasoning leave.
 
-     1  section label      20px / 600            the system component
-     2  headline           56px / 600  paper     the anchor, and the only one
-     3  supporting line    20px / 430  muted     what the problem actually is
-     4  questions          24px / 430  paper 90  examples, not co-headlines
-     5  takeaway           20px / 430  muted     the conclusion (17px sm)
+   So the three items here are not questions a visitor could go and answer.
+   They are the three things that are genuinely hard to reconstruct, and the
+   difficulty is not finding one document: it is rebuilding the story running
+   through many of them, across years and across people.
 
-   THE COMPOSITION IS THE GRID, NOT A SECOND COLUMN. Everything used to sit
-   inside eight columns hard against the left edge, which left half of a very
-   wide dark canvas doing nothing. Each level now takes the width it actually
-   needs: the headline nine columns, the supporting line six, the questions
-   nine or ten, the takeaway eight. Wider measures also mean fewer wrapped
-   lines, so using more of the canvas made the section shorter rather than
-   taller.
+   No cards, no boxes. Rules and space. */
 
-   The three questions go progressively deeper: now, then across teams, then
-   back through the property's own history. The quiet labels carry that arc. */
-
-const QUESTIONS = [
+const LOST = [
+  { label: "Why", ask: "Why was this decision made?" },
+  { label: "What changed", ask: "What happened after it?" },
   {
-    label: "What's happening now",
-    ask: "What is still blocking the South Pad from moving forward?",
+    label: "What matters now",
+    ask: "Does that history change what we should do today?",
   },
-  {
-    label: "Across teams",
-    ask: "Are we actually ready to hand Unit 12 over on Monday?",
-  },
-  {
-    label: "From the property's history",
-    ask: "Why was the main water line replaced, who did the work, and what warranty still applies?",
-  },
-];
-
-/* All three share one measure and one left edge. An earlier pass inset the
-   middle question by a column for rhythm, and the staggered rules and labels
-   read as a misalignment rather than as a composition. */
-const RHYTHM = [
-  "lg:col-span-10 lg:col-start-1",
-  "lg:col-span-10 lg:col-start-1",
-  "lg:col-span-10 lg:col-start-1",
 ];
 
 export function ProblemSection() {
   return (
-    /* One tonal step up from the canvas, deeper into the same environment and
-       never a different theme (DESIGN.md §6.3). */
-    <section className="bg-canvas py-[104px] md:py-[128px]">
+    <section className="section bg-canvas">
       <div className="track">
-        {/* ── LEVEL 1 and 2: the statement, then what it means ─────────── */}
+        {/* ── the statement ────────────────────────────────────────────── */}
         <div className="grid12">
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">
             <SectionLabel>The problem</SectionLabel>
@@ -65,83 +44,65 @@ export function ProblemSection() {
 
         <div className="grid12 mt-5">
           <Reveal delay={40} className="col-span-12 md:col-span-6 lg:col-span-9">
-            <h2 className="text-[2rem] font-semibold leading-[1.08] tracking-[-0.016em] text-paper sm:text-[2.5rem] lg:text-display-2">
-              Simple questions should not require a scavenger hunt.
+            <h2 className="text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.015em] text-paper sm:text-[2.125rem] lg:text-[3rem] lg:leading-[1.06] lg:tracking-[-0.018em]">
+              Every property accumulates years of history. Almost none have a
+              complete memory.
             </h2>
           </Reveal>
         </div>
 
-        <div className="grid12 mt-6">
-          <Reveal delay={60} className="col-span-12 md:col-span-6 lg:col-span-6">
-            {/* the line that names the problem before the examples show it */}
+        <div className="grid12 mt-7">
+          <Reveal delay={60} className="col-span-12 md:col-span-6 lg:col-span-7">
             <p className="text-lead text-paper-muted">
-              Property context lives across files, emails, systems, and people.
-              Teams spend hours piecing it together just to answer simple
-              questions.
+              Drawings, reports, approvals, emails, repairs, leases, and
+              decisions end up scattered across different people and systems.
+              Some are buried. Some disappear entirely.
+            </p>
+            {/* the second half of the problem, and the harder half. Kept as
+                its own block because it is a different point, not a
+                continuation of the list above it. */}
+            <p className="mt-5 text-lead text-paper">
+              And even when the files survive, the reasoning connecting them
+              usually does not.
             </p>
           </Reveal>
         </div>
 
-        {/* ── LEVEL 3: the examples ─────────────────────────────────────── */}
-        <div className="grid12 mt-16 md:mt-20">
-          {QUESTIONS.map((q, i) => (
+        {/* ── what is actually hard to reconstruct ─────────────────────── */}
+        <div className="grid12 mt-14 md:mt-16">
+          {LOST.map((l, i) => (
             <Reveal
-              key={q.label}
-              className={clsx("col-span-12 md:col-span-6", RHYTHM[i])}
+              key={l.label}
+              delay={i * 60}
+              className="col-span-12 md:col-span-3 lg:col-span-4"
             >
               <hr className="rule-full" />
-              <div className="py-8 md:py-9">
-                {/* a category label, not small text: mono, caps, tracked, and
-                    far enough from the question to read as a heading for it
-                    rather than a first line of it */}
+              <div className="py-6 md:py-7">
                 <p className="text-mono-sm uppercase tracking-[0.08em] text-paper-subtle">
-                  {q.label}
+                  {l.label}
                 </p>
-                {/* no character cap: the column is the measure now, which
-                    takes the longest question from three lines to two */}
-                <p className="mt-4 text-[1.25rem] leading-[1.4] tracking-[-0.006em] text-paper/90 sm:text-[1.375rem] lg:text-[1.5rem]">
-                  &ldquo;{q.ask}&rdquo;
+                <p className="mt-3 max-w-[24ch] text-[1.125rem] leading-[1.4] tracking-[-0.006em] text-paper/90 sm:text-[1.25rem]">
+                  {l.ask}
                 </p>
               </div>
-              {/* the group closes with a rule only on the last item, so the
-                  takeaway below is outside the list, not a fourth row */}
-              {i === QUESTIONS.length - 1 && <hr className="rule-full" />}
             </Reveal>
           ))}
         </div>
 
-        {/* ── LEVEL 4: the conclusion ─────────────────────────────────────
-            Quieter than the questions in size, weight and colour, and set off
-            by roughly twice the space that separates one question from the
-            next. Only the first clause carries any emphasis, which is what
-            makes it land as a conclusion instead of a fourth example. */}
-        <div className="grid12 mt-14 md:mt-16">
+        {/* ── the consequence, in two blocks ───────────────────────────── */}
+        <div className="grid12 mt-12 md:mt-14">
           <Reveal delay={40} className="col-span-12 md:col-span-6 lg:col-span-8">
-            {/* The top of the section is about fragmentation today. This is a
-                different problem: the same reconstruction happening again and
-                again as people move on. Saying "scattered" twice made them
-                read as one point stated twice.
-
-                The term is named only after the visitor has felt it, and the
-                sentence that follows is the definition, so it needs no badge,
-                no glossary and no icon. */}
-            {/* Two blocks, because they are two different points and one
-                paragraph made them read as a single run-on. The first is what
-                accumulates; the second is what happens to it when the people
-                change. Emphasis is on exactly two phrases, so it still lands
-                as prose rather than as a definition card. */}
-            <p className="text-body text-paper-muted md:text-lead">
-              <span className="font-medium text-paper">
-                Properties accumulate years of emails, reports, drawings,
-                decisions, and handoffs.
-              </span>{" "}
-              The answers are usually still there, but the context connecting
-              them gets harder to recover.
+            <p className="text-body text-paper md:text-lead">
+              Properties keep accumulating records while the people who
+              understand them keep changing.
             </p>
-            <p className="mt-6 text-body text-paper-muted md:text-lead">
-              As teams change, that context gets lost and rebuilt. That is{" "}
+            {/* the term is named and defined in the same breath, so it never
+                stands alone as a slogan */}
+            <p className="mt-5 text-body text-paper-muted md:text-lead">
+              Over time, that creates{" "}
               <span className="font-medium text-paper">corporate amnesia</span>:
-              the files remain, but the reasoning behind them disappears.
+              the organization keeps the files, but loses why decisions were
+              made, what changed, and what still matters.
             </p>
           </Reveal>
         </div>

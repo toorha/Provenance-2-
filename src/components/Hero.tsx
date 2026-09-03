@@ -13,7 +13,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function Hero() {
   return (
-    <section className="track pt-[152px] pb-[104px] md:pt-[188px] md:pb-[132px]">
+    <section className="track pb-[72px] pt-[132px] md:pb-[88px] md:pt-[164px]">
       <div className="grid12">
         <Reveal className="col-span-12 lg:col-span-11">
           <h1 className="text-[2.5rem] font-semibold leading-[1.04] tracking-[-0.018em] text-paper [text-wrap:balance] sm:text-[2.75rem] md:text-[3rem] lg:text-[3.75rem] lg:leading-[1.0] xl:text-display-1">

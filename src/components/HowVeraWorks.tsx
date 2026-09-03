@@ -56,7 +56,7 @@ const WORKFLOWS = [
 
 export function HowVeraWorks() {
   return (
-    <section className="bg-canvas pb-[80px] pt-[104px] md:pb-[96px] md:pt-[128px]">
+    <section className="section bg-canvas">
       <div className="track">
         {/* ── the statement ────────────────────────────────────────────── */}
         <div className="grid12">

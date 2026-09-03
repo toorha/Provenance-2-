@@ -20,7 +20,7 @@ export function ClosingCta() {
   return (
     <section
       id="access"
-      className="scroll-mt-[60px] bg-canvas pb-[132px] pt-[72px] md:pb-[168px] md:pt-[88px]"
+      className="section-major anchor-offset bg-canvas"
     >
       <div className="track">
         <div className="grid12">

@@ -25,6 +25,9 @@ import { ProvenanceLockup } from "@/components/ProvenanceMark";
 
 const LINKS = [
   { href: "#product", label: "Meet Vera" },
+  /* the system graphic on the homepage is the destination. It is not
+     duplicated onto a route of its own. */
+  { href: "#how-it-works", label: "How it works" },
   { href: "/thesis", label: "Thesis" },
   { href: "#faq", label: "FAQ" },
 ];
