@@ -24,16 +24,11 @@ export function ProductFrame({
   onModeChange,
   children,
   frameRef,
-  promote,
 }: {
   mode: ModeId;
   onModeChange: (m: ModeId) => void;
   children: React.ReactNode;
   frameRef?: React.RefObject<HTMLDivElement | null>;
-  /* the mode Vera is pointing at, once the walkthrough has finished. Green
-     because green means Vera, and this is Vera prompting rather than the
-     interface decorating itself. */
-  promote?: ModeId | null;
 }) {
   return (
     <div
@@ -74,7 +69,6 @@ export function ProductFrame({
       >
         {MODES.map((m: (typeof MODES)[number] & { hint?: string }) => {
           const selected = m.id === mode;
-          const pointed = !selected && promote === m.id;
           return (
             <button
               key={m.id}
@@ -94,8 +88,6 @@ export function ProductFrame({
                 "focus-visible:ring-offset-2 focus-visible:ring-offset-mineral-0",
                 selected
                   ? "bg-mineral-100 font-semibold text-ink"
-                  : pointed
-                    ? "bg-vera-200 font-semibold text-vera-700 hover:bg-vera-200"
                     : "font-medium text-slate hover:bg-mineral-50 hover:text-ink",
               )}
             >
@@ -117,9 +109,7 @@ export function ProductFrame({
                 <span
                   className={clsx(
                     "ml-2 hidden text-[12px] font-medium underline decoration-1 underline-offset-[3px] transition-colors duration-base lg:inline",
-                    pointed
-                      ? "text-vera-700 decoration-vera-600"
-                      : "text-slate decoration-mineral-400",
+                    "text-slate decoration-mineral-400",
                   )}
                 >
                   {m.hint}
@@ -129,11 +119,7 @@ export function ProductFrame({
               <span
                 className={clsx(
                   "absolute inset-x-0 bottom-0 h-0.5 transition-opacity duration-base ease-state",
-                  selected
-                    ? "bg-ink opacity-100"
-                    : pointed
-                      ? "bg-vera-700 opacity-100"
-                      : "opacity-0",
+                  selected ? "bg-ink opacity-100" : "opacity-0",
                 )}
               />
             </button>

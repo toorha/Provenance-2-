@@ -84,6 +84,6 @@ export const INSIGHT_CUES = {
     anchor: "center",
     maxW: 520,
     large: true,
-    holdMs: 5200,
+    holdMs: 3400,
   },
 } satisfies Record<string, NarratorCue>;

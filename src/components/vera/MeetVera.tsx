@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Reveal } from "@/components/ui/Reveal";
@@ -24,16 +24,30 @@ import { VeraMark } from "./VeraMark";
 import { ASK_EXAMPLES, MEMORY_UPDATE } from "@/lib/ask-data";
 import { ASK_CUES, INSIGHT_CUES, TRACK_CUES } from "@/lib/narrator-cues";
 
-/* HOMEPAGE.md §5, Section 3 — Meet Vera. Layout D (Full stage), mineral-050
-   band, the one `loud` section on the page.
+/* HOMEPAGE.md §5, Section 3. Meet Vera.
 
-   The introduction is deliberately short: label, headline, one line of
-   functions, then the product. No feature cards explaining Vera — the frame is
-   the explanation.
+   WATCH FIRST, EXPLORE SECOND. The three modes used to be three sandboxes:
+   every one of them needed the visitor to click a row, open a panel, expand a
+   source and press something before it said anything. That asks somebody to
+   learn an interface before they understand the product, which is backwards
+   on a landing page.
 
-   Track the Work is the ONE automatic walkthrough on the page. Ask Vera waits
-   to be tried, and carries the only tab cue. Proactive Insights is manually
-   explored too, and never autoplays. */
+   So the section now plays one guided run of three chapters, Track then Ask
+   then Insights, and each chapter shows its own strongest case without a
+   single required click. Everything stays live the whole time.
+
+   USER INTENT ALWAYS WINS. Any deliberate interaction cancels the rest of the
+   run permanently: switching mode, clicking a row, opening an insight, asking
+   a question. Nothing will move a visitor off a tab they chose. That is the
+   one rule that separates a guided reveal from a demo that fights you.
+
+   The three mode buttons are never taken away. They are how the visitor knows
+   there are three capabilities at all. */
+
+/* Roughly 27 seconds end to end, and deliberately unhurried: every line has
+   to stay up long enough to actually read (§16.6). */
+const CHAPTER_GAP = 900;
+const ASK_SETTLE = 1600;
 
 export function MeetVera() {
   const [mode, setMode] = useState<ModeId>("track");
@@ -43,19 +57,12 @@ export function MeetVera() {
      panel sits at full weight and a real user reading it sees everything. */
   const [beat, setBeat] = useState<Beat>(null);
   const [camera, setCamera] = useState(false);
-  /* how the list is emphasised while the demo runs — see TrackTheWork */
+  /* how the list is emphasised while the demo runs, see TrackTheWork */
   const [phase, setPhase] = useState<ListPhase>("idle");
-  /* the narrator. One cue at a time, and it travels to the beat it explains
-     so the camera, the cursor and the explanation agree on where to look. */
+  /* One cue per chapter at most. An earlier pass narrated the actions too,
+     which put green boxes over the very UI they were describing. */
   const [cue, setCue] = useState<NarratorCue | null>(null);
-  /* set when the Track walkthrough reaches its end, cleared as soon as the
-     visitor goes anywhere. It is a prompt, not a permanent state. */
-  const [promote, setPromote] = useState<ModeId | null>(null);
 
-  /* Ask Vera. Nothing here runs on its own — the visitor picks a suggestion or
-     a role, and only then does anything type. Track the Work stays the page's
-     one automatic walkthrough, which is what keeps the section from feeling
-     like an endless product tour. */
   const [ask, setAsk] = useState<AskState>({
     introducing: false,
     phase: "idle",
@@ -64,15 +71,33 @@ export function MeetVera() {
     isUpdate: false,
     focus: null,
   });
-  /* Proactive Insights. Manually explored, exactly like Ask Vera: no cursor
-     sequence, no typing, no autoplay. Track stays the only demo that plays
-     itself, and it never hands off to another tab when it finishes. */
   const [insight, setInsight] = useState<InsightState>({
     openId: null,
     sourcesOpen: false,
     introducing: false,
   });
-  const introTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const rowRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  /* ── the guided run ─────────────────────────────────────────────────── */
+
+  /* Set the moment the visitor does anything deliberate. Once true it never
+     goes back: the rest of the run is abandoned rather than paused, because
+     resuming a story somebody interrupted is the same as ignoring them. */
+  const takenOver = useRef(false);
+  const chapterTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const clearChapters = useCallback(() => {
+    chapterTimers.current.forEach(clearTimeout);
+    chapterTimers.current = [];
+  }, []);
+  const later = useCallback((ms: number, fn: () => void) => {
+    chapterTimers.current.push(
+      setTimeout(() => {
+        if (!takenOver.current) fn();
+      }, ms),
+    );
+  }, []);
 
   const askTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const clearAsk = useCallback(() => {
@@ -80,11 +105,24 @@ export function MeetVera() {
     askTimers.current = [];
   }, []);
 
-  /* Types the text out, then answers. Natural cadence with jitter, and the
-     answer arrives BY BLOCK — never character by character, which is the
-     single strongest tell of a wrapped chat model (DESIGN.md §10.6). After it
-     lands, focus walks answer → rows → close, the same attention mechanic
-     Track the Work uses. */
+  useEffect(() => () => {
+    clearChapters();
+    clearAsk();
+  }, [clearChapters, clearAsk]);
+
+  const isDesktop = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(min-width: 1024px)").matches;
+
+  /* Types the question out, then answers it.
+
+     The answer arrives BY BLOCK, never character by character, which is the
+     single strongest tell of a wrapped chat model (DESIGN.md §10.6).
+
+     There is no focus walk any more. It used to dim the answer, then the
+     rows, then the action in sequence, and three moving highlights inside one
+     panel is exactly the choreography that made the demo tiring. The answer
+     lands whole and stays lit. */
   const runAsk = useCallback(
     (text: string, isUpdate: boolean, example = ASK_EXAMPLES[0]) => {
       clearAsk();
@@ -99,121 +137,168 @@ export function MeetVera() {
         isUpdate,
         focus: null,
       });
-      /* beside the input, because that is what is moving right now */
-      /* nothing narrates over the typing or the answer. The mode intro says
-         what Ask Vera does, and the answer speaks for itself. */
       setCue(null);
 
-      /* Target the whole typing pass at about 3.2s regardless of length. A
-         fixed per-character rate typed the short question in 2.2s, which was
-         not long enough to read the cue that introduces it, while making the
-         floor long enough to fix that left the box sitting on the answer. */
-      const perChar = Math.max(9, Math.min(34, 3200 / text.length));
-      let t = 260;
+      /* the whole typing pass targets about 2.8s regardless of length, so a
+         long question does not outstay its welcome and a short one still
+         reads as typing rather than as a paste */
+      const perChar = Math.max(9, Math.min(34, 2800 / text.length));
+      let t = 240;
       for (let i = 1; i <= text.length; i++) {
         t += perChar * (0.75 + Math.random() * 0.5);
         at(t, () => setAsk((s) => ({ ...s, typed: text.slice(0, i) })));
       }
-      t += 380;
+      t += 340;
       at(t, () => setAsk((s) => ({ ...s, phase: "thinking" })));
-      /* long enough for "Vera is working" to register as a beat rather than
-         a flicker, short enough that it never feels like latency */
-      t += 1000;
-      at(t, () => {
+      /* long enough to register as a beat, short enough never to read as
+         latency */
+      t += 900;
+      at(t, () =>
         setAsk((s) => ({
           ...s,
           phase: isUpdate ? "updated" : "answer",
-          focus: isUpdate ? null : "answer",
-        }));
-      });
-      if (!isUpdate) {
-        t += 1600;
-        at(t, () => setAsk((s) => ({ ...s, focus: "rows" })));
-        t += 1900;
-        at(t, () =>
-          setAsk((s) => ({ ...s, focus: example.close ? "close" : null })),
-        );
-        t += 1400;
-        at(t, () => setAsk((s) => ({ ...s, focus: null })));
-      }
+          focus: null,
+        })),
+      );
+      return t;
     },
     [clearAsk],
   );
 
-  const frameRef = useRef<HTMLDivElement | null>(null);
-  const rowRefs = useRef<Record<string, HTMLElement | null>>({});
+  /* CHAPTER 3. Vera noticed something nobody asked about. The mode intro is
+     the one cue here, because that is the single idea the interface cannot
+     show on its own, and it plays over a blank panel so it covers nothing. */
+  const beginInsights = useCallback(() => {
+    if (takenOver.current) return;
+    setMode("insights");
+    setInsight({ openId: null, sourcesOpen: false, introducing: true });
+    setCue(INSIGHT_CUES.intro);
+    /* the insight opens itself once the annotation has gone */
+    later(INSIGHT_CUES.intro.holdMs! + 700, () =>
+      setInsight({ openId: "zoning", sourcesOpen: false, introducing: false }),
+    );
+  }, [later]);
 
-  /* The Track walkthrough — a guided presentation, not a click-through.
+  /* CHAPTER 2. A hard question, answered from the property record. No cue:
+     a question typing itself and being answered needs no caption, and the
+     annotation would only sit on the answer. */
+  const beginAsk = useCallback(() => {
+    if (takenOver.current) return;
+    setMode("ask");
+    setBeat(null);
+    setCamera(false);
+    setPhase("idle");
+    setActiveId(null);
+    setCue(null);
+    const development = ASK_EXAMPLES[0];
+    later(600, () => {
+      const answeredAt = runAsk(development.question, false, development);
+      later(600 + answeredAt + ASK_SETTLE, beginInsights);
+    });
+  }, [later, runAsk, beginInsights]);
 
-     It opens by teaching the list: the two flagship rows brighten, the three
-     ordinary rows recede, and it holds long enough for a viewer to see which
-     two are worth opening. Only then does the cursor move.
+  /* CHAPTER 1. Track, shortened.
 
-     Inside the panel exactly one beat is at full weight at a time. The cursor
-     alone was never going to carry that — it says where the pointer is, not
-     where to read. About 11s. Do not speed it up; a demo too fast to read
-     proves nothing (§16.6). */
+     It used to open the sources drawer and then close the whole panel again,
+     which added two clicks and a teardown to a story that was already told.
+     It now ends with the panel open and every beat at full weight, so the
+     final frame is the useful one. */
   const buildSteps = useCallback((): Step[] => {
-    const q = (sel: string) => () =>
-      frameRef.current?.querySelector<HTMLElement>(sel) ?? null;
     const row = () => rowRefs.current["spa-conflict"];
 
     return [
-      { kind: "wait", ms: 700 },
+      { kind: "wait", ms: 600 },
 
-      // INTRO — these are the two worth looking at
+      // the two rows worth opening
       { kind: "do", fn: () => { setPhase("showcase"); setCue(TRACK_CUES.rows); } },
-      { kind: "wait", ms: 1500 },
+      { kind: "wait", ms: 1400 },
 
-      // and this is the one being demonstrated
+      // and the one being demonstrated
       { kind: "move", to: row },
       { kind: "do", fn: () => setPhase("focus") },
-      { kind: "wait", ms: 650 },
+      { kind: "wait", ms: 600 },
       { kind: "click" },
       { kind: "do", fn: () => { setActiveId("spa-conflict"); setCamera(true); } },
-      { kind: "wait", ms: 420 },
+      { kind: "wait", ms: 500 },
 
-      // BEAT 1: what Vera understood. This is also where the rows cue hands
-      // over, because Vera's read is now the thing to look at.
+      // what Vera understood, and where the one cue hands over
       { kind: "do", fn: () => { setBeat("read"); setCue(null); } },
-      { kind: "wait", ms: 1750 },
+      { kind: "wait", ms: 2000 },
 
-      // BEAT 2: what Vera connected it from. 2019 against today.
+      // the 2019 agreement against this week's drawing and meeting
       { kind: "do", fn: () => setBeat("connected") },
-      { kind: "wait", ms: 2100 },
+      { kind: "wait", ms: 2400 },
 
-      // BEAT 3 — the decision the team has to make
+      // the decision the team has to make
       { kind: "do", fn: () => setBeat("next") },
-      { kind: "wait", ms: 1700 },
+      { kind: "wait", ms: 2000 },
 
-      // the evidence, swapped into the same space
-      { kind: "do", fn: () => { setBeat("connected"); setCue(null); } },
-      { kind: "move", to: q("[data-sources-toggle]") },
-      { kind: "wait", ms: 380 },
-      { kind: "click" },
-      { kind: "do", fn: () => setSourcesOpen(true) },
-      { kind: "wait", ms: 1600 },
-      { kind: "click" },
-      { kind: "do", fn: () => setSourcesOpen(false) },
-      { kind: "wait", ms: 450 },
+      // settle: nothing dimmed, panel still open, fully interactive
+      { kind: "do", fn: () => { setBeat(null); setCamera(false); setPhase("idle"); } },
+      { kind: "wait", ms: CHAPTER_GAP },
 
-      // close, and rest with BOTH flagships bright so the viewer is invited to
-      // click the second one themselves
-      { kind: "do", fn: () => { setBeat(null); setCamera(false); } },
-      { kind: "move", to: q("[data-panel-close]") },
-      { kind: "wait", ms: 340 },
-      { kind: "click" },
-      { kind: "do", fn: () => { setActiveId(null); setPhase("showcase"); } },
-      { kind: "wait", ms: 400 },
-
-      // the walkthrough is over, so Vera points at what to try next
-      { kind: "do", fn: () => setPromote("ask") },
+      { kind: "do", fn: () => beginAsk() },
     ];
-  }, []);
+  }, [beginAsk]);
 
   const { pos, pressed, ping, stop: stopWalkthrough } = useCursorSequence(
     frameRef,
     buildSteps,
+  );
+
+  /* One place to hand control over, called by every deliberate interaction. */
+  const takeOver = useCallback(() => {
+    takenOver.current = true;
+    clearChapters();
+    stopWalkthrough();
+  }, [clearChapters, stopWalkthrough]);
+
+  /* Switching mode by hand. The guided run stops for good, and the mode opens
+     at its most useful state rather than at an empty one: an intro cue on
+     desktop, and on a phone the strongest case outright, because six taps to
+     understand one feature is the problem this pass exists to remove. */
+  const onModeChange = useCallback(
+    (m: ModeId) => {
+      takeOver();
+      clearAsk();
+      setMode(m);
+      setBeat(null);
+      setCamera(false);
+      setPhase("idle");
+      setActiveId(null);
+      setSourcesOpen(false);
+
+      const desktop = isDesktop();
+
+      if (m === "ask") {
+        setInsight({ openId: null, sourcesOpen: false, introducing: false });
+        setCue(desktop ? ASK_CUES.intro : null);
+        setAsk({
+          introducing: desktop,
+          phase: "idle",
+          typed: "",
+          example: ASK_EXAMPLES[0],
+          isUpdate: false,
+          focus: null,
+        });
+        if (!desktop) runAsk(ASK_EXAMPLES[0].question, false, ASK_EXAMPLES[0]);
+        return;
+      }
+
+      if (m === "insights") {
+        setCue(desktop ? INSIGHT_CUES.intro : null);
+        setInsight({
+          openId: desktop ? null : "zoning",
+          sourcesOpen: false,
+          introducing: desktop,
+        });
+        return;
+      }
+
+      setCue(null);
+      setInsight({ openId: null, sourcesOpen: false, introducing: false });
+    },
+    [takeOver, clearAsk, runAsk],
   );
 
   return (
@@ -221,11 +306,11 @@ export function MeetVera() {
       id="product"
       /* back to the base canvas: the product window is the bright surface, so
          the section around it must be the darkest thing near it. That contrast
-         IS the point — marketing environment, then real software. */
+         IS the point, marketing environment then real software. */
       className="section-major anchor-offset overflow-hidden bg-canvas"
     >
       <div className="track">
-        {/* intro — concise, so the product appears quickly */}
+        {/* intro, concise, so the product appears quickly */}
         <div className="grid12">
           <div className="col-span-12 lg:col-span-8">
             <Reveal>
@@ -248,7 +333,7 @@ export function MeetVera() {
           </div>
         </div>
 
-        {/* the line that switches the page into the TODAY register — it has to
+        {/* the line that switches the page into the TODAY register: it has to
             arrive right after two sections about decades (HOMEPAGE.md §5) */}
         <Reveal delay={60}>
           <p className="mt-7 max-w-[54ch] text-lead text-paper-muted">
@@ -257,9 +342,8 @@ export function MeetVera() {
           </p>
         </Reveal>
 
-
-        {/* the product — layout D, spans all 12 */}
-        {/* The camera is a scoped push, not a zoom effect: 1.08x with the
+        {/* the product, layout D, spans all 12.
+            The camera is a scoped push, not a zoom effect: 1.08x with the
             origin set toward the panel, so the frame leans into the detail the
             way a product recording would. Disabled under reduced motion and
             below lg, where there is no panel to lean toward. */}
@@ -275,160 +359,133 @@ export function MeetVera() {
             )}
           >
             <div className="demo-scale surface-light rounded-frame">
-            <ProductFrame
-              mode={mode}
-              onModeChange={(m) => {
-                /* the walkthrough is Track's. Leaving Track is taking over,
-                   and a sequence that keeps running would go on setting beats
-                   and cues underneath another mode. */
-                stopWalkthrough();
-                setPromote(null);
-                setMode(m);
-                // switching modes ends any Track narration cleanly
-                setBeat(null);
-                setCamera(false);
-                setPhase("idle");
-                setActiveId(null);
-                if (introTimer.current) clearTimeout(introTimer.current);
-                setCue(m === "insights" ? INSIGHT_CUES.intro : null);
-                /* the ask branch below sets its own cue */
-                setInsight({
-                  openId: null,
-                  sourcesOpen: false,
-                  introducing: m === "insights",
-                });
-
-                if (m === "ask") {
-                  // Ask Vera always opens idle. It never types unprompted.
-                  clearAsk();
-                  setAsk({
-                    introducing: true,
-                    phase: "idle",
-                    typed: "",
-                    example: ASK_EXAMPLES[0],
-                    isUpdate: false,
-                    focus: null,
-                  });
-                  setCue(ASK_CUES.intro);
-                }
-              }}
-              frameRef={frameRef}
-              promote={promote}
-            >
-              {mode === "track" && (
-                <TrackTheWork
-                  activeId={activeId}
-                  onSelect={(id) => {
-                    setActiveId(id);
-                    setSourcesOpen(false);
-                    // a real click ends the narration; nothing should dim and
-                    // the viewer takes over
-                    setBeat(null);
-                    setCamera(false);
-                    setPhase("idle");
-                    setCue(null);
-                  }}
-                  rowRefs={rowRefs}
-                  beat={beat}
-                  phase={phase}
-                  focusId="spa-conflict"
-                  sourcesOpen={sourcesOpen}
-                  onToggleSources={() => setSourcesOpen((v) => !v)}
-                />
-              )}
-              {mode === "ask" && (
-                <AskVera
-                  state={ask}
-                  onPick={(kind, exampleId) => {
-                    if (kind === "update") {
-                      runAsk(MEMORY_UPDATE.input, true);
-                      return;
-                    }
-                    const ex =
-                      ASK_EXAMPLES.find((e) => e.id === exampleId) ??
-                      ASK_EXAMPLES[0];
-                    runAsk(ex.question, false, ex);
-                  }}
-                  onRole={(id) => {
-                    const ex = ASK_EXAMPLES.find((e) => e.id === id);
-                    if (ex) runAsk(ex.question, false, ex);
-                  }}
-                  onToggleSources={() => {
-                    const opening = ask.phase !== "sources";
-                    setAsk((s) => ({
-                      ...s,
-                      phase: opening ? "sources" : "answer",
-                      focus: null,
-                    }));
-                  }}
-                />
-              )}
-              {mode === "insights" && (
-                <ProactiveInsights
-                  state={insight}
-                  onSelect={(id) => {
-                    setInsight({ openId: id, sourcesOpen: false, introducing: false });
-                    /* not narrated. The box landed on the reasoning and the
-                       Ask Vera action, which is exactly what the visitor
-                       opened the insight to read, and the mode intro has
-                       already made the point. */
-                    setCue(null);
-                  }}
-                  onToggleSources={() => {
-                    /* not narrated. The source treatment already makes the
-                       point, and a cue here would be over-explaining. */
-                    setInsight((s) => ({ ...s, sourcesOpen: !s.sourcesOpen }));
-                    setCue(null);
-                  }}
-                  onAsk={(role, question) => {
-                    clearAsk();
-                    setCue(null);
-                    setInsight({
-                      introducing: false,
-                      openId: null,
-                      sourcesOpen: false,
-                    });
-                    const ex =
-                      ASK_EXAMPLES.find((e) => e.id === role) ??
-                      ASK_EXAMPLES[0];
-                    /* the question is prefilled and waiting, not answered:
-                       the visitor sends it, and the role is already selected
-                       so the worked examples are one click away. */
-                    setAsk({
-                      introducing: false,
-                      phase: "idle",
-                      typed: question,
-                      example: ex,
-                      isUpdate: false,
-                      focus: null,
-                    });
-                    setMode("ask");
-                  }}
-                />
-              )}
-            </ProductFrame>
+              <ProductFrame
+                mode={mode}
+                onModeChange={onModeChange}
+                frameRef={frameRef}
+              >
+                {mode === "track" && (
+                  <TrackTheWork
+                    activeId={activeId}
+                    onSelect={(id) => {
+                      /* a real click ends the run: nothing dims, nothing
+                         advances, the viewer has it from here */
+                      takeOver();
+                      setActiveId(id);
+                      setSourcesOpen(false);
+                      setBeat(null);
+                      setCamera(false);
+                      setPhase("idle");
+                      setCue(null);
+                    }}
+                    rowRefs={rowRefs}
+                    beat={beat}
+                    phase={phase}
+                    focusId="spa-conflict"
+                    sourcesOpen={sourcesOpen}
+                    onToggleSources={() => {
+                      takeOver();
+                      setSourcesOpen((v) => !v);
+                    }}
+                  />
+                )}
+                {mode === "ask" && (
+                  <AskVera
+                    state={ask}
+                    onPick={(kind, exampleId) => {
+                      takeOver();
+                      if (kind === "update") {
+                        runAsk(MEMORY_UPDATE.input, true);
+                        return;
+                      }
+                      const ex =
+                        ASK_EXAMPLES.find((e) => e.id === exampleId) ??
+                        ASK_EXAMPLES[0];
+                      runAsk(ex.question, false, ex);
+                    }}
+                    onRole={(id) => {
+                      takeOver();
+                      const ex = ASK_EXAMPLES.find((e) => e.id === id);
+                      if (ex) runAsk(ex.question, false, ex);
+                    }}
+                    onToggleSources={() => {
+                      takeOver();
+                      const opening = ask.phase !== "sources";
+                      setAsk((s) => ({
+                        ...s,
+                        phase: opening ? "sources" : "answer",
+                        focus: null,
+                      }));
+                    }}
+                  />
+                )}
+                {mode === "insights" && (
+                  <ProactiveInsights
+                    state={insight}
+                    onSelect={(id) => {
+                      takeOver();
+                      setInsight({
+                        openId: id,
+                        sourcesOpen: false,
+                        introducing: false,
+                      });
+                      setCue(null);
+                    }}
+                    onToggleSources={() => {
+                      takeOver();
+                      setInsight((s) => ({ ...s, sourcesOpen: !s.sourcesOpen }));
+                      setCue(null);
+                    }}
+                    onAsk={(role, question) => {
+                      takeOver();
+                      clearAsk();
+                      setCue(null);
+                      setInsight({
+                        introducing: false,
+                        openId: null,
+                        sourcesOpen: false,
+                      });
+                      const ex =
+                        ASK_EXAMPLES.find((e) => e.id === role) ??
+                        ASK_EXAMPLES[0];
+                      /* prefilled and waiting, not answered: this question is
+                         not one of the worked examples, and inventing a reply
+                         would be the one dishonest thing in the demo */
+                      setAsk({
+                        introducing: false,
+                        phase: "idle",
+                        typed: question,
+                        example: ex,
+                        isUpdate: false,
+                        focus: null,
+                      });
+                      setMode("ask");
+                    }}
+                  />
+                )}
+              </ProductFrame>
             </div>
 
-            {/* the cursor is clipped to the frame — it never escapes onto the
-                page (§16.2). Rendered as a sibling overlay so it sits above the
-                frame's own content. */}
+            {/* the cursor is clipped to the frame, it never escapes onto the
+                page (§16.2). Rendered as a sibling overlay so it sits above
+                the frame's own content. */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-frame">
               <FakeCursor pos={pos} pressed={pressed} ping={ping} />
               {/* desktop only, and inside the camera transform so annotation
                   and camera push travel together rather than fight */}
               <div className="hidden lg:block">
                 <DemoNarrator
-                cue={cue}
-                frameRef={frameRef}
-                onCueLeaving={(id) => {
-                  /* the interface fades in exactly as the annotation fades
-                     out, which is the whole effect */
-                  if (id === "ask-intro")
-                    setAsk((s) => ({ ...s, introducing: false }));
-                  if (id === "insight-intro")
-                    setInsight((s) => ({ ...s, introducing: false }));
-                }}
-              />
+                  cue={cue}
+                  frameRef={frameRef}
+                  onCueLeaving={(id) => {
+                    /* the interface fades in exactly as the annotation fades
+                       out, which is the whole effect */
+                    if (id === "ask-intro")
+                      setAsk((s) => ({ ...s, introducing: false }));
+                    if (id === "insight-intro")
+                      setInsight((s) => ({ ...s, introducing: false }));
+                  }}
+                />
               </div>
             </div>
           </div>
