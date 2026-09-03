@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { ProvenanceLockup } from "@/components/ProvenanceMark";
 
-/* Placeholder for this build stage. The real closing CTA and footer are a later
-   pass. One tonal step up from the canvas, so the page closes without ever
+/* Shared by the homepage and the Thesis page. The page closes without ever
    leaving the dark environment (DESIGN.md §6.3). */
 
 export function Footer() {
@@ -29,10 +28,6 @@ export function Footer() {
           </div>
         </div>
 
-        <p className="mt-16 text-mono-sm uppercase text-paper-subtle">
-          Sections 4 to 8 are not built yet. This stage is the shell, hero,
-          problem section and Meet Vera.
-        </p>
       </div>
     </footer>
   );

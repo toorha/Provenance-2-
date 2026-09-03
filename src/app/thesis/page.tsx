@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { LongViewSection } from "@/components/LongViewSection";
+import { ClosingCta } from "@/components/ClosingCta";
 import { THESIS } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
@@ -207,7 +207,7 @@ export default function ThesisPage() {
           </div>
         </article>
 
-        <LongViewSection />
+        <ClosingCta />
       </main>
       <Footer />
     </>

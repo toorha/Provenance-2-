@@ -65,15 +65,33 @@ const WORK_OUT = [
    again. The stage only raises emphasis; nothing appears or disappears. */
 const BEATS = [1500, 1700, 1800, 1600];
 
-/* The curve field. One viewBox stretched to whatever the composition is
-   given, with non-scaling strokes so the hairlines stay hairlines however far
-   it stretches. Four in, three out, all meeting one node: enough to read as
-   convergence, few enough not to read as wiring. */
-const IN_Y = [92, 178, 262, 346, 432];
-const OUT_Y = [140, 220, 304, 384];
-const NODE_Y = 262;
-const IN_PATH = (y: number) => `M 150 ${y} C 300 ${y}, 340 ${NODE_Y}, 452 ${NODE_Y}`;
-const OUT_PATH = (y: number) => `M 548 ${NODE_Y} C 680 ${NODE_Y}, 720 ${y}, 860 ${y}`;
+/* The curve field is MEASURED, not authored.
+
+   It used to be a fixed viewBox stretched to fit, which meant the curves
+   started at coordinates that had nothing to do with where the list items
+   actually sat. They emerged from the gaps between words, and no amount of
+   tuning the constants would have fixed it, because flexbox decides where
+   the items go and the numbers could not know that.
+
+   Now every row is measured and one curve is drawn per item, from the edge
+   of its own text to the node. The viewBox is the container's real pixel
+   size, so a coordinate here is a pixel there. */
+type Geo = {
+  w: number;
+  h: number;
+  node: { x: number; y: number };
+  inX: number;
+  outX: number;
+  cardL: number;
+  cardR: number;
+  inY: number[];
+  outY: number[];
+};
+
+const curve = (x0: number, y0: number, x1: number, y1: number) => {
+  const d = (x1 - x0) * 0.55;
+  return `M ${x0} ${y0} C ${x0 + d} ${y0}, ${x1 - d} ${y1}, ${x1} ${y1}`;
+};
 
 export function ProvenanceSystem() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -87,6 +105,55 @@ export function ProvenanceSystem() {
   /* the travelling dots. Off until mount confirms motion is welcome, so the
      server-rendered diagram is the static one. */
   const [flow, setFlow] = useState(false);
+  const [geo, setGeo] = useState<Geo | null>(null);
+  const inRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const outRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const inColRef = useRef<HTMLDivElement | null>(null);
+  const outColRef = useRef<HTMLDivElement | null>(null);
+
+  /* Measured on mount and on every resize. Below the desktop breakpoint the
+     columns stack and there is nothing to join, so it clears itself. */
+  useEffect(() => {
+    const host = ref.current;
+    if (!host) return;
+
+    const measure = () => {
+      const stacked = !window.matchMedia("(min-width: 1024px)").matches;
+      const card = cardRef.current;
+      const inCol = inColRef.current;
+      const outCol = outColRef.current;
+      if (stacked || !card || !inCol || !outCol) return setGeo(null);
+
+      const H = host.getBoundingClientRect();
+      const c = card.getBoundingClientRect();
+      const mid = (el: HTMLElement | null) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return r.top - H.top + r.height / 2;
+      };
+      setGeo({
+        w: Math.round(H.width),
+        h: Math.round(H.height),
+        node: { x: c.left - H.left + c.width / 2, y: c.top - H.top + c.height / 2 },
+        inX: inCol.getBoundingClientRect().right - H.left + 12,
+        outX: outCol.getBoundingClientRect().left - H.left - 12,
+        cardL: c.left - H.left - 10,
+        cardR: c.right - H.left + 10,
+        inY: inRefs.current.map(mid).filter((n): n is number => n !== null),
+        outY: outRefs.current.map(mid).filter((n): n is number => n !== null),
+      });
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(host);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -193,71 +260,68 @@ export function ProvenanceSystem() {
           <div ref={ref} className="relative">
             {/* the curve field, behind everything and desktop only: at narrow
                 widths the three regions stack and there is nothing to join */}
-            <svg
-              aria-hidden
-              viewBox="0 0 1000 524"
-              preserveAspectRatio="none"
-              className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
-            >
-              <g
-                fill="none"
-                stroke="rgba(243,244,240,0.30)"
-                strokeWidth="1.25"
-                vectorEffect="non-scaling-stroke"
+            {geo && (
+              <svg
+                aria-hidden
+                viewBox={`0 0 ${geo.w} ${geo.h}`}
+                className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
               >
-                {IN_Y.map((y, i) => (
-                  <path
-                    key={`in-${y}`}
-                    d={IN_PATH(y)}
-                    className="transition-opacity duration-considered ease-state"
-                    style={{
-                      opacity: !armed || stage >= 1 ? 1 : 0.4,
-                      transitionDelay: `${i * 30}ms`,
-                    }}
-                  />
-                ))}
-                {OUT_Y.map((y, i) => (
-                  <path
-                    key={`out-${y}`}
-                    d={OUT_PATH(y)}
-                    className="transition-opacity duration-considered ease-state"
-                    style={{
-                      opacity: !armed || stage >= 4 ? 1 : 0.4,
-                      transitionDelay: `${i * 30}ms`,
-                    }}
-                  />
-                ))}
-              </g>
-
-              {flow && (
-                <g fill="var(--vera-400)">
-                  {IN_Y.map((y, i) => (
-                    <circle key={`fin-${y}`} r="2.6" opacity="0.85">
-                      <animateMotion
-                        dur="4.2s"
-                        begin={`${i * 0.7}s`}
-                        repeatCount="indefinite"
-                        path={IN_PATH(y)}
-                      />
-                    </circle>
+                <g fill="none" stroke="rgba(243,244,240,0.30)" strokeWidth="1.25">
+                  {geo.inY.map((y, i) => (
+                    <path
+                      key={`in-${i}`}
+                      d={curve(geo.inX, y, geo.cardL, geo.node.y)}
+                      className="transition-opacity duration-considered ease-state"
+                      style={{
+                        opacity: !armed || stage >= 1 ? 1 : 0.4,
+                        transitionDelay: `${i * 30}ms`,
+                      }}
+                    />
                   ))}
-                  {OUT_Y.map((y, i) => (
-                    <circle key={`fout-${y}`} r="2.6" opacity="0.85">
-                      <animateMotion
-                        dur="4.2s"
-                        begin={`${1.2 + i * 0.7}s`}
-                        repeatCount="indefinite"
-                        path={OUT_PATH(y)}
-                      />
-                    </circle>
+                  {geo.outY.map((y, i) => (
+                    <path
+                      key={`out-${i}`}
+                      d={curve(geo.cardR, geo.node.y, geo.outX, y)}
+                      className="transition-opacity duration-considered ease-state"
+                      style={{
+                        opacity: !armed || stage >= 4 ? 1 : 0.4,
+                        transitionDelay: `${i * 30}ms`,
+                      }}
+                    />
                   ))}
                 </g>
-              )}
-            </svg>
+
+                {flow && (
+                  <g fill="var(--vera-400)">
+                    {geo.inY.map((y, i) => (
+                      <circle key={`fin-${i}`} r="2.6" opacity="0.85">
+                        <animateMotion
+                          dur="4.2s"
+                          begin={`${i * 0.6}s`}
+                          repeatCount="indefinite"
+                          path={curve(geo.inX, y, geo.cardL, geo.node.y)}
+                        />
+                      </circle>
+                    ))}
+                    {geo.outY.map((y, i) => (
+                      <circle key={`fout-${i}`} r="2.6" opacity="0.85">
+                        <animateMotion
+                          dur="4.2s"
+                          begin={`${1.2 + i * 0.6}s`}
+                          repeatCount="indefinite"
+                          path={curve(geo.cardR, geo.node.y, geo.outX, y)}
+                        />
+                      </circle>
+                    ))}
+                  </g>
+                )}
+              </svg>
+            )}
 
             <div className="relative grid gap-y-12 lg:grid-cols-[186px_minmax(0,1fr)_186px] lg:items-center lg:gap-x-8">
               {/* 01 WORK IN */}
               <div
+                ref={inColRef}
                 className={clsx(
                   "transition-opacity duration-considered ease-state",
                   emph(1),
@@ -265,8 +329,14 @@ export function ProvenanceSystem() {
               >
                 <Stage label="Work in" className="lg:text-right" />
                 <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px] lg:text-right">
-                  {WORK_IN.map((w) => (
-                    <li key={w} className="text-body text-paper-muted">
+                  {WORK_IN.map((w, i) => (
+                    <li
+                      key={w}
+                      ref={(el) => {
+                        inRefs.current[i] = el;
+                      }}
+                      className="text-body text-paper-muted"
+                    >
                       {w}
                     </li>
                   ))}
@@ -275,7 +345,10 @@ export function ProvenanceSystem() {
 
               {/* 02 + 03: one card, split by a rule. Vera builds Provenance. */}
               <div className="lg:px-6">
-                <div className="overflow-hidden rounded-panel border border-mineral-300 bg-mineral-0 font-product shadow-lift-2">
+                <div
+                  ref={cardRef}
+                  className="overflow-hidden rounded-panel border border-mineral-300 bg-mineral-0 font-product shadow-lift-2"
+                >
                   {/* VERA: the mark, the green, the verbs */}
                   <div
                     className={clsx(
@@ -335,6 +408,7 @@ export function ProvenanceSystem() {
 
               {/* 04 WORK OUT */}
               <div
+                ref={outColRef}
                 className={clsx(
                   "transition-opacity duration-considered ease-state",
                   emph(4),
@@ -342,8 +416,14 @@ export function ProvenanceSystem() {
               >
                 <Stage label="Work out" />
                 <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px]">
-                  {WORK_OUT.map((o) => (
-                    <li key={o} className="text-body text-paper-muted">
+                  {WORK_OUT.map((o, i) => (
+                    <li
+                      key={o}
+                      ref={(el) => {
+                        outRefs.current[i] = el;
+                      }}
+                      className="text-body text-paper-muted"
+                    >
                       {o}
                     </li>
                   ))}
