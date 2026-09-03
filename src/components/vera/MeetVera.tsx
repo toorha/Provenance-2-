@@ -371,9 +371,11 @@ export function MeetVera() {
                   state={insight}
                   onSelect={(id) => {
                     setInsight({ openId: id, sourcesOpen: false, introducing: false });
-                    /* the flagship earns one line, because the zoning case is
-                       the whole argument for this mode */
-                    setCue(id === "zoning" ? INSIGHT_CUES.noticed : null);
+                    /* not narrated. The box landed on the reasoning and the
+                       Ask Vera action, which is exactly what the visitor
+                       opened the insight to read, and the mode intro has
+                       already made the point. */
+                    setCue(null);
                   }}
                   onToggleSources={() => {
                     /* not narrated. The source treatment already makes the

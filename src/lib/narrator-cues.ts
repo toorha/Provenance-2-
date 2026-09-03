@@ -86,13 +86,4 @@ export const INSIGHT_CUES = {
     large: true,
     holdMs: 5200,
   },
-  /* Timed, because the visitor opened the insight and nothing follows on its
-     own. Held long enough to cover the reasoning opening beneath it, which is
-     the whole point of the mode: nobody asked. */
-  noticed: {
-    id: "insight-noticed",
-    text: "You did not ask. Vera noticed the connection.",
-    anchor: "center-right",
-    holdMs: 4000,
-  },
 } satisfies Record<string, NarratorCue>;
