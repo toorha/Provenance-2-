@@ -1,9 +1,13 @@
 import Image from "next/image";
 import {
+  HERO_AERIAL_H,
   HERO_AERIAL_POSITION,
   HERO_AERIAL_SRC,
+  HERO_AERIAL_W,
   HERO_HIGHLIGHTS,
+  HERO_STREETS,
   type Highlight,
+  type StreetLabel,
 } from "@/lib/hero-portfolio";
 
 /* The aerial behind the thesis.
@@ -31,6 +35,7 @@ export function HeroAerial() {
       className={[
         // mobile: a shallow band under the copy, full-bleed
         "relative mt-12 h-[250px] w-full sm:h-[300px] md:h-[340px]",
+        "[container-type:size]",
         // desktop: the whole section, behind everything
         "lg:absolute lg:inset-0 lg:z-0 lg:mt-0 lg:h-auto",
       ].join(" ")}
@@ -52,10 +57,6 @@ export function HeroAerial() {
         />
       </div>
 
-      {/* 3 · property highlights, over the image and under the gradient so the
-             fade dims them on the left exactly as it dims the buildings */}
-      <HighlightOverlay />
-
       {/* 2 · the gradient that makes it part of the page.
 
              Desktop reads left to right: opaque canvas across the copy, then a
@@ -71,9 +72,9 @@ export function HeroAerial() {
                rgb(${CANVAS}) 38%,
                rgba(${CANVAS}, 0.96) 54%,
                rgba(${CANVAS}, 0.90) 64%,
-               rgba(${CANVAS}, 0.62) 74%,
-               rgba(${CANVAS}, 0.24) 88%,
-               rgba(${CANVAS}, 0.05) 100%)`,
+               rgba(${CANVAS}, 0.50) 74%,
+               rgba(${CANVAS}, 0.11) 88%,
+               rgba(${CANVAS}, 0) 100%)`,
             /* nav contrast (§14) */
             `linear-gradient(180deg,
                rgba(${CANVAS}, 0.82) 0px,
@@ -83,8 +84,8 @@ export function HeroAerial() {
                photograph that stops */
             `linear-gradient(0deg,
                rgb(${CANVAS}) 0%,
-               rgba(${CANVAS}, 0.72) 9%,
-               rgba(${CANVAS}, 0) 30%)`,
+               rgba(${CANVAS}, 0.75) 6%,
+               rgba(${CANVAS}, 0) 22%)`,
           ].join(","),
         }}
       />
@@ -107,6 +108,47 @@ export function HeroAerial() {
           ].join(","),
         }}
       />
+
+      {/* 4 · street names, ABOVE the gradient because they are the one thing
+             here that has to stay legible rather than dissolve. They say the
+             frame is a place with addresses, which is what makes the
+             properties in it read as real assets. */}
+      {/* 3 · the properties, and 4 · the street names.
+
+             Both sit ABOVE the gradient. Under it they were dimmed by the
+             same fade that dims the buildings, which sounds right and reads
+             as smudged: a mark that says "this one is remembered" has to be
+             legible or it is not saying anything. Every one of them is placed
+             where the image is genuinely visible, so nothing floats. */}
+      <CoverBox>
+        <HighlightOverlay />
+        <StreetOverlay />
+      </CoverBox>
+    </div>
+  );
+}
+
+/* THE OVERLAYS HAVE TO BE CROPPED THE WAY THE IMAGE IS.
+
+   Percentages inside the layer are not percentages inside the photograph: the
+   photograph is object-fit: cover, so it overflows the layer on one axis and
+   is clipped. This box reproduces that exactly — the same aspect, sized to the
+   larger of the two fits, centred — so a coordinate written against the image
+   lands on the same pixel of the image at every viewport. Container units make
+   it pure CSS; nothing has to be measured at runtime. */
+function CoverBox({ children }: { children: React.ReactNode }) {
+  const ratio = `${HERO_AERIAL_W} / ${HERO_AERIAL_H}`;
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          aspectRatio: ratio,
+          width: `max(100cqw, calc(100cqh * ${HERO_AERIAL_W} / ${HERO_AERIAL_H}))`,
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -149,7 +191,7 @@ function HighlightShape({
         animationDelay: `${900 + index * 260}ms`,
       }}
     >
-      <div className="absolute inset-0 border border-vera-400/70 bg-vera-400/[0.07]" />
+      <div className="absolute inset-0 border border-vera-400/85 bg-vera-400/[0.09]" />
       {p.pin ? (
         <>
           <div
@@ -163,5 +205,46 @@ function HighlightShape({
         </>
       ) : null}
     </div>
+  );
+}
+
+/* Set along the road itself: horizontal streets read left to right, vertical
+   ones turn with the street. Mono, uppercase, tracked out and dim — the
+   register of something printed on a plan, not a map pin. */
+function StreetOverlay() {
+  if (HERO_STREETS.length === 0) return null;
+  return (
+    <div className="absolute inset-0">
+      {HERO_STREETS.map((s) => (
+        <StreetName key={s.name} street={s} />
+      ))}
+    </div>
+  );
+}
+
+function StreetName({ street: s }: { street: StreetLabel }) {
+  const vertical = s.axis === "v";
+  return (
+    <span
+      className={[
+        "hero-street absolute whitespace-nowrap font-mono text-[9px] uppercase",
+        "tracking-[0.18em] text-paper-subtle/70 lg:text-[10px]",
+        s.hideBelowLg ? "hidden lg:block" : "",
+      ].join(" ")}
+      style={{
+        left: `${vertical ? s.along : s.at}%`,
+        top: `${vertical ? s.at : s.along}%`,
+        /* vertical-rl, not rotate(). A rotated span is still laid out as a
+           wide box, so translate(-50%) shifted it by half the LENGTH of the
+           name rather than half its line height and dropped it several
+           percent to the left, straight through a highlighted property.
+           In vertical writing mode the box is genuinely narrow and the
+           centring is honest. */
+        writingMode: vertical ? "vertical-rl" : undefined,
+        transform: vertical ? "translateX(-50%)" : "translateY(-50%)",
+      }}
+    >
+      {s.name}
+    </span>
   );
 }

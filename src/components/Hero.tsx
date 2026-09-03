@@ -25,7 +25,7 @@ import { HeroAerial } from "@/components/hero/HeroAerial";
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden pb-[64px] pt-[132px] md:pb-[80px] md:pt-[164px] lg:min-h-[43rem] lg:pb-[128px] lg:pt-[188px]">
+    <section className="relative isolate overflow-hidden pb-[64px] pt-[132px] md:pb-[80px] md:pt-[164px] lg:min-h-[40rem] lg:pb-[72px] lg:pt-[176px]">
       <div className="track relative z-10">
         <div className="grid12">
           <Reveal className="col-span-12 lg:col-span-8">

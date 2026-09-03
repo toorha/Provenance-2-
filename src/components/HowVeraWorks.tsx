@@ -49,8 +49,11 @@ const WORKFLOWS = [
   },
   {
     label: "Invite Vera",
-    copy: "Turns decisions, actions and unresolved issues into property context.",
-    w: "lg:w-[352px]",
+    /* The other two are things you do to an email you were sending anyway.
+       This one is a guest on the call, so it has to say what the guest
+       actually does: sits there, writes it down, files it, and chases it. */
+    copy: "Joins the meeting or call, keeps the notes, updates the property and sends the follow-ups.",
+    w: "lg:w-[392px]",
   },
 ];
 

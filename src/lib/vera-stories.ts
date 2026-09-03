@@ -30,6 +30,13 @@ export type Evidence = {
 
 export type VeraStory = {
   id: "track" | "ask" | "insights";
+  /** What this mode is FOR, said before any of it happens.
+
+      Somebody who lands mid-scroll sees records and a green conclusion and has
+      to reverse-engineer what they are looking at. One sentence on an almost
+      empty panel costs two seconds and means the evidence that follows is read
+      as a demonstration of something rather than as decoration. */
+  intro: string;
   property: { name: string; project: string };
   framing: string;
   /** Ask only. The question is the entry point, so it leads. */
@@ -50,6 +57,8 @@ export type VeraStory = {
 export const STORIES: Record<VeraStory["id"], VeraStory> = {
   track: {
     id: "track",
+    intro:
+      "Vera reads everything that arrives on a property, and tells you when two things stop agreeing with each other.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Vera keeps up with what is changing across the property.",
     evidence: [
@@ -84,6 +93,8 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
 
   ask: {
     id: "ask",
+    intro:
+      "Ask a question in your own words. Vera answers from the property's own records, and shows you which ones it used.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Asked this morning",
     question: "Can we move forward with the South Pad?",
@@ -120,6 +131,8 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
 
   insights: {
     id: "insights",
+    intro:
+      "Vera keeps watching long after the work stops. When something changes that makes an old decision worth revisiting, it says so.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Nobody asked. Vera noticed on its own.",
     headline: "A project paused in 2023 may now be possible.",

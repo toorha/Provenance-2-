@@ -32,12 +32,18 @@ export function VeraShowcase({
   revealed,
 }: {
   story: VeraStory;
-  /** how many steps are showing. Infinity when a visitor picked this mode
+  /** how many steps are showing. Below zero is the intro, which says what the
+      mode is for before it does it. Infinity when a visitor picked this mode
       themselves and should simply see the whole thing. */
   revealed: number;
 }) {
   const shown = (i: number) => i < revealed;
   const n = story.evidence.length;
+
+  /* The mode explains itself before it demonstrates itself. Two seconds on a
+     near-empty panel is the difference between "records and a green box" and
+     "oh, that is what it is doing". */
+  if (revealed < 0) return <Intro story={story} />;
 
   /* step order: 0 header, 1..n evidence, n+1 conclusion, n+2 next.
      Ask puts the conclusion first, so it reveals with the header. */
@@ -220,3 +226,33 @@ function SourceIcon({ kind }: { kind: EvidenceKind }) {
 /* header, each record, conclusion, next */
 export const stepsFor = (id: VeraStory["id"]) =>
   STORIES[id].evidence.length + 3;
+
+/* THE BLANK PANEL.
+
+   Deliberately almost empty. Anything else here competes with the sentence,
+   and the sentence is the only reason this beat exists. The mark and the mode
+   name identify the speaker; the line says what the next few seconds are for.
+
+   Same container and same min-height as the story, so the frame does not move
+   a pixel when the intro gives way to the evidence. */
+function Intro({ story }: { story: VeraStory }) {
+  return (
+    <div className="flex min-h-[372px] flex-col justify-center px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
+      <div className="hero-intro-in max-w-[38ch]">
+        <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-vera-700">
+          <VeraMark size={14} />
+          {MODE_TITLE[story.id]}
+        </p>
+        <p className="mt-3.5 text-[19px] font-medium leading-[1.38] tracking-[-0.008em] text-ink lg:text-[22px]">
+          {story.intro}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const MODE_TITLE: Record<VeraStory["id"], string> = {
+  track: "Track the work",
+  ask: "Ask Vera",
+  insights: "Proactive Insights",
+};

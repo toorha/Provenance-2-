@@ -36,12 +36,21 @@ import { STORIES, STORY_ORDER } from "@/lib/vera-stories";
    fit inside about half a minute. */
 const STEP_MS = 620;
 const HOLD_MS = 3600;
+/* long enough to read one sentence and understand what is about to happen,
+   short enough that nobody feels held up by it */
+const INTRO_MS = 2600;
+
+/* below zero is the intro panel: the mode saying what it is for before it
+   does it. Also the state the section sits in before anything has played, so
+   a visitor who never scrolls here still sees an explanation rather than an
+   empty window. */
+const INTRO = -1;
 
 export function MeetVera() {
   const [mode, setMode] = useState<ModeId>("track");
   /* how much of the current story is showing. Infinity means all of it, which
      is what a visitor gets the moment they choose a mode themselves. */
-  const [revealed, setRevealed] = useState(0);
+  const [revealed, setRevealed] = useState(INTRO);
 
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -88,25 +97,24 @@ export function MeetVera() {
       let t = 0;
       STORY_ORDER.forEach((id, chapter) => {
         const steps = stepsFor(id);
-        if (chapter > 0) {
-          const at = t;
-          timers.current.push(
-            setTimeout(() => {
-              if (takenOver.current) return;
-              setMode(id);
-              setRevealed(0);
-            }, at),
-          );
-        }
+        /* every chapter opens on its own intro, including the first */
+        const at = t;
+        timers.current.push(
+          setTimeout(() => {
+            if (takenOver.current) return;
+            if (chapter > 0) setMode(id);
+            setRevealed(INTRO);
+          }, at),
+        );
         for (let s = 1; s <= steps; s++) {
-          const at = t + s * STEP_MS;
+          const when = t + INTRO_MS + s * STEP_MS;
           timers.current.push(
             setTimeout(() => {
               if (!takenOver.current) setRevealed(s);
-            }, at),
+            }, when),
           );
         }
-        t += steps * STEP_MS + HOLD_MS;
+        t += INTRO_MS + steps * STEP_MS + HOLD_MS;
       });
     };
 
