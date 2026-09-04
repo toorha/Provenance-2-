@@ -16,9 +16,24 @@ import { Reveal } from "@/components/ui/Reveal";
    ISO, no encryption specifics, no data residency and no retention policy in
    the security answer, because none of that exists in the product yet and
    inventing it in a FAQ is how a company ends up with a promise it cannot
-   keep. The customisation answer says Provenance CAN be tailored, never that
-   any particular integration is already built, for the same reason. Nothing
-   transfers automatically when a property is sold.
+   keep. It says safeguards are INTENDED to protect information and that
+   access is governed by the customer's own permissions, which is a
+   description of the design rather than a certification. The customisation
+   answer says Provenance CAN be tailored, never that any particular
+   integration is already built, for the same reason. Nothing transfers
+   automatically when a property is sold.
+
+   THE AUDIENCE IS WIDER THAN THE FIRST CUSTOMERS. Owners and asset managers
+   may be the strongest early accounts, but a FAQ written only for them tells
+   a consultant, an architect or an engineer that this is not their tool. They
+   are the ones who inherit incomplete context, add to it and hand it on, so
+   they are named explicitly. The same reasoning removed "institutional" from
+   the customisation answer.
+
+   THE PRIVACY ANSWER DRAWS ONE LINE ABOVE ALL OTHERS: a private environment
+   per organization, not a shared knowledge base pooled across customers. That
+   is the question anyone evaluating an AI product is actually asking, and it
+   deserves a direct sentence rather than an inference.
 
    There is no "why not just use ChatGPT" question any more. Answering it put
    the page on someone else's ground and invited a comparison the product does
@@ -37,6 +52,13 @@ const FAQS: Faq[] = [
     ],
   },
   {
+    q: "Who is Provenance built for?",
+    a: [
+      "Provenance is built for teams that manage complex property information over long periods of time. That includes owners, developers, asset managers, consultants, architects, engineers, contractors, planners, and operators who need better continuity across projects, decisions, documents, and people.",
+      "Owners keep the memory, the people they work with contribute to it, and everyone works from better context.",
+    ],
+  },
+  {
     q: "How does Vera learn about a property?",
     a: [
       "Vera learns from the work your team is already doing. Emails, meetings, documents, decisions, and updates become part of the property context, so the record keeps building as work moves forward.",
@@ -49,9 +71,10 @@ const FAQS: Faq[] = [
     ],
   },
   {
-    q: "What about sensitive information?",
+    q: "How does Provenance keep our data private and secure?",
     a: [
-      "Property information can include sensitive commercial, legal, and operational context. Provenance is designed so your organization controls what information is brought in, who can access it, and what can be shared.",
+      "Provenance is designed as a private environment for your organization’s portfolio and projects. Access to properties and information is controlled by your organization, and Vera only works with information a user is authorized to access. Customer data is not pooled into a shared knowledge base across organizations.",
+      "Provenance uses technical and organizational safeguards intended to protect customer information, with access governed by your organization’s permissions and account configuration.",
     ],
   },
   {
@@ -63,7 +86,7 @@ const FAQS: Faq[] = [
   {
     q: "Can Provenance be customized for our organization?",
     a: [
-      "Yes. Provenance can be tailored to the way institutional real estate teams operate, including custom workflows, views, data structures, permissions, and integrations for larger portfolios and organizations.",
+      "Yes. Provenance can be tailored to the way your team already works, including custom workflows, views, data structures, permissions, and integrations for larger portfolios and organizations.",
     ],
   },
   {

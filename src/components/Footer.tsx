@@ -18,12 +18,21 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="col-span-12 lg:col-span-6 lg:justify-self-end">
+          {/* The nav is the site's four destinations; this is where the two
+              that are not part of the argument live, so Contact has somewhere
+              to be reached from on every page. */}
+          <div className="col-span-12 flex gap-x-8 lg:col-span-6 lg:justify-self-end">
             <Link
               href="/thesis"
               className="-my-2 inline-flex min-h-[44px] items-center text-ui text-paper-muted transition-colors duration-instant hover:text-paper"
             >
               Thesis
+            </Link>
+            <Link
+              href="/contact"
+              className="-my-2 inline-flex min-h-[44px] items-center text-ui text-paper-muted transition-colors duration-instant hover:text-paper"
+            >
+              Contact
             </Link>
           </div>
         </div>
