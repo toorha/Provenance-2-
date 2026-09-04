@@ -9,9 +9,9 @@ import {
 
 /* The aerial behind the thesis.
 
-   FOUR LAYERS, SEPARATELY TUNABLE (§16): the photograph, the gradient that
-   dissolves it into the canvas, the optional property highlights, and — in the
-   hero itself — the copy. Nothing here knows what the headline says.
+   THREE LAYERS, SEPARATELY TUNABLE (§16): the photograph, the gradient that
+   dissolves it into the canvas, and the street names. The copy lives in the
+   hero itself, and nothing here knows what the headline says.
 
    IT IS A BACKGROUND ON DESKTOP AND A BLOCK ON MOBILE. Above 1024px this sits
    absolutely behind the copy and bleeds past the right edge. Below it, the
@@ -82,11 +82,18 @@ export function HeroAerial() {
                rgba(${CANVAS}, 0.42) 76%,
                rgba(${CANVAS}, 0.10) 88%,
                rgba(${CANVAS}, 0) 100%)`,
-            /* nav contrast (§14) */
+            /* Nav contrast (§14), but no heavier than it has to be. At 0.82
+               falling to nothing over 200px this scrim was flattening the top
+               third of the frame to plain black, so the city appeared to
+               start well below the fold of its own image. It can be this
+               light because the nav links sit on the left, where the
+               left-to-right fade is already close to opaque, and the one
+               control that does sit over open image is a solid pill that
+               carries its own background. */
             `linear-gradient(180deg,
-               rgba(${CANVAS}, 0.82) 0px,
-               rgba(${CANVAS}, 0.42) 96px,
-               rgba(${CANVAS}, 0) 200px)`,
+               rgba(${CANVAS}, 0.58) 0px,
+               rgba(${CANVAS}, 0.24) 84px,
+               rgba(${CANVAS}, 0) 150px)`,
             /* and the floor, so the section ends in canvas rather than in a
                photograph that stops */
             `linear-gradient(0deg,
@@ -116,12 +123,10 @@ export function HeroAerial() {
         }}
       />
 
-      {/* 4 · street names, ABOVE the gradient because they are the one thing
-             here that has to stay legible rather than dissolve. They say the
-             frame is a place with addresses, which is what makes the
-             properties in it read as real assets. */}
-      {/* 3 · the street names, above the gradient because they are the one
-             thing here that has to stay legible rather than dissolve. */}
+      {/* 3 · the street names, ABOVE the gradient because they are the one
+             thing here that has to stay legible rather than dissolve. They
+             say the frame is a place with addresses, which is what makes the
+             buildings in it read as real assets. */}
       <CoverBox>
         <StreetOverlay />
       </CoverBox>

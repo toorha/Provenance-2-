@@ -111,18 +111,19 @@ export function ProvenanceSystem() {
   const inColRef = useRef<HTMLDivElement | null>(null);
   const outColRef = useRef<HTMLDivElement | null>(null);
 
-  /* Measured on mount and on every resize. Below the desktop breakpoint the
-     columns stack and there is nothing to join, so it clears itself. */
+  /* Measured on mount and on every resize, at every width. The columns no
+     longer stack on a phone, so there is always something to join, and
+     because every coordinate comes from a real bounding box the same code
+     draws the same diagram at 390px as it does at 1440. */
   useEffect(() => {
     const host = ref.current;
     if (!host) return;
 
     const measure = () => {
-      const stacked = !window.matchMedia("(min-width: 1024px)").matches;
       const card = cardRef.current;
       const inCol = inColRef.current;
       const outCol = outColRef.current;
-      if (stacked || !card || !inCol || !outCol) return setGeo(null);
+      if (!card || !inCol || !outCol) return setGeo(null);
 
       const H = host.getBoundingClientRect();
       const c = card.getBoundingClientRect();
@@ -257,13 +258,12 @@ export function ProvenanceSystem() {
         {/* ── the system ─────────────────────────────────────────────── */}
         <Reveal delay={100} className="mt-16 md:mt-20">
           <div ref={ref} className="relative">
-            {/* the curve field, behind everything and desktop only: at narrow
-                widths the three regions stack and there is nothing to join */}
+            {/* the curve field, behind everything, at every width */}
             {geo && (
               <svg
                 aria-hidden
                 viewBox={`0 0 ${geo.w} ${geo.h}`}
-                className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
+                className="pointer-events-none absolute inset-0 h-full w-full"
               >
                 <g fill="none" stroke="rgba(243,244,240,0.30)" strokeWidth="1.25">
                   {geo.inY.map((y, i) => (
@@ -317,7 +317,15 @@ export function ProvenanceSystem() {
               </svg>
             )}
 
-            <div className="relative grid gap-y-12 lg:grid-cols-[186px_minmax(0,1fr)_186px] lg:items-center lg:gap-x-8">
+            {/* THREE COLUMNS AT EVERY WIDTH.
+
+                Stacking the regions on a phone turned the one thing this
+                section exists to say — many inputs converge into Vera, and
+                Provenance sends many outputs back out — into three unrelated
+                lists with the converging curves switched off entirely. The
+                convergence IS the content, so the phone keeps the shape and
+                pays for it in type size instead. */}
+            <div className="relative grid grid-cols-[70px_minmax(0,1fr)_70px] items-center gap-x-2.5 sm:grid-cols-[96px_minmax(0,1fr)_96px] sm:gap-x-4 lg:grid-cols-[186px_minmax(0,1fr)_186px] lg:gap-x-8">
               {/* 01 WORK IN */}
               <div
                 ref={inColRef}
@@ -326,15 +334,15 @@ export function ProvenanceSystem() {
                   emph(1),
                 )}
               >
-                <Stage label="Inputs" className="lg:text-right" />
-                <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px] lg:text-right">
+                <Stage label="Inputs" className="text-right" />
+                <ul className="mt-3 space-y-[16px] text-right sm:space-y-[20px] lg:mt-5 lg:space-y-[26px]">
                   {WORK_IN.map((w, i) => (
                     <li
                       key={w}
                       ref={(el) => {
                         inRefs.current[i] = el;
                       }}
-                      className="text-body text-paper-muted"
+                      className="text-[11px] leading-[1.2] text-paper-muted sm:text-[13px] lg:text-body"
                     >
                       {w}
                     </li>
@@ -343,7 +351,7 @@ export function ProvenanceSystem() {
               </div>
 
               {/* 02 + 03: one card, split by a rule. Vera builds Provenance. */}
-              <div className="lg:px-6">
+              <div className="px-0 lg:px-6">
                 <div
                   ref={cardRef}
                   className="overflow-hidden rounded-panel border border-mineral-300 bg-mineral-0 font-product shadow-lift-2"
@@ -414,14 +422,14 @@ export function ProvenanceSystem() {
                 )}
               >
                 <Stage label="Outputs" />
-                <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3 lg:block lg:space-y-[26px]">
+                <ul className="mt-3 space-y-[16px] sm:space-y-[20px] lg:mt-5 lg:space-y-[26px]">
                   {WORK_OUT.map((o, i) => (
                     <li
                       key={o}
                       ref={(el) => {
                         outRefs.current[i] = el;
                       }}
-                      className="text-body text-paper-muted"
+                      className="text-[11px] leading-[1.2] text-paper-muted sm:text-[13px] lg:text-body"
                     >
                       {o}
                     </li>
@@ -440,7 +448,7 @@ function Stage({ label, className }: { label: string; className?: string }) {
   return (
     <p
       className={clsx(
-        "text-mono-sm uppercase tracking-[0.08em] text-paper",
+        "text-[9px] uppercase tracking-[0.08em] text-paper sm:text-[10px] lg:text-mono-sm",
         className,
       )}
     >
