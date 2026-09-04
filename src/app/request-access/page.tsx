@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { RequestAccessForm } from "./RequestAccessForm";
+import { BookACall } from "@/components/BookACall";
 
 export const metadata: Metadata = {
   title: "Request access · Provenance",
@@ -36,6 +37,12 @@ export default function RequestAccessPage() {
             <div className="mt-12 md:mt-14">
               <RequestAccessForm />
             </div>
+
+            {/* In the same column as the form rather than off in a right
+                rail, and after it rather than above it: the form is what
+                this page is for, and a calendar link placed first would
+                quietly become the easier option. */}
+            <BookACall className="mt-14 border-t border-[rgba(243,244,240,0.16)] pt-10 md:mt-16" />
           </div>
         </div>
       </main>
