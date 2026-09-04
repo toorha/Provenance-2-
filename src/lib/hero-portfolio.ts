@@ -35,57 +35,61 @@ export type HighlightType =
   | "industrial"
   | "institutional";
 
-/* One highlighted property. `pin` is the mast height as a percentage of the
-   layer, and 0 or absent means no marker. `hideBelowLg` drops a property from
-   the mobile crop, where only three or four should survive. */
+/* One marked property. x/y/w/h are the roof, which the marker hangs over;
+   `hideBelowLg` drops a property from the mobile crop, where only three or
+   four survive. */
 export type Highlight = {
   id: string;
   type: HighlightType;
   /** left edge, % */ x: number;
   /** top edge, % */ y: number;
-  /** % of layer width */ w: number;
-  /** % of layer height */ h: number;
-  pin?: number;
+  /** % of image width */ w: number;
+  /** % of image height */ h: number;
   hideBelowLg?: boolean;
 };
 
-/* EIGHT ASSETS, SIX CLASSES, ALL OF THEM WHERE THE IMAGE IS ACTUALLY VISIBLE.
+/* FIVE MARKED ASSETS, FIVE CLASSES.
 
    The point of the variety is that a portfolio is not a set of office towers.
    A grocery-anchored plaza and a logistics shed say "these are real assets
-   somebody owns" in a way that six glass towers never would.
+   somebody owns" in a way five glass towers never would.
 
-   Everything left of about 70% sits under the opaque part of the left fade,
-   so nothing is marked there: an outline with no visible building under it
-   reads as a bug, not as restraint. */
+   Nothing is marked left of about 70%, because the left fade is still close
+   to opaque there and a marker with no visible building under it reads as a
+   bug rather than as restraint. */
 export const HERO_HIGHLIGHTS: Highlight[] = [
-  { id: "civic", type: "institutional", x: 87.51, y: 19.31, w: 4.96, h: 8.52, hideBelowLg: true },
-  { id: "residences", type: "residential", x: 72.23, y: 29.39, w: 3.92, h: 4.52, pin: 6 },
-  { id: "office", type: "office", x: 77.08, y: 31.37, w: 6.08, h: 6.67, hideBelowLg: true },
-  { id: "plaza", type: "retail", x: 71.93, y: 63.41, w: 3.96, h: 3.41, pin: 5 },
-  { id: "tower", type: "mixed-use", x: 89.63, y: 59.40, w: 1.67, h: 2.52, pin: 10 },
-  { id: "neighbourhood", type: "retail", x: 93.20, y: 63.17, w: 4.25, h: 3.41, hideBelowLg: true },
-  { id: "logistics", type: "industrial", x: 83.67, y: 74.01, w: 2.67, h: 5.43, pin: 5 },
-  { id: "highstreet", type: "retail", x: 76.59, y: 82.08, w: 6.08, h: 3.41 },
+  { id: "residences", type: "residential", x: 72.25, y: 28.11, w: 3.92, h: 4.52 },
+  { id: "office", type: "office", x: 77.09, y: 29.65, w: 6.08, h: 6.67, hideBelowLg: true },
+  { id: "tower", type: "mixed-use", x: 89.94, y: 53.24, w: 1.67, h: 2.52 },
+  { id: "plaza", type: "retail", x: 71.99, y: 62.25, w: 3.96, h: 3.41 },
+  { id: "logistics", type: "industrial", x: 83.71, y: 73.11, w: 2.67, h: 3.60 },
 ];
 
 /* Street names, so the frame reads as a place rather than as a texture.
 
-   `along` is the road's own position: for a horizontal street it is the y of
-   the centreline, for a vertical one the x. `at` is where along that road the
-   label sits, chosen to miss the highlighted properties. */
+   VERTICAL STREETS ONLY, AND THAT IS NOT A STYLE CHOICE.
+
+   Buildings lean up the frame, so anything sitting below a horizontal road
+   sweeps straight over it: label one of those and you have named a road that
+   is not there. The vertical channels survive, because the same lean only
+   crosses them at a shallow angle, so those are the ones that get names.
+
+   `along` is the road's own x. `at` is where down that road the label sits,
+   chosen to clear the markers. */
 export type StreetLabel = {
   name: string;
-  axis: "h" | "v";
-  /** % — y for a horizontal street, x for a vertical one */ along: number;
-  /** % — position along the street */ at: number;
+  /** % — the road's x position */ along: number;
+  /** % — position down the street */ at: number;
   hideBelowLg?: boolean;
 };
 
+/* Every `at` below was picked by scanning its road for a stretch the
+   buildings have not swept over, then checking it clears the markers. Move
+   one by eye and it will end up naming a road nobody can see. */
 export const HERO_STREETS: StreetLabel[] = [
-  { name: "Meridian Avenue", axis: "h", along: 33.07, at: 84, hideBelowLg: true },
-  { name: "Foundry Road", axis: "h", along: 75.19, at: 70 },
-  { name: "Market Street", axis: "v", along: 71.33, at: 45 },
-  { name: "Harbour Street", axis: "v", along: 86.67, at: 55, hideBelowLg: true },
-  { name: "Port Street", axis: "v", along: 92.56, at: 38, hideBelowLg: true },
+  { name: "Market Street", along: 71.33, at: 40 },
+  /* for anyone who actually reads the map */
+  { name: "Memory Lane", along: 82.94, at: 56, hideBelowLg: true },
+  { name: "Harbour Street", along: 86.67, at: 44 },
+  { name: "Port Street", along: 92.56, at: 34, hideBelowLg: true },
 ];

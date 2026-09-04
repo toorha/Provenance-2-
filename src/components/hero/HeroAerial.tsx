@@ -175,9 +175,22 @@ function HighlightOverlay() {
   );
 }
 
-/* A hairline perimeter and, optionally, a short mast with a point of light on
-   top. No fill beyond a barely-there wash, no glow, no label, no line to any
-   other property: the mark says this one is remembered, and nothing else. */
+/* A POINT OF LIGHT. NOTHING ELSE.
+
+   There used to be a hairline rectangle around each roof as well. It was
+   accurate, measured to within a pixel of the roof it outlined, and it still
+   looked wrong: at this camera angle a building sweeps a long way down from
+   its roof to its footprint, so a rectangle capping the top reads as a box
+   floating beside a building rather than around one. Any fix for that meant
+   either flattening the tilt or wrapping the whole leaning silhouette, and
+   both cost more than the outline was worth.
+
+   The mast that used to hang above it went the same way and for the same
+   reason: a line drawn straight up from a building that is already leaning
+   is a second thing to not quite agree with the first.
+
+   A point has no edges to disagree with. It sits on a roof and says this one
+   is remembered, which was the entire job. */
 function HighlightShape({
   property: p,
   index,
@@ -191,28 +204,18 @@ function HighlightShape({
         "hero-highlight absolute",
         p.hideBelowLg ? "hidden lg:block" : "",
       ].join(" ")}
+      /* Dead centre of the roof, as a percentage of the image and never of
+         the viewport, or the marker drifts off its building the moment the
+         window changes shape. */
       style={{
-        left: `${p.x}%`,
-        top: `${p.y}%`,
-        width: `${p.w}%`,
-        height: `${p.h}%`,
+        left: `${p.x + p.w / 2}%`,
+        top: `${p.y + p.h / 2}%`,
         /* they arrive one after another rather than all at once (§9) */
         animationDelay: `${900 + index * 260}ms`,
       }}
     >
-      <div className="absolute inset-0 border border-vera-400/85 bg-vera-400/[0.09]" />
-      {p.pin ? (
-        <>
-          <div
-            className="absolute left-1/2 w-px -translate-x-1/2 bg-gradient-to-t from-vera-400/10 to-vera-400/70"
-            style={{ bottom: "100%", height: `${(p.pin / p.h) * 100}%` }}
-          />
-          <div
-            className="hero-highlight-pin absolute left-1/2 h-[5px] w-[5px] -translate-x-1/2 rounded-full bg-vera-400"
-            style={{ bottom: `calc(100% + ${(p.pin / p.h) * 100}% - 2px)` }}
-          />
-        </>
-      ) : null}
+      {/* a ring, so the point reads on a bright roof as well as a dark one */}
+      <div className="hero-highlight-pin absolute left-0 top-0 h-[6px] w-[6px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-vera-400 ring-[3px] ring-vera-400/20" />
     </div>
   );
 }
@@ -232,7 +235,6 @@ function StreetOverlay() {
 }
 
 function StreetName({ street: s }: { street: StreetLabel }) {
-  const vertical = s.axis === "v";
   return (
     <span
       className={[
@@ -241,16 +243,16 @@ function StreetName({ street: s }: { street: StreetLabel }) {
         s.hideBelowLg ? "hidden lg:block" : "",
       ].join(" ")}
       style={{
-        left: `${vertical ? s.along : s.at}%`,
-        top: `${vertical ? s.at : s.along}%`,
+        left: `${s.along}%`,
+        top: `${s.at}%`,
         /* vertical-rl, not rotate(). A rotated span is still laid out as a
            wide box, so translate(-50%) shifted it by half the LENGTH of the
            name rather than half its line height and dropped it several
-           percent to the left, straight through a highlighted property.
-           In vertical writing mode the box is genuinely narrow and the
-           centring is honest. */
-        writingMode: vertical ? "vertical-rl" : undefined,
-        transform: vertical ? "translateX(-50%)" : "translateY(-50%)",
+           percent to the left, straight through a marked property. In
+           vertical writing mode the box is genuinely narrow and the centring
+           is honest. */
+        writingMode: "vertical-rl",
+        transform: "translateX(-50%)",
       }}
     >
       {s.name}
