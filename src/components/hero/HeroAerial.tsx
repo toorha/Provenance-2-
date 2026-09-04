@@ -76,11 +76,13 @@ export function HeroAerial() {
           background: [
             `linear-gradient(90deg,
                rgb(${CANVAS}) 0%,
-               rgb(${CANVAS}) 38%,
-               rgba(${CANVAS}, 0.96) 54%,
-               rgba(${CANVAS}, 0.90) 64%,
-               rgba(${CANVAS}, 0.50) 74%,
-               rgba(${CANVAS}, 0.11) 88%,
+               rgb(${CANVAS}) 22%,
+               rgba(${CANVAS}, 0.94) 36%,
+               rgba(${CANVAS}, 0.88) 48%,
+               rgba(${CANVAS}, 0.80) 58%,
+               rgba(${CANVAS}, 0.68) 66%,
+               rgba(${CANVAS}, 0.42) 76%,
+               rgba(${CANVAS}, 0.10) 88%,
                rgba(${CANVAS}, 0) 100%)`,
             /* nav contrast (§14) */
             `linear-gradient(180deg,

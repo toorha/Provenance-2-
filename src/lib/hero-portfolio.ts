@@ -59,14 +59,14 @@ export type Highlight = {
    so nothing is marked there: an outline with no visible building under it
    reads as a bug, not as restraint. */
 export const HERO_HIGHLIGHTS: Highlight[] = [
-  { id: "civic", type: "institutional", x: 87.48, y: 20.64, w: 4.96, h: 4.11, hideBelowLg: true },
-  { id: "residences", type: "residential", x: 72.08, y: 31.75, w: 3.92, h: 4.52, pin: 6 },
-  { id: "office", type: "office", x: 77.05, y: 33.55, w: 6.08, h: 3.99, hideBelowLg: true },
-  { id: "tower", type: "mixed-use", x: 85.54, y: 49.14, w: 0.96, h: 2.24, pin: 10 },
-  { id: "plaza", type: "retail", x: 71.89, y: 64.14, w: 3.96, h: 3.41, pin: 5 },
-  { id: "neighbourhood", type: "retail", x: 93.14, y: 64.18, w: 4.25, h: 3.41, hideBelowLg: true },
-  { id: "logistics", type: "industrial", x: 83.65, y: 74.68, w: 1.25, h: 4.48, pin: 5 },
-  { id: "highstreet", type: "retail", x: 76.53, y: 83.13, w: 6.08, h: 3.41 },
+  { id: "civic", type: "institutional", x: 87.41, y: 21.28, w: 4.96, h: 8.52, hideBelowLg: true },
+  { id: "residences", type: "residential", x: 72.25, y: 30.25, w: 3.92, h: 4.52, pin: 6 },
+  { id: "office", type: "office", x: 76.89, y: 34.93, w: 6.08, h: 6.67, hideBelowLg: true },
+  { id: "tower", type: "mixed-use", x: 85.89, y: 42.77, w: 1.67, h: 2.52, pin: 10 },
+  { id: "plaza", type: "retail", x: 71.90, y: 64.09, w: 3.96, h: 3.41, pin: 5 },
+  { id: "neighbourhood", type: "retail", x: 93.17, y: 63.87, w: 4.25, h: 3.41, hideBelowLg: true },
+  { id: "logistics", type: "industrial", x: 83.62, y: 74.95, w: 2.67, h: 5.38, pin: 5 },
+  { id: "highstreet", type: "retail", x: 76.52, y: 83.20, w: 6.08, h: 3.41 },
 ];
 
 /* Street names, so the frame reads as a place rather than as a texture.
