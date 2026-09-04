@@ -249,7 +249,12 @@ export const stepsFor = (id: VeraStory["id"]) =>
    a pixel when the intro gives way to the evidence. */
 function Intro({ story }: { story: VeraStory }) {
   return (
-    <div className="flex h-full min-h-[372px] flex-col justify-center px-5 py-5 font-product lg:min-h-[562px] lg:px-7 lg:py-6">
+    /* Centred on a desktop panel, near the top on a phone. The panel is
+       pinned to the height of the finished story, so vertical centring left
+       two sentences floating in the middle of a tall white box with nothing
+       above or below them. Sitting them near the top puts the sentence where
+       the eye already is, right under the tab that was just selected. */
+    <div className="flex h-full min-h-[372px] flex-col justify-start px-5 pb-5 pt-8 font-product lg:min-h-[562px] lg:justify-center lg:px-7 lg:py-6">
       <div className="hero-intro-in max-w-[38ch]">
         <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-vera-700">
           <VeraMark size={14} />

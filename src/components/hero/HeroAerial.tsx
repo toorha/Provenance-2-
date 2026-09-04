@@ -37,8 +37,17 @@ export function HeroAerial() {
         "lg:absolute lg:inset-0 lg:z-0 lg:mt-0 lg:h-auto",
       ].join(" ")}
     >
-      {/* 1 · the photograph */}
-      <div className="hero-aerial-drift absolute inset-0 overflow-hidden">
+      {/* 1 · the photograph.
+
+             THE DRIFT IS ON THE IMAGE, NOT ON THIS BOX. It used to scale the
+             wrapper, which scales the wrapper's clip box with it: at 1.016 the
+             photograph grew about three pixels past every edge while the
+             gradient layers, which are unscaled siblings, stayed put. The
+             result was a hairline of raw undimmed photograph along the bottom
+             of the phone band, with a hard edge where the fade had already
+             finished. Scaling the image inside a clip box that does not move
+             keeps the fade and the photograph the same size. */}
+      <div className="absolute inset-0 overflow-hidden">
         <Image
           src={HERO_AERIAL_SRC}
           alt=""
@@ -58,7 +67,7 @@ export function HeroAerial() {
              width away, and centring there would throw away the right side of
              the frame, which is exactly where the portfolio is. So it anchors
              right. */
-          className="object-cover object-right lg:object-center"
+          className="hero-aerial-drift object-cover object-right lg:object-center"
         />
       </div>
 

@@ -325,7 +325,7 @@ export function ProvenanceSystem() {
                 lists with the converging curves switched off entirely. The
                 convergence IS the content, so the phone keeps the shape and
                 pays for it in type size instead. */}
-            <div className="relative grid grid-cols-[70px_minmax(0,1fr)_70px] items-center gap-x-2.5 sm:grid-cols-[96px_minmax(0,1fr)_96px] sm:gap-x-4 lg:grid-cols-[186px_minmax(0,1fr)_186px] lg:gap-x-8">
+            <div className="relative grid grid-cols-[86px_minmax(0,1fr)_86px] items-center gap-x-2 sm:grid-cols-[112px_minmax(0,1fr)_112px] sm:gap-x-4 lg:grid-cols-[186px_minmax(0,1fr)_186px] lg:gap-x-8">
               {/* 01 WORK IN */}
               <div
                 ref={inColRef}
@@ -342,7 +342,7 @@ export function ProvenanceSystem() {
                       ref={(el) => {
                         inRefs.current[i] = el;
                       }}
-                      className="text-[11px] leading-[1.2] text-paper-muted sm:text-[13px] lg:text-body"
+                      className="text-[10px] leading-[1.2] text-paper-muted sm:text-[12px] lg:text-body"
                     >
                       {w}
                     </li>
@@ -359,23 +359,23 @@ export function ProvenanceSystem() {
                   {/* VERA: the mark, the green, the verbs */}
                   <div
                     className={clsx(
-                      "px-6 py-5 text-center transition-opacity duration-considered ease-state",
+                      "px-3 py-3.5 text-center transition-opacity duration-considered ease-state lg:px-6 lg:py-5",
                       emph(2),
                     )}
                   >
-                    <p className="flex items-center justify-center gap-2 text-[16px] font-medium tracking-[-0.008em] text-ink">
+                    <p className="flex items-center justify-center gap-1.5 text-[12px] font-medium tracking-[-0.008em] text-ink lg:gap-2 lg:text-[16px]">
                       <span className="text-vera-700">
                         <ConvergeMark active={!armed || stage >= 2} />
                       </span>
                       Vera
                     </p>
-                    <p className="mt-1.5 text-[14px] leading-[1.5] text-slate">
+                    <p className="mt-1 text-[10px] leading-[1.4] text-slate lg:mt-1.5 lg:text-[14px]">
                       {VERA_VERBS.slice(0, -1).join(", ")}, and{" "}
                       {VERA_VERBS[VERA_VERBS.length - 1]}.
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-center gap-1.5 border-y border-mineral-200 bg-mineral-50 py-1.5 text-[11px] uppercase tracking-[0.08em] text-slate">
+                  <div className="flex items-center justify-center gap-1 border-y border-mineral-200 bg-mineral-50 py-1 text-[9px] uppercase tracking-[0.08em] text-slate lg:gap-1.5 lg:py-1.5 lg:text-[11px]">
                     <svg
                       width="9"
                       height="11"
@@ -397,15 +397,15 @@ export function ProvenanceSystem() {
                       The section is named after the memory. */}
                   <div
                     className={clsx(
-                      "px-6 py-7 text-center transition-opacity duration-considered ease-state",
+                      "px-3 py-5 text-center transition-opacity duration-considered ease-state lg:px-6 lg:py-7",
                       emph(3),
                     )}
                   >
-                    <p className="flex items-center justify-center gap-2.5 text-[24px] font-semibold tracking-[-0.014em] text-ink">
+                    <p className="flex items-center justify-center gap-1.5 text-[16px] font-semibold tracking-[-0.014em] text-ink lg:gap-2.5 lg:text-[24px] [&>svg]:h-[18px] [&>svg]:w-[18px] lg:[&>svg]:h-[26px] lg:[&>svg]:w-[26px]">
                       <ProvenanceMark size={26} />
                       Provenance
                     </p>
-                    <p className="mx-auto mt-2 max-w-[46ch] text-[14px] leading-[1.55] text-slate">
+                    <p className="mx-auto mt-1.5 max-w-[46ch] text-[10px] leading-[1.45] text-slate lg:mt-2 lg:text-[14px]">
                       The Memory Layer for the Property. What Happened, Why
                       It Happened, What Changed, and What Still Matters.
                     </p>
@@ -429,7 +429,7 @@ export function ProvenanceSystem() {
                       ref={(el) => {
                         outRefs.current[i] = el;
                       }}
-                      className="text-[11px] leading-[1.2] text-paper-muted sm:text-[13px] lg:text-body"
+                      className="text-[10px] leading-[1.2] text-paper-muted sm:text-[12px] lg:text-body"
                     >
                       {o}
                     </li>
