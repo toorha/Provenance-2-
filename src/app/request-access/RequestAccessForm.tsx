@@ -192,7 +192,7 @@ export function RequestAccessForm() {
       />
 
       <div className="mt-6">
-        <Label htmlFor="message">
+        <Label htmlFor="message" optional>
           What would you want Provenance to help with?
         </Label>
         <textarea

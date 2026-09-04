@@ -81,12 +81,13 @@ export function MeetVera() {
        way to recover. A section that silently shows nothing is far worse
        than one that skips its animation. */
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    /* no autoplay below the desktop breakpoint: on a phone each mode is one
-       tap and shows itself complete */
     const desktop = window.matchMedia("(min-width: 1024px)").matches;
     const el = sectionRef.current;
 
-    if (reduced || !desktop || !el) {
+    /* Somebody who has asked for less motion gets the finished thing, and a
+       missing ref fails open to the same place. A section that silently shows
+       nothing is far worse than one that skips its animation. */
+    if (reduced || !el) {
       setRevealed(Infinity);
       return;
     }
@@ -96,6 +97,23 @@ export function MeetVera() {
     const play = () => {
       if (started || takenOver.current || document.hidden) return;
       started = true;
+
+      /* PHONES GET THE SENTENCE, THEN THE WHOLE STORY.
+
+         No walk through three modes on a phone: that is a lot of scrolling
+         real estate spent on something the visitor did not ask to watch. But
+         opening straight on records and a green conclusion drops them into
+         the middle of a demonstration with no idea what it demonstrates, so
+         the explanation still plays first. */
+      if (!desktop) {
+        setRevealed(INTRO);
+        timers.current.push(
+          setTimeout(() => {
+            if (!takenOver.current) setRevealed(Infinity);
+          }, INTRO_MS),
+        );
+        return;
+      }
 
       let t = 0;
       STORY_ORDER.forEach((id, chapter) => {

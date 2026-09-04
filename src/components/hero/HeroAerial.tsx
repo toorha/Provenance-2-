@@ -1,7 +1,6 @@
 import Image from "next/image";
 import {
   HERO_AERIAL_H,
-  HERO_AERIAL_POSITION,
   HERO_AERIAL_SRC,
   HERO_AERIAL_W,
   HERO_HIGHLIGHTS,
@@ -34,7 +33,7 @@ export function HeroAerial() {
       aria-hidden
       className={[
         // mobile: a shallow band under the copy, full-bleed
-        "relative mt-12 h-[250px] w-full sm:h-[300px] md:h-[340px]",
+        "relative mt-12 h-[400px] w-full sm:h-[460px] md:h-[520px]",
         "[container-type:size]",
         // desktop: the whole section, behind everything
         "lg:absolute lg:inset-0 lg:z-0 lg:mt-0 lg:h-auto",
@@ -52,8 +51,16 @@ export function HeroAerial() {
              the browser pick the width it needs */
           sizes="100vw"
           quality={82}
-          className="object-cover"
-          style={{ objectPosition: HERO_AERIAL_POSITION }}
+          /* ALIGNMENT IS SHARED WITH CoverBox BELOW. Change one and you must
+             change the other, or every outline slides off its building.
+
+             Desktop centres: the layer is wider than the image's aspect, so
+             cover scales by width and nothing is cropped horizontally at all.
+             The taller phone band is the opposite, cropping about half the
+             width away, and centring there would throw away the right side of
+             the frame, which is exactly where the portfolio is. So it anchors
+             right. */
+          className="object-cover object-right lg:object-center"
         />
       </div>
 
@@ -141,7 +148,7 @@ function CoverBox({ children }: { children: React.ReactNode }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="absolute right-0 top-1/2 -translate-y-1/2 lg:left-1/2 lg:right-auto lg:-translate-x-1/2"
         style={{
           aspectRatio: ratio,
           width: `max(100cqw, calc(100cqh * ${HERO_AERIAL_W} / ${HERO_AERIAL_H}))`,
@@ -227,8 +234,8 @@ function StreetName({ street: s }: { street: StreetLabel }) {
   return (
     <span
       className={[
-        "hero-street absolute whitespace-nowrap font-mono text-[9px] uppercase",
-        "tracking-[0.18em] text-paper-subtle/70 lg:text-[10px]",
+        "hero-street absolute whitespace-nowrap font-mono text-[11px] uppercase",
+        "tracking-[0.16em] text-paper-subtle/80 lg:text-[13px]",
         s.hideBelowLg ? "hidden lg:block" : "",
       ].join(" ")}
       style={{

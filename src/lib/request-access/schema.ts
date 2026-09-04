@@ -92,8 +92,11 @@ export function validate(fields: RequestAccessFields): FieldErrors {
   )
     errors.portfolioSize = "Please choose one of the listed options.";
 
-  if (fields.message.length < MESSAGE_MIN)
-    errors.message = "Please tell us a little more.";
+  /* Optional. Somebody who wants access should not be made to write an essay
+     to ask for it, and a forced field mostly produces "n/a". If they do write
+     something, it still has to be long enough to be worth reading. */
+  if (fields.message && fields.message.length < MESSAGE_MIN)
+    errors.message = "Please tell us a little more, or leave this blank.";
   else if (fields.message.length > MESSAGE_MAX)
     errors.message = `Please keep this under ${MESSAGE_MAX} characters.`;
 
