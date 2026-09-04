@@ -16,54 +16,16 @@
    alt and is marked decorative. */
 export const HERO_AERIAL_SRC = "/hero/portfolio-aerial.png";
 
-/* The aerial's own aspect, which the overlays have to reproduce exactly.
-   The highlight and street coordinates are percentages OF THE IMAGE, but the
-   image is object-fit: cover and therefore cropped, so the overlays are laid
-   out inside a box that replicates that crop. Get this wrong and every
-   outline drifts off its building the moment the viewport changes shape. */
+/* The aerial's own aspect, which the street overlay has to reproduce exactly.
+   Its coordinates are percentages OF THE IMAGE, but the image is
+   object-fit: cover and therefore cropped, so the overlay is laid out inside
+   a box that replicates that crop. Get this wrong and every label drifts off
+   its road the moment the viewport changes shape. */
 export const HERO_AERIAL_W = 2400;
 export const HERO_AERIAL_H = 1350;
 
 /* Crop alignment lives in HeroAerial, next to the overlay box that has to
    match it exactly. Splitting the two across files is how they drift. */
-
-export type HighlightType =
-  | "retail"
-  | "mixed-use"
-  | "residential"
-  | "office"
-  | "industrial"
-  | "institutional";
-
-/* One marked property. x/y/w/h are the roof, which the marker hangs over;
-   `hideBelowLg` drops a property from the mobile crop, where only three or
-   four survive. */
-export type Highlight = {
-  id: string;
-  type: HighlightType;
-  /** left edge, % */ x: number;
-  /** top edge, % */ y: number;
-  /** % of image width */ w: number;
-  /** % of image height */ h: number;
-  hideBelowLg?: boolean;
-};
-
-/* FIVE MARKED ASSETS, FIVE CLASSES.
-
-   The point of the variety is that a portfolio is not a set of office towers.
-   A grocery-anchored plaza and a logistics shed say "these are real assets
-   somebody owns" in a way five glass towers never would.
-
-   Nothing is marked left of about 70%, because the left fade is still close
-   to opaque there and a marker with no visible building under it reads as a
-   bug rather than as restraint. */
-export const HERO_HIGHLIGHTS: Highlight[] = [
-  { id: "residences", type: "residential", x: 72.25, y: 28.11, w: 3.92, h: 4.52 },
-  { id: "office", type: "office", x: 77.09, y: 29.65, w: 6.08, h: 6.67, hideBelowLg: true },
-  { id: "tower", type: "mixed-use", x: 89.94, y: 53.24, w: 1.67, h: 2.52 },
-  { id: "plaza", type: "retail", x: 71.99, y: 62.25, w: 3.96, h: 3.41 },
-  { id: "logistics", type: "industrial", x: 83.71, y: 73.11, w: 2.67, h: 3.60 },
-];
 
 /* Street names, so the frame reads as a place rather than as a texture.
 
@@ -90,6 +52,6 @@ export const HERO_STREETS: StreetLabel[] = [
   { name: "Market Street", along: 71.33, at: 40 },
   /* for anyone who actually reads the map */
   { name: "Memory Lane", along: 82.94, at: 56, hideBelowLg: true },
-  { name: "Harbour Street", along: 86.67, at: 44 },
+  { name: "Harbour Street", along: 86.67, at: 56 },
   { name: "Port Street", along: 92.56, at: 34, hideBelowLg: true },
 ];

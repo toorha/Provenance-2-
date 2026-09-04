@@ -3,9 +3,7 @@ import {
   HERO_AERIAL_H,
   HERO_AERIAL_SRC,
   HERO_AERIAL_W,
-  HERO_HIGHLIGHTS,
   HERO_STREETS,
-  type Highlight,
   type StreetLabel,
 } from "@/lib/hero-portfolio";
 
@@ -122,15 +120,9 @@ export function HeroAerial() {
              here that has to stay legible rather than dissolve. They say the
              frame is a place with addresses, which is what makes the
              properties in it read as real assets. */}
-      {/* 3 · the properties, and 4 · the street names.
-
-             Both sit ABOVE the gradient. Under it they were dimmed by the
-             same fade that dims the buildings, which sounds right and reads
-             as smudged: a mark that says "this one is remembered" has to be
-             legible or it is not saying anything. Every one of them is placed
-             where the image is genuinely visible, so nothing floats. */}
+      {/* 3 · the street names, above the gradient because they are the one
+             thing here that has to stay legible rather than dissolve. */}
       <CoverBox>
-        <HighlightOverlay />
         <StreetOverlay />
       </CoverBox>
     </div>
@@ -158,64 +150,6 @@ function CoverBox({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
-    </div>
-  );
-}
-
-/* Percentage geometry only, so one set of coordinates serves every breakpoint
-   and every crop. Renders nothing at all when no properties are configured. */
-function HighlightOverlay() {
-  if (HERO_HIGHLIGHTS.length === 0) return null;
-  return (
-    <div className="absolute inset-0">
-      {HERO_HIGHLIGHTS.map((p, i) => (
-        <HighlightShape key={p.id} property={p} index={i} />
-      ))}
-    </div>
-  );
-}
-
-/* A POINT OF LIGHT. NOTHING ELSE.
-
-   There used to be a hairline rectangle around each roof as well. It was
-   accurate, measured to within a pixel of the roof it outlined, and it still
-   looked wrong: at this camera angle a building sweeps a long way down from
-   its roof to its footprint, so a rectangle capping the top reads as a box
-   floating beside a building rather than around one. Any fix for that meant
-   either flattening the tilt or wrapping the whole leaning silhouette, and
-   both cost more than the outline was worth.
-
-   The mast that used to hang above it went the same way and for the same
-   reason: a line drawn straight up from a building that is already leaning
-   is a second thing to not quite agree with the first.
-
-   A point has no edges to disagree with. It sits on a roof and says this one
-   is remembered, which was the entire job. */
-function HighlightShape({
-  property: p,
-  index,
-}: {
-  property: Highlight;
-  index: number;
-}) {
-  return (
-    <div
-      className={[
-        "hero-highlight absolute",
-        p.hideBelowLg ? "hidden lg:block" : "",
-      ].join(" ")}
-      /* Dead centre of the roof, as a percentage of the image and never of
-         the viewport, or the marker drifts off its building the moment the
-         window changes shape. */
-      style={{
-        left: `${p.x + p.w / 2}%`,
-        top: `${p.y + p.h / 2}%`,
-        /* they arrive one after another rather than all at once (§9) */
-        animationDelay: `${900 + index * 260}ms`,
-      }}
-    >
-      {/* a ring, so the point reads on a bright roof as well as a dark one */}
-      <div className="hero-highlight-pin absolute left-0 top-0 h-[6px] w-[6px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-vera-400 ring-[3px] ring-vera-400/20" />
     </div>
   );
 }
