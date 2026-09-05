@@ -51,7 +51,7 @@ export type StreetLabel = {
 export const HERO_STREETS: StreetLabel[] = [
   { name: "Market Street", along: 71.33, at: 40 },
   /* for anyone who actually reads the map */
-  { name: "Memory Lane", along: 82.94, at: 56, hideBelowLg: true },
+  { name: "Memory Lane", along: 82.94, at: 40, hideBelowLg: true },
   { name: "Harbour Street", along: 86.67, at: 66 },
   { name: "Port Street", along: 92.56, at: 34, hideBelowLg: true },
 ];

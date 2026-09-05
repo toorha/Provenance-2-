@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 import { Button } from "@/components/ui/Button";
 import { ProvenanceLockup } from "@/components/ProvenanceMark";
 import { VeraMark } from "@/components/vera/VeraMark";
+import { CALL_URL } from "@/lib/contact";
 
 /* DESIGN.md §9.
    60px. Sans at ui 14px/500. Transparent over the hero, solid canvas with a
@@ -28,6 +29,9 @@ import { VeraMark } from "@/components/vera/VeraMark";
 const PRODUCTS = [{ href: "#product", name: "Vera" }];
 
 const LINKS = [
+  /* first, because it is first on the page and because the argument starts
+     with the problem rather than with the product */
+  { href: "#problem", label: "The problem" },
   { href: "#product", label: "Products", menu: true },
   /* the system graphic on the homepage is the destination. It is not
      duplicated onto a route of its own. */
@@ -172,6 +176,19 @@ export function Navigation() {
           </ul>
 
           <div className="ml-auto flex items-center gap-2">
+            {/* Outlined, and left of the primary. Two filled pills side by
+                side would give the bar two first actions and therefore
+                none. Hidden below lg, where five links and two buttons stop
+                fitting on one row; the overlay carries it there instead. */}
+            <Button
+              href={CALL_URL}
+              external
+              variant="secondary"
+              size="md"
+              className="hidden lg:inline-flex"
+            >
+              Book a call
+            </Button>
             <Button href="/request-access" variant="primary" size="md">
               Request access
             </Button>
@@ -233,6 +250,14 @@ export function Navigation() {
 
           <Button href="/request-access" variant="primary" className="mt-8">
             Request access
+          </Button>
+          <Button
+            href={CALL_URL}
+            external
+            variant="secondary"
+            className="mt-3"
+          >
+            Book a call
           </Button>
         </div>
       </div>

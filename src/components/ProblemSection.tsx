@@ -33,7 +33,7 @@ const LOST = [
 
 export function ProblemSection() {
   return (
-    <section className="section bg-canvas">
+    <section id="problem" className="section anchor-offset bg-canvas">
       <div className="track">
         {/* ── the statement ────────────────────────────────────────────── */}
         <div className="grid12">

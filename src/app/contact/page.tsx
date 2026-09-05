@@ -44,12 +44,17 @@ export default function ContactPage() {
             <div className="mt-12 md:mt-14">
               <ContactForm />
             </div>
+          </div>
+          {/* THE RIGHT RAIL, NOT UNDER THE FORM.
 
-            {/* Same column, same position as on Request access. It used to
-                sit in a right rail here, which put the two pages' calendar
-                links in two different places for no reason a visitor could
-                see. */}
-            <BookACall className="mt-14 border-t border-[rgba(243,244,240,0.16)] pt-10 md:mt-16" />
+              The column beside the form was empty for the whole length of the
+              page, and the call was sitting below a form somebody has to
+              scroll past to find it. Up here it is visible without scrolling
+              and still second: the form owns the left seven columns and the
+              eye reaches it first. It drops under the form on a phone, where
+              there is only one column to be in. */}
+          <div className="col-span-12 mt-14 lg:col-span-4 lg:col-start-9 lg:mt-0">
+            <BookACall className="border-t border-[rgba(243,244,240,0.16)] pt-8 lg:mt-[168px]" />
           </div>
         </div>
       </main>

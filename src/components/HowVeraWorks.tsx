@@ -37,7 +37,12 @@ import { VeraMark } from "@/components/vera/VeraMark";
 const WORKFLOWS = [
   {
     label: "Reply or forward",
-    copy: "Captures the files, property and what changed.",
+    /* "Captures the files, property and what changed" listed three things
+       that do not belong in one list: you do not capture a property, and
+       "what changed" had no subject. Naming the two hard parts instead, which
+       are working out WHICH property this belongs to and keeping the reason
+       rather than just the attachment. */
+    copy: "Files the attachments against the right property, and records what changed and why.",
     /* widest: it contains an actual sentence someone typed */
     w: "lg:w-[420px]",
   },
@@ -93,8 +98,12 @@ export function HowVeraWorks() {
               delay={i * 60}
               className={clsx("w-full", w.w)}
             >
-              {/* the label sits on its fragment, not adrift above it */}
-              <p className="text-mono-sm uppercase tracking-[0.08em] text-paper-subtle">
+              {/* The label sits on its fragment, not adrift above it, and it
+                  is the title of the column rather than a caption on it. At
+                  11.5px in paper-subtle it was both smaller and dimmer than
+                  its own body copy underneath, so the three things this
+                  section is actually about were the quietest text in it. */}
+              <p className="text-[13px] font-semibold uppercase tracking-[0.07em] text-paper sm:text-[14px]">
                 {w.label}
               </p>
 

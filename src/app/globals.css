@@ -179,6 +179,22 @@
     }
   }
 
+  /* A RULE BELONGS TO THE SECTION UNDER IT.
+
+     Dropped between two sections it collects the previous section's bottom
+     padding above and the next one's top padding below, so the seam it was
+     meant to mark ended up floating in two hundred pixels of nothing. It now
+     sits closer to what it introduces than to what it closes, which is the
+     arrangement the thesis page gets by putting its rule inside the section. */
+  .section-rule + section {
+    padding-top: 40px;
+  }
+  @media (min-width: 768px) {
+    .section-rule + section {
+      padding-top: 52px;
+    }
+  }
+
   /* anchored sections must clear the 60px fixed bar with room to breathe */
   .anchor-offset {
     scroll-margin-top: 84px;

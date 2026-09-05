@@ -32,28 +32,47 @@ export function Button({
   href,
   variant = "primary",
   size = "lg",
+  external,
   className,
   children,
 }: {
   href: string;
   variant?: Variant;
   size?: Size;
+  /** leaves the site: renders a plain anchor, opens in a new tab, and says so
+      to a screen reader. next/link is for routes we own and does not carry
+      target or rel, so an outside destination needs its own element rather
+      than a Link pointed at somebody else's domain. */
+  external?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
+  const classes = clsx(
+    "inline-flex items-center justify-center rounded-control",
+    "transition-colors duration-instant ease-state",
+    // touch targets hold 44px regardless of declared size (§17.2)
+    "max-lg:h-11",
+    VARIANT[variant],
+    SIZE[size],
+    className,
+  );
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={classes}
+      >
+        {children}
+        <span className="sr-only">(opens in a new tab)</span>
+      </a>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className={clsx(
-        "inline-flex items-center justify-center rounded-control",
-        "transition-colors duration-instant ease-state",
-        // touch targets hold 44px regardless of declared size (§17.2)
-        "max-lg:h-11",
-        VARIANT[variant],
-        SIZE[size],
-        className,
-      )}
-    >
+    <Link href={href} className={classes}>
       {children}
     </Link>
   );

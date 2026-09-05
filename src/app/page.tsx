@@ -24,7 +24,7 @@ import { Footer } from "@/components/Footer";
    already says a new section has begun. */
 function SectionRule() {
   return (
-    <div className="track" aria-hidden>
+    <div className="section-rule track" aria-hidden>
       <hr className="rule-full" />
     </div>
   );

@@ -50,11 +50,18 @@ export function Hero() {
               property, even as the people around it change.
             </p>
 
-            {/* The product, in five words. Subordinate to the thesis by size and
-                weight — it is the second thing read, never a competing headline.
-                The closing CTA turns the same line into an instruction. */}
+            {/* The product, named. Subordinate to the thesis by size and
+                weight: it is the second thing read, never a competing
+                headline.
+
+                It says "Provenance gives" rather than "Give", because the
+                headline above it has just made a claim about buildings and
+                this is the sentence that says what answers it. The imperative
+                was borrowed from the closing CTA, where it still belongs,
+                and up here it asked the visitor to do something forty words
+                before there was anything to do. */}
             <p className="mt-6 text-heading-3 text-paper">
-              Give every property a memory.
+              Provenance gives every property a memory.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">

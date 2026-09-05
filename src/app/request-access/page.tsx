@@ -37,12 +37,17 @@ export default function RequestAccessPage() {
             <div className="mt-12 md:mt-14">
               <RequestAccessForm />
             </div>
+          </div>
+          {/* THE RIGHT RAIL, NOT UNDER THE FORM.
 
-            {/* In the same column as the form rather than off in a right
-                rail, and after it rather than above it: the form is what
-                this page is for, and a calendar link placed first would
-                quietly become the easier option. */}
-            <BookACall className="mt-14 border-t border-[rgba(243,244,240,0.16)] pt-10 md:mt-16" />
+              The column beside the form was empty for the whole length of the
+              page, and the call was sitting below a form somebody has to
+              scroll past to find it. Up here it is visible without scrolling
+              and still second: the form owns the left seven columns and the
+              eye reaches it first. It drops under the form on a phone, where
+              there is only one column to be in. */}
+          <div className="col-span-12 mt-14 lg:col-span-4 lg:col-start-9 lg:mt-0">
+            <BookACall className="border-t border-[rgba(243,244,240,0.16)] pt-8 lg:mt-[168px]" />
           </div>
         </div>
       </main>
