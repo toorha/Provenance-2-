@@ -31,9 +31,16 @@ export function Hero() {
           <Reveal className="col-span-12 lg:col-span-8">
             <h1 className="text-[2.5rem] font-semibold leading-[1.04] tracking-[-0.018em] text-paper [text-wrap:balance] sm:text-[2.75rem] md:text-[3rem] lg:text-[3.25rem] lg:leading-[1.02] lg:[text-wrap:pretty] xl:text-[3.75rem]">
               Buildings outlive the people who work on them.{" "}
-              {/* the second sentence takes its own line where there is room for
-                  one, and simply follows on where there is not */}
-              <span className="lg:block">Their memory should too.</span>
+              {/* The second sentence takes its own line where there is room
+                  for one, and simply follows on where there is not.
+
+                  The gap is in em, not pixels, so it holds its proportion to
+                  the type across every step of the display scale. It only
+                  applies once the span is a block: below lg the two sentences
+                  run on inline and there is no break to open up. */}
+              <span className="lg:mt-[0.16em] lg:block">
+                Their memory should too.
+              </span>
             </h1>
           </Reveal>
 
