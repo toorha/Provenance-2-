@@ -66,7 +66,7 @@ export const STORIES: Record<VeraStory["id"], VeraStory> = {
   track: {
     id: "track",
     intro:
-      "Vera keeps the project state up to date, tracks what is blocking progress, and shows your team what needs to happen next.",
+      "Vera keeps a live understanding of the project, so your team can see what is holding it back and what needs to happen next to move it forward.",
     property: { name: "Westmount Centre", project: "South Pad redevelopment" },
     framing: "Vera keeps up with what is changing across the property.",
     evidence: [

@@ -255,7 +255,13 @@ function Intro({ story }: { story: VeraStory }) {
        above or below them. Sitting them near the top puts the sentence where
        the eye already is, right under the tab that was just selected. */
     <div className="flex h-full min-h-[372px] flex-col justify-start px-5 pb-5 pt-8 font-product lg:min-h-[562px] lg:justify-center lg:px-7 lg:py-6">
-      <div className="hero-intro-in max-w-[38ch]">
+      {/* A WIDE MEASURE, NOT A COLUMN. At 38ch the sentence broke into four
+          short lines stacked in the left third of a panel that is more than
+          twice that wide, which reads as a narrow column of text rather than
+          as a line somebody is saying to you. It runs across the panel now
+          and still stops well short of the full width, because a sentence set
+          edge to edge in a 1100px frame is no easier to read. */}
+      <div className="hero-intro-in max-w-[74ch]">
         <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-vera-700">
           <VeraMark size={14} />
           {MODE_TITLE[story.id]}
