@@ -55,8 +55,9 @@ export function MeetVera() {
      is what a visitor gets the moment they choose a mode themselves. */
   const [revealed, setRevealed] = useState(INTRO);
 
-  /* whether the visitor has chosen a mode themselves yet */
-  const [picked, setPicked] = useState(false);
+  /* The modes the visitor has chosen themselves, so each tab can retire its
+     own cue. Autoplay's mode changes are deliberately not recorded here. */
+  const [visited, setVisited] = useState<ReadonlySet<ModeId>>(() => new Set());
 
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -197,9 +198,13 @@ export function MeetVera() {
     (m: ModeId) => {
       takenOver.current = true;
       /* State, not the ref above it, because the tabs have to re-render to
-         drop their cue. Once somebody has picked a mode they know the row is
-         clickable, and the invitation has done its job. */
-      setPicked(true);
+         drop the cue on the tab that was just visited. */
+      setVisited((prev) => {
+        if (prev.has(m)) return prev;
+        const next = new Set(prev);
+        next.add(m);
+        return next;
+      });
       clear();
       setMode(m);
       setRevealed(INTRO);
@@ -254,7 +259,7 @@ export function MeetVera() {
               mode={mode}
               onModeChange={onModeChange}
               frameRef={frameRef}
-              showHints={!picked}
+              visitedModes={visited}
             >
               <VeraShowcase story={story} revealed={revealed} />
             </ProductFrame>

@@ -18,19 +18,23 @@ import { MODES, PROPERTY, type ModeId } from "@/lib/vera-data";
    So the chrome is two bars — identity above, navigation below — which is what
    actual enterprise software does. Everything else follows §10.1 exactly. */
 
+/* a stable empty default, so omitting the prop does not hand the component
+   a new Set on every render */
+const NO_VISITS: ReadonlySet<ModeId> = new Set();
+
 export function ProductFrame({
   mode,
   onModeChange,
   children,
   frameRef,
-  showHints = false,
+  visitedModes = NO_VISITS,
 }: {
   mode: ModeId;
   onModeChange: (m: ModeId) => void;
   children: React.ReactNode;
   frameRef?: React.RefObject<HTMLDivElement | null>;
-  /** false once the visitor has picked a mode themselves */
-  showHints?: boolean;
+  /** modes the visitor has chosen themselves. Each one retires its own cue. */
+  visitedModes?: ReadonlySet<ModeId>;
 }) {
   return (
     <div
@@ -94,14 +98,21 @@ export function ProductFrame({
               )}
             >
               {m.label}
-              {/* AN INVITATION, NOT A LABEL.
+              {/* AN INVITATION, NOT A LABEL, AND IT IS PER TAB.
 
                   It says the tabs are live, which a row of quiet text does
-                  not, and then it goes: once somebody has picked a mode they
-                  know the row is clickable and a standing "Try me" on every
-                  unselected tab is just noise on top of the thing they came
-                  to read. Grey, subordinate, no badge and no pulse. */}
-              {showHints && m.hint && !selected && (
+                  not, and each tab keeps its own until the visitor has been
+                  there. Opening Ask Vera leaves the invitation standing on
+                  Proactive Insights, and going to Insights first leaves it on
+                  Ask. One global flag cleared every tab on the first click,
+                  which retired the cue on the two modes nobody had seen yet.
+
+                  Autoplay does not count as a visit: the run walks all three
+                  modes by itself, so counting those would retire every cue
+                  before anybody touched anything.
+
+                  Grey, subordinate, no badge and no pulse. */}
+              {m.hint && !selected && !visitedModes.has(m.id) && (
                 <span
                   className={clsx(
                     "ml-2 hidden text-[12px] font-medium underline decoration-1 underline-offset-[3px] transition-colors duration-base lg:inline",
