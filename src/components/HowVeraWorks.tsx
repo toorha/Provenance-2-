@@ -37,18 +37,17 @@ import { VeraMark } from "@/components/vera/VeraMark";
 const WORKFLOWS = [
   {
     label: "Reply or forward",
-    /* "Captures the files, property and what changed" listed three things
-       that do not belong in one list: you do not capture a property, and
-       "what changed" had no subject. Naming the two hard parts instead, which
-       are working out WHICH property this belongs to and keeping the reason
-       rather than just the attachment. */
-    copy: "Files the attachments against the right property, and records what changed and why.",
+    /* Three beats, and the third is the one that matters: filing is the
+       admin anybody can picture, and keeping the context with the file is the
+       part that is hard. The card has to earn both, because Vera being useful
+       for routine work is what makes the rest of it credible. */
+    copy: "Files the attachment against the right property, records what changed, and keeps the context with it.",
     /* widest: it contains an actual sentence someone typed */
     w: "lg:w-[420px]",
   },
   {
     label: "Cc Vera",
-    copy: "Keeps decisions, open issues and follow-ups from the thread.",
+    copy: "Keeps decisions, open issues, and follow-ups from the thread.",
     /* smallest: two header rows and nothing else */
     w: "lg:w-[318px]",
   },
@@ -56,8 +55,9 @@ const WORKFLOWS = [
     label: "Invite Vera",
     /* The other two are things you do to an email you were sending anyway.
        This one is a guest on the call, so it has to say what the guest
-       actually does: sits there, writes it down, files it, and chases it. */
-    copy: "Joins the meeting or call, keeps the notes, updates the property and sends the follow-ups.",
+       actually does, and "keeps the notes" undersold it: the property is
+       updated by the end of the meeting, not written up after it. */
+    copy: "Joins the meeting, captures decisions and follow-ups, and updates the property context.",
     w: "lg:w-[392px]",
   },
 ];
@@ -84,8 +84,8 @@ export function HowVeraWorks() {
         <div className="grid12 mt-6">
           <Reveal delay={60} className="col-span-12 md:col-span-6 lg:col-span-7">
             <p className="text-lead text-paper-muted">
-              Reply, forward, invite, ask, or file. Vera captures context as the
-              work happens.
+              Reply, forward, invite, or ask. Vera captures context as the work
+              happens.
             </p>
           </Reveal>
         </div>
