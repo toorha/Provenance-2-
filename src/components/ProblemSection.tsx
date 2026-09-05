@@ -7,35 +7,30 @@ import { Reveal } from "@/components/ui/Reveal";
    "simple questions should not require a scavenger hunt" and three worked
    questions, which framed Provenance as document search and made the product
    look like a faster way to find a file. Meet Vera already proves the
-   question answering, and proves it far better than a static list of
-   questions ever could.
+   question answering, and proves it far better than a static list ever could.
 
    The real problem is structural and it compounds. A property runs for
-   decades, records pile up across people and systems, some are duplicated,
-   some are buried, some are gone, and the reasoning that connected them was
-   never written down anywhere. Then the people who held that reasoning leave.
+   decades, records pile up across people and systems, some are buried, some
+   are gone, and the reasoning that connected them was never written down.
+   Then the people who held that reasoning leave.
 
-   So the three items here are not questions a visitor could go and answer.
-   They are the three things that are genuinely hard to reconstruct, and the
-   difficulty is not finding one document: it is rebuilding the story running
-   through many of them, across years and across people.
+   IT SAID THAT THREE TIMES. There was a row of three questions — why, what
+   changed, what matters now — sitting between a line about reasoning not
+   surviving and a closing line about losing why decisions were made, what
+   changed and what still matters. Three statements of one idea, and the row
+   was the weakest of them, because a question a visitor cannot answer is not
+   an argument, it is a prompt with nowhere to go.
+
+   What is left is four moves and about seventy words: what piles up, what
+   goes missing, the turn, and what it costs. Long enough to be true, short
+   enough to land before anybody scrolls past it.
 
    No cards, no boxes. Rules and space. */
-
-const LOST = [
-  { label: "Why", ask: "Why was this decision made?" },
-  { label: "What changed", ask: "What happened after it?" },
-  {
-    label: "What matters now",
-    ask: "Does that history change what we should do today?",
-  },
-];
 
 export function ProblemSection() {
   return (
     <section id="problem" className="section anchor-offset bg-canvas">
       <div className="track">
-        {/* ── the statement ────────────────────────────────────────────── */}
         <div className="grid12">
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-3">
             <SectionLabel>The problem</SectionLabel>
@@ -54,55 +49,30 @@ export function ProblemSection() {
         <div className="grid12 mt-7">
           <Reveal delay={60} className="col-span-12 md:col-span-6 lg:col-span-7">
             <p className="text-lead text-paper-muted">
-              Drawings, reports, approvals, emails, repairs, leases, and
-              decisions end up scattered across different people and systems.
-              Some are buried. Some disappear entirely.
+              Drawings, reports, approvals, emails, leases and decisions end up
+              spread across people and systems. Some are buried. Some are gone.
             </p>
-            {/* the second half of the problem, and the harder half. Kept as
-                its own block because it is a different point, not a
-                continuation of the list above it. */}
-            <p className="mt-5 text-lead text-paper">
-              And even when the files survive, the reasoning connecting them
-              usually does not.
+            {/* The turn, and the only line in the section set in full paper:
+                everything above it is the setup and everything below it is the
+                cost. Two short sentences because it is the point. */}
+            <p className="mt-6 text-lead text-paper">
+              The files usually survive. The reasoning that connected them does
+              not.
             </p>
           </Reveal>
         </div>
 
-        {/* ── what is actually hard to reconstruct ─────────────────────── */}
-        <div className="grid12 mt-14 md:mt-16">
-          {LOST.map((l, i) => (
-            <Reveal
-              key={l.label}
-              delay={i * 60}
-              className="col-span-12 md:col-span-3 lg:col-span-4"
-            >
-              <hr className="rule-full" />
-              <div className="py-6 md:py-7">
-                <p className="text-mono-sm uppercase tracking-[0.08em] text-paper-subtle">
-                  {l.label}
-                </p>
-                <p className="mt-3 max-w-[24ch] text-[1.125rem] leading-[1.4] tracking-[-0.006em] text-paper/90 sm:text-[1.25rem]">
-                  {l.ask}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        {/* ── the consequence, in two blocks ───────────────────────────── */}
         <div className="grid12 mt-12 md:mt-14">
           <Reveal delay={40} className="col-span-12 md:col-span-6 lg:col-span-8">
-            <p className="text-body text-paper md:text-lead">
-              Properties keep accumulating records while the people who
-              understand them keep changing.
-            </p>
             {/* the term is named and defined in the same breath, so it never
                 stands alone as a slogan */}
-            <p className="mt-5 text-body text-paper-muted md:text-lead">
-              Over time, that creates{" "}
-              <span className="font-medium text-vera-400">corporate amnesia</span>:
-              the organization keeps the files, but loses why decisions were
-              made, what changed, and what still matters.
+            <p className="text-body text-paper-muted md:text-lead">
+              So every time the team changes, part of the property is relearned
+              from scratch. That is{" "}
+              <span className="font-medium text-vera-400">
+                corporate amnesia
+              </span>
+              : the records remain, the thinking behind them is gone.
             </p>
           </Reveal>
         </div>
