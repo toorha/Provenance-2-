@@ -55,6 +55,9 @@ export function MeetVera() {
      is what a visitor gets the moment they choose a mode themselves. */
   const [revealed, setRevealed] = useState(INTRO);
 
+  /* whether the visitor has chosen a mode themselves yet */
+  const [picked, setPicked] = useState(false);
+
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
   /* set by any deliberate interaction. Once true the run is abandoned rather
@@ -193,6 +196,10 @@ export function MeetVera() {
   const onModeChange = useCallback(
     (m: ModeId) => {
       takenOver.current = true;
+      /* State, not the ref above it, because the tabs have to re-render to
+         drop their cue. Once somebody has picked a mode they know the row is
+         clickable, and the invitation has done its job. */
+      setPicked(true);
       clear();
       setMode(m);
       setRevealed(INTRO);
@@ -247,6 +254,7 @@ export function MeetVera() {
               mode={mode}
               onModeChange={onModeChange}
               frameRef={frameRef}
+              showHints={!picked}
             >
               <VeraShowcase story={story} revealed={revealed} />
             </ProductFrame>

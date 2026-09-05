@@ -222,11 +222,15 @@ export const MODES = [
     id: "track",
     label: "Track the work",
     question: "What is happening?",
+    /* the invitation, shown until the visitor picks a mode themselves */
+    hint: "Try me",
   },
   {
     id: "ask",
     label: "Ask Vera",
     question: "What happened, why, and what do I need to know?",
+    /* the invitation, shown until the visitor picks a mode themselves */
+    hint: "Try me",
   },
   {
     /* Vera starts this one. Track answers "what is happening", Ask answers
@@ -235,6 +239,8 @@ export const MODES = [
     id: "insights",
     label: "Proactive Insights",
     question: "What should I know that I did not think to ask?",
+    /* the invitation, shown until the visitor picks a mode themselves */
+    hint: "Try me",
   },
 ] as const;
 

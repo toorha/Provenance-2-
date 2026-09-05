@@ -2,7 +2,6 @@
 
 import { clsx } from "clsx";
 import { MODES, PROPERTY, type ModeId } from "@/lib/vera-data";
-import { VeraMark } from "./VeraMark";
 
 /* DESIGN.md §10.1 — the product frame.
 
@@ -24,11 +23,14 @@ export function ProductFrame({
   onModeChange,
   children,
   frameRef,
+  showHints = false,
 }: {
   mode: ModeId;
   onModeChange: (m: ModeId) => void;
   children: React.ReactNode;
   frameRef?: React.RefObject<HTMLDivElement | null>;
+  /** false once the visitor has picked a mode themselves */
+  showHints?: boolean;
 }) {
   return (
     <div
@@ -91,21 +93,15 @@ export function ProductFrame({
                     : "font-medium text-slate hover:bg-mineral-50 hover:text-ink",
               )}
             >
-              {/* the mark identifies the one mode that is Vera by name.
-                   Small, and only here: the other two tabs stay bare. */}
-              {m.id === "ask" && (
-                <VeraMark
-                  size={15}
-                  className={clsx(
-                    "mr-2 transition-colors duration-base",
-                    selected ? "text-vera-700" : "text-vera-600",
-                  )}
-                />
-              )}
               {m.label}
-              {/* Ask Vera never autoplays, so it needs a cue that it is
-                  interactive. Grey, subordinate, no badge, no pulse. */}
-              {m.hint && !selected && (
+              {/* AN INVITATION, NOT A LABEL.
+
+                  It says the tabs are live, which a row of quiet text does
+                  not, and then it goes: once somebody has picked a mode they
+                  know the row is clickable and a standing "Try me" on every
+                  unselected tab is just noise on top of the thing they came
+                  to read. Grey, subordinate, no badge and no pulse. */}
+              {showHints && m.hint && !selected && (
                 <span
                   className={clsx(
                     "ml-2 hidden text-[12px] font-medium underline decoration-1 underline-offset-[3px] transition-colors duration-base lg:inline",
